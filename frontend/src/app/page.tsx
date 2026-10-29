@@ -4,6 +4,9 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+// The API URL will automatically use Vercel on Netlify, and localhost on your computer
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
 export default function Home() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -59,7 +62,8 @@ export default function Home() {
     setMessage({ text: '', type: '' });
 
     try {
-      const response = await fetch('http://localhost:4000/auth/login', {
+      // 🟢 FIXED: Uses API_URL instead of hardcoded localhost
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
