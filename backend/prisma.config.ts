@@ -1,12 +1,13 @@
 import 'dotenv/config';
-import { defineConfig, env } from 'prisma/config';
+import { definePrismaConfig } from 'prisma/config';
+import { defineConfig as ormConfig, prisma7Schema } from '@prisma/orm-postgres/config';
 
-export default defineConfig({
-  schema: 'prisma/schema.prisma',
-  migrations: {
-    path: 'prisma/migrations',
-  },
-  datasource: {
-    url: env('DATABASE_URL'),
-  },
+export default definePrismaConfig({
+  orm: ormConfig({
+    // This tells Prisma 8 to read your existing Prisma 7 schema
+    contract: prisma7Schema('prisma/schema.prisma'),
+    db: {
+      connection: process.env['DATABASE_URL']!,
+    },
+  }),
 });

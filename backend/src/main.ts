@@ -10,8 +10,11 @@ async function bootstrap() {
   });
 
   const port = Number(process.env.PORT) || 4000;
-  await app.listen(port);
-  console.log(`🚀 API running on http://localhost:${port}`);
+  
+  // CRITICAL FIX: Bind to '0.0.0.0' so the cloud provider can reach your app
+  await app.listen(port, '0.0.0.0');
+  
+  console.log(`🚀 API running on port ${port}`);
 }
 
 bootstrap();
