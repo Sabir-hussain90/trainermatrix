@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, FormEvent, Suspense, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const API_URL = 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 // ============ PRIVILEGES CONFIG ============
 const PRIVILEGE_ROWS = [

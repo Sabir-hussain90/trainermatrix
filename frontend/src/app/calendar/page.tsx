@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API_URL = 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 // Generate time options every 15 minutes (12:00 am → 11:45 pm)
 const generateTimeOptions = () => {
