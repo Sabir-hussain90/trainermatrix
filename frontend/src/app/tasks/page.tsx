@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef, FormEvent, Suspense, useMemo } from 'react';
+import { useState, useEffect, useRef, Suspense, useMemo } from 'react';
+import type { ChangeEvent, FormEvent, ReactNode } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -690,7 +691,7 @@ function TasksPageInner() {
     }
   };
 
-  const handleProfilePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -704,7 +705,7 @@ function TasksPageInner() {
     e.target.value = '';
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { setToast({ message: 'Logo too large. Max 5MB.', type: 'error' }); e.target.value = ''; return; }
@@ -1880,7 +1881,7 @@ function TasksPageInner() {
 
 // ============== REUSABLE COMPONENTS ==============
 
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; }) {
+function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: ReactNode; active?: boolean; badge?: number; }) {
   return (
     <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
       {active && (<span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>)}
