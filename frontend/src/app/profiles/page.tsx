@@ -341,6 +341,10 @@ export default function ProfilesPage() {
   const [signatureTab, setSignatureTab] = useState<'type' | 'draw' | 'upload'>('type');
   const [signatureName, setSignatureName] = useState('');
   const [signatureStyle, setSignatureStyle] = useState('1');
+  const [signatureImage, setSignatureImage] = useState<string | null>(null);
+  
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   // ====== HELPERS ======
   const getToken = (): string | null => {
@@ -582,6 +586,94 @@ export default function ProfilesPage() {
     if (idx < TABS.length - 1) setModalTab(TABS[idx + 1].id);
   };
 
+  // ====== SIGNATURE CANVAS HANDLERS ======
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    setIsDrawing(true);
+    ctx.beginPath();
+    
+    let clientX, clientY;
+    if ('touches' in e) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    ctx.moveTo(clientX - rect.left, clientY - rect.top);
+  };
+
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    let clientX, clientY;
+    if ('touches' in e) {
+      e.preventDefault();
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineTo(clientX - rect.left, clientY - rect.top);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  const handleSaveSignature = () => {
+    let finalSignature = '';
+    if (signatureTab === 'type') {
+      finalSignature = `Signed by: ${signatureName || 'Client'}`;
+    } else if (signatureTab === 'draw') {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        finalSignature = canvas.toDataURL('image/png');
+      }
+    } else if (signatureTab === 'upload' && signatureImage) {
+      finalSignature = signatureImage;
+    }
+
+    setParqData({ ...parqData, signature: finalSignature || 'Signed' });
+    setSignatureModalOpen(false);
+    
+    // Auto-save the profile after adding the signature
+    setTimeout(() => {
+      document.getElementById('submit-profile-btn')?.click();
+    }, 100);
+  };
+
+  const handleSignatureImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setSignatureImage(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
   // ====== CREATE PROFILE (POST) ======
   const handleSaveProfile = async () => {
     const errs: { [key: string]: string } = {};
@@ -629,11 +721,6 @@ export default function ProfilesPage() {
       console.error('[createProfile]', err);
       setToast({ message: err.message || 'Failed to create profile', type: 'error' });
     } finally { setSaving(false); }
-  };
-
-  const handleApplySignature = () => {
-    setParqData({ ...parqData, signature: `Signed by: ${signatureName || 'Client'}` });
-    setSignatureModalOpen(false);
   };
 
   // ====== ACCOUNT INFO SAVE ======
@@ -1709,7 +1796,7 @@ export default function ProfilesPage() {
                     <div>
                       <label className="block text-[15px] font-medium text-gray-800 mb-2">9. Signature</label>
                       <button type="button" onClick={() => setSignatureModalOpen(true)} className="px-6 py-2.5 border border-dashed border-gray-300 rounded-xl text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition">
-                        {parqData.signature ? parqData.signature : 'Add E-Signature'}
+                        {parqData.signature ? 'Signature Added' : 'Add E-Signature'}
                       </button>
                     </div>
                   </div>
@@ -1802,7 +1889,12 @@ export default function ProfilesPage() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
               </button>
               <button onClick={() => setCreateOpen(false)} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
-              <button onClick={handleSaveProfile} disabled={saving} className={`ml-auto px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
+              <button 
+                id="submit-profile-btn"
+                onClick={handleSaveProfile} 
+                disabled={saving} 
+                className={`ml-auto px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}
+              >
                 {saving ? 'Creating...' : 'Create Profile'}
               </button>
             </div>
@@ -1851,19 +1943,38 @@ export default function ProfilesPage() {
               )}
               {signatureTab === 'draw' && (
                 <div className="flex flex-col h-full">
-                  <div className="w-full h-[200px] border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center">
-                    <p className="text-gray-400 text-sm">Draw here (Canvas placeholder)</p>
+                  <div className="w-full h-[200px] border-2 border-dashed border-gray-300 rounded-xl bg-white relative overflow-hidden">
+                    <canvas 
+                      ref={canvasRef}
+                      width={500}
+                      height={200}
+                      onMouseDown={startDrawing}
+                      onMouseMove={draw}
+                      onMouseUp={stopDrawing}
+                      onMouseLeave={stopDrawing}
+                      onTouchStart={startDrawing}
+                      onTouchMove={draw}
+                      onTouchEnd={stopDrawing}
+                      className="w-full h-full cursor-crosshair"
+                    />
                   </div>
-                  <button className="text-left text-sm text-gray-500 hover:text-gray-800 mt-4 underline">Clear</button>
+                  <button onClick={clearCanvas} className="text-left text-sm text-gray-500 hover:text-gray-800 mt-4 underline">Clear</button>
                 </div>
               )}
               {signatureTab === 'upload' && (
-                <div className="w-full h-[200px] border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-3">
-                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                  </div>
-                  <p className="text-sm font-semibold text-gray-800">Drag Files or Click to Browse</p>
-                  <p className="text-xs text-gray-500 mt-1">Max image size: 6MB</p>
+                <div className="w-full h-[200px] border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center relative overflow-hidden">
+                  <input type="file" accept="image/*" onChange={handleSignatureImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                  {signatureImage ? (
+                     <img src={signatureImage} alt="Signature" className="w-full h-full object-contain p-2" />
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-3">
+                        <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-800">Drag Files or Click to Browse</p>
+                      <p className="text-xs text-gray-500 mt-1">Max image size: 6MB</p>
+                    </>
+                  )}
                 </div>
               )}
             </div>
