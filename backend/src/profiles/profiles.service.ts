@@ -28,6 +28,12 @@ export class ProfilesService {
   }
 
   create(body: any, staffId: string) {
+    // Check if PAR-Q answers are provided to set the status correctly
+    const hasParqAnswers = body.parqAnswers && Object.keys(body.parqAnswers).length > 0;
+    
+    // Auto-set parqStatus to COMPLETE if answers are provided
+    const parqStatus = hasParqAnswers ? 'COMPLETE' : (body.parqStatus || 'INCOMPLETE');
+
     return this.prisma.profile.create({
       data: {
         firstName: body.firstName,
@@ -43,6 +49,8 @@ export class ProfilesService {
         clientAccess: body.clientAccess || 'deny',
         groups: body.groups || [],
         staffId,
+        parqStatus: parqStatus,
+        parqAnswers: body.parqAnswers || {}, // Saves the PAR-Q form data
       },
     });
   }
@@ -54,7 +62,7 @@ export class ProfilesService {
       'firstName', 'lastName', 'email', 'phone', 'sex', 'birthday',
       'heightFt', 'heightIn', 'profilePhoto', 'measurementSystem',
       'clientAccess', 'groups', 'parqStatus', 'lastTested',
-      'nextGoal', 'overdueMetrics', 'status',
+      'nextGoal', 'overdueMetrics', 'status', 'parqAnswers',
     ];
     for (const key of allowed) {
       if (body[key] !== undefined) data[key] = body[key];

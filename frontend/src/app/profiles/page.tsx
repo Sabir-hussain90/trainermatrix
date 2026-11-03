@@ -12,12 +12,12 @@ const TABS = [
   { id: 'custom-1', label: 'Aut et fuga Perfere', type: 'form' },
   { id: 'custom-2', label: 'amplify_form_1', type: 'form' },
   { id: 'custom-3', label: 'Fitness Assessment', type: 'form' },
-  { id: 'custom-4', label: 'Thousand', type: 'form' },
+  { id: 'custom-4', label: 'abid', type: 'form' },
   { id: 'custom-5', label: '1101', type: 'form' },
-  { id: 'custom-6', label: 'Tuseday Test', type: 'form' },
+  { id: 'custom-6', label: 'sajid test', type: 'form' },
   { id: 'custom-7', label: 'New', type: 'form' },
   { id: 'custom-8', label: 'sdf1234', type: 'form' },
-  { id: 'custom-9', label: 'Naeem test', type: 'form' },
+  { id: 'custom-9', label: 'sabir ', type: 'form' },
   { id: 'custom-10', label: 'Today', type: 'form' },
   { id: 'custom-11', label: 'Notepad', type: 'form' },
 ];
@@ -270,6 +270,16 @@ export default function ProfilesPage() {
     email: '', phone: '', groups: [] as string[], staff: '', staffId: '',
     clientAccess: 'deny', profilePhoto: '' as string | null,
   });
+  
+  // === NEW STATE FOR FORM TABS ===
+  const [parqData, setParqData] = useState({
+    q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', notes: '', signature: ''
+  });
+
+  const [custom1Data, setCustom1Data] = useState({ mcs: '' });
+  const [custom3Data, setCustom3Data] = useState({ name: '' });
+  const [custom6Data, setCustom6Data] = useState({ mcqSingle: '', mcqMulti: [] as string[], paragraph: '' });
+  const [notepadData, setNotepadData] = useState('');
 
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
   const [groupsOpen, setGroupsOpen] = useState(false);
@@ -316,7 +326,6 @@ export default function ProfilesPage() {
     styku: { enabled: false, apiKey: '', apiSecret: '', bodyFatMethod: 'BIA', circumferenceMeasurement: 'Left Side' },
   });
 
-  // New settings state
   const [privileges, setPrivileges] = useState<{ [key: string]: { admin: boolean; supervisor: boolean; staff: boolean } }>(() => {
     const defaults: any = {};
     PRIVILEGE_ROWS.forEach((row) => { defaults[row.id] = { admin: true, supervisor: true, staff: true }; });
@@ -405,7 +414,6 @@ export default function ProfilesPage() {
     } catch (err) { console.error('[fetchUnreadMessages]', err); }
   };
 
-  // ✅ NEW: Fetch privileges from backend
   const fetchPrivileges = async () => {
     try {
       const res = await fetch(`${API_URL}/privileges`, { headers: authHeaders() });
@@ -468,7 +476,7 @@ export default function ProfilesPage() {
     fetchProfiles();
     fetchStaff();
     fetchUnreadMessages();
-    fetchPrivileges();   // ✅ NEW
+    fetchPrivileges();
   }, [router]);
 
   useEffect(() => {
@@ -511,6 +519,11 @@ export default function ProfilesPage() {
   const openCreateModal = () => {
     setModalTab('profile-info');
     setFormData({ firstName: '', lastName: '', sex: '', measurementSystem: 'Imperial', birthMonth: '', birthDay: '', birthYear: '', heightFt: '', heightIn: '', email: '', phone: '', groups: [], staff: '', staffId: '', clientAccess: 'deny', profilePhoto: '' });
+    setParqData({ q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', notes: '', signature: '' });
+    setCustom1Data({ mcs: '' });
+    setCustom3Data({ name: '' });
+    setCustom6Data({ mcqSingle: '', mcqMulti: [], paragraph: '' });
+    setNotepadData('');
     setValidationErrors({});
     setCreateOpen(true);
   };
@@ -593,6 +606,7 @@ export default function ProfilesPage() {
         clientAccess: formData.clientAccess,
         groups: formData.groups,
         profilePhoto: formData.profilePhoto || undefined,
+        parqAnswers: parqData, // <-- INJECTED PAR-Q DATA HERE
       };
       if (formData.staffId) body.staffId = formData.staffId;
 
@@ -669,9 +683,7 @@ export default function ProfilesPage() {
     setToast({ message: 'Account logo removed', type: 'success' });
   };
 
-  // ✅ REPLACED: handleSaveSettings now saves privileges to backend for ADMIN
   const handleSaveSettings = async () => {
-    // Save non-privilege settings locally (as before)
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor,
       accountLogo,
@@ -682,13 +694,11 @@ export default function ProfilesPage() {
       resultsData,
     }));
 
-    // Non-ADMIN: only save personal settings, don't touch privileges
     if (user?.role !== 'ADMIN') {
       setToast({ message: 'Settings saved', type: 'success' });
       return;
     }
 
-    // ADMIN: save privileges to backend
     try {
       const res = await fetch(`${API_URL}/privileges`, {
         method: 'PUT',
@@ -711,7 +721,6 @@ export default function ProfilesPage() {
     setPrivileges((prev) => ({ ...prev, [rowId]: { ...prev[rowId], [role]: !prev[rowId][role] } }));
   };
 
-  // ✅ NEW: can() helper
   const can = (key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
@@ -1438,7 +1447,7 @@ export default function ProfilesPage() {
             </div>
 
             <div className="px-8 py-8 max-h-[60vh] overflow-y-auto">
-              {modalTab === 'profile-info' ? (
+              {modalTab === 'profile-info' && (
                 <>
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Profile Information</h2>
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1625,15 +1634,152 @@ export default function ProfilesPage() {
                     </div>
                   </div>
                 </>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <svg className="w-8 h-8 text-gray-400 animate-spin mb-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                  </svg>
-                  <p className="text-base text-gray-500">Loading form...</p>
+              )}
+
+              {/* ====== PAR-Q FORM TAB ====== */}
+              {modalTab === 'parq' && (
+                <div className="max-w-3xl">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">PAR-Q</h2>
+                  <div className="space-y-6">
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">1. Has your doctor ever said that you have a heart condition, or high blood pressure?</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" checked={parqData.q1 === 'Yes'} onChange={() => setParqData({ ...parqData, q1: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" checked={parqData.q1 === 'No'} onChange={() => setParqData({ ...parqData, q1: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">2. Do you feel pain in your chest at rest, during your daily activities of living, or when you do physical activity?</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" checked={parqData.q2 === 'Yes'} onChange={() => setParqData({ ...parqData, q2: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" checked={parqData.q2 === 'No'} onChange={() => setParqData({ ...parqData, q2: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">3. Do you lose balance because of dizziness, or have you lost consciousness in the last 12 months? (Please answer NO if your dizziness was associated with over-breathing, including during vigorous exercise)</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" checked={parqData.q3 === 'Yes'} onChange={() => setParqData({ ...parqData, q3: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q3" checked={parqData.q3 === 'No'} onChange={() => setParqData({ ...parqData, q3: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">4. Have you ever been diagnosed with another chronic medical condition (other than heart disease or high blood pressure)?</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" checked={parqData.q4 === 'Yes'} onChange={() => setParqData({ ...parqData, q4: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q4" checked={parqData.q4 === 'No'} onChange={() => setParqData({ ...parqData, q4: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">5. Are you currently taking prescribed medications for a chronic medical condition?</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" checked={parqData.q5 === 'Yes'} onChange={() => setParqData({ ...parqData, q5: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q5" checked={parqData.q5 === 'No'} onChange={() => setParqData({ ...parqData, q5: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">6. Do you currently have (or have had within the past 12 months) a bone, joint, or soft tissue (muscle, ligament, or tendon) problem that could be made worse by becoming more physically active?</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q6" checked={parqData.q6 === 'Yes'} onChange={() => setParqData({ ...parqData, q6: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q6" checked={parqData.q6 === 'No'} onChange={() => setParqData({ ...parqData, q6: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-gray-800 mb-2">7. Has your doctor ever said that you should only do medically supervised physical activity?</p>
+                      <div className="flex flex-col gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q7" checked={parqData.q7 === 'Yes'} onChange={() => setParqData({ ...parqData, q7: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                        <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="q7" checked={parqData.q7 === 'No'} onChange={() => setParqData({ ...parqData, q7: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[15px] font-medium text-gray-800 mb-2">8. Additional Notes</label>
+                      <textarea rows={4} value={parqData.notes} onChange={(e) => setParqData({ ...parqData, notes: e.target.value })} className="w-full p-4 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
+                    </div>
+                    <div>
+                      <label className="block text-[15px] font-medium text-gray-800 mb-2">9. Signature</label>
+                      <button type="button" onClick={() => setParqData({ ...parqData, signature: 'signed' })} className="px-6 py-2.5 border border-dashed border-gray-300 rounded-xl text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition">Add E-Signature</button>
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {/* ====== AUT ET FUGA PERFERE FORM ====== */}
+              {modalTab === 'custom-1' && (
+                <div className="max-w-3xl">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Mollitia reiciendis</h2>
+                  <p className="text-[14.5px] text-gray-600 mb-8">Consectetur expedita</p>
+                  
+                  <div className="mb-6">
+                    <p className="text-[15px] font-bold text-gray-800 mb-3">qweqweasdASD</p>
+                    <p className="text-[14.5px] text-gray-600 mb-6">MCS</p>
+                    <div className="flex flex-col gap-2">
+                      <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="mcs" checked={custom1Data.mcs === 'Yes'} onChange={() => setCustom1Data({ mcs: 'Yes' })} className="w-4 h-4" /> <span className="text-[14px]">Yes</span></label>
+                      <label className="flex items-center gap-2 cursor-pointer"><input type="radio" name="mcs" checked={custom1Data.mcs === 'No'} onChange={() => setCustom1Data({ mcs: 'No' })} className="w-4 h-4" /> <span className="text-[14px]">No</span></label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ====== FITNESS ASSESSMENT FORM ====== */}
+              {modalTab === 'custom-3' && (
+                <div className="max-w-3xl">
+                  <h2 className="text-[20px] font-bold text-gray-900 mb-4">Fitness & Health Assessment Form</h2>
+                  <p className="text-[14px] text-gray-600 mb-8 leading-relaxed">A form used to collect basic fitness, health, and physical activity information from clients. It helps trainers evaluate the client's current condition and plan suitable workouts.</p>
+                  <div>
+                    <label className="block text-[15px] font-semibold text-gray-900 mb-2">What is your name?</label>
+                    <input type="text" value={custom3Data.name} onChange={(e) => setCustom3Data({ name: e.target.value })} className="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                  </div>
+                </div>
+              )}
+
+              {/* ====== SAJID TEST (H2 SECTION) FORM ====== */}
+              {modalTab === 'custom-6' && (
+                <div className="max-w-3xl">
+                  <h2 className="text-[20px] font-bold text-gray-900 mb-6">H2 Section</h2>
+                  
+                  <div className="mb-8">
+                    <p className="text-[15px] font-semibold text-gray-800 mb-3">MCQ single select</p>
+                    <div className="flex flex-col gap-2">
+                      {['opt1', 'opt2', 'opt3', 'opt4'].map(opt => (
+                        <label key={opt} className="flex items-center gap-2 cursor-pointer"><input type="radio" name="mcqSingle" checked={custom6Data.mcqSingle === opt} onChange={() => setCustom6Data({ ...custom6Data, mcqSingle: opt })} className="w-4 h-4" /> <span className="text-[14px]">{opt}</span></label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-8">
+                    <p className="text-[15px] font-semibold text-gray-800 mb-3">MCQ multiselect</p>
+                    <div className="flex flex-col gap-2">
+                      {['opt1', 'opt2', 'opt3', 'opt4'].map(opt => (
+                        <label key={opt} className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" checked={custom6Data.mcqMulti.includes(opt)} onChange={(e) => {
+                            const list = e.target.checked ? [...custom6Data.mcqMulti, opt] : custom6Data.mcqMulti.filter(i => i !== opt);
+                            setCustom6Data({ ...custom6Data, mcqMulti: list });
+                          }} className="w-4 h-4" /> <span className="text-[14px]">{opt}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-[15px] font-medium text-gray-800 mb-2">Test paragraph</p>
+                  </div>
+                </div>
+              )}
+
+              {/* ====== NOTEPAD FORM ====== */}
+              {modalTab === 'custom-11' && (
+                <div className="max-w-3xl">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">Notepad</h2>
+                  <textarea rows={10} value={notepadData} onChange={(e) => setNotepadData(e.target.value)} placeholder="Enter notes..." className="w-full p-4 border border-gray-200 rounded-xl text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
+                </div>
+              )}
+
+              {/* Fallback for other non-implemented forms */}
+              {['custom-2', 'custom-4', 'custom-5', 'custom-7', 'custom-8', 'custom-9', 'custom-10'].includes(modalTab) && (
+                <div className="flex flex-col items-center justify-center py-20">
+                  <p className="text-base text-gray-500">Form content not set up yet.</p>
+                </div>
+              )}
+
             </div>
 
             <div className="px-8 py-5 border-t border-gray-100 flex items-center gap-3">

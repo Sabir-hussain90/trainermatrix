@@ -99,6 +99,7 @@ export type ProfileCountAggregateOutputType = {
   clientAccess: number
   status: number
   parqStatus: number
+  parqAnswers: number
   lastTested: number
   nextGoal: number
   overdueMetrics: number
@@ -183,6 +184,7 @@ export type ProfileCountAggregateInputType = {
   clientAccess?: true
   status?: true
   parqStatus?: true
+  parqAnswers?: true
   lastTested?: true
   nextGoal?: true
   overdueMetrics?: true
@@ -294,6 +296,7 @@ export type ProfileGroupByOutputType = {
   clientAccess: string
   status: $Enums.ProfileStatus
   parqStatus: $Enums.ParqStatus
+  parqAnswers: runtime.JsonValue | null
   lastTested: string | null
   nextGoal: string | null
   overdueMetrics: number
@@ -341,6 +344,7 @@ export type ProfileWhereInput = {
   clientAccess?: Prisma.StringFilter<"Profile"> | string
   status?: Prisma.EnumProfileStatusFilter<"Profile"> | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFilter<"Profile"> | $Enums.ParqStatus
+  parqAnswers?: Prisma.JsonNullableFilter<"Profile">
   lastTested?: Prisma.StringNullableFilter<"Profile"> | string | null
   nextGoal?: Prisma.StringNullableFilter<"Profile"> | string | null
   overdueMetrics?: Prisma.IntFilter<"Profile"> | number
@@ -370,6 +374,7 @@ export type ProfileOrderByWithRelationInput = {
   clientAccess?: Prisma.SortOrder
   status?: Prisma.SortOrder
   parqStatus?: Prisma.SortOrder
+  parqAnswers?: Prisma.SortOrderInput | Prisma.SortOrder
   lastTested?: Prisma.SortOrderInput | Prisma.SortOrder
   nextGoal?: Prisma.SortOrderInput | Prisma.SortOrder
   overdueMetrics?: Prisma.SortOrder
@@ -402,6 +407,7 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   clientAccess?: Prisma.StringFilter<"Profile"> | string
   status?: Prisma.EnumProfileStatusFilter<"Profile"> | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFilter<"Profile"> | $Enums.ParqStatus
+  parqAnswers?: Prisma.JsonNullableFilter<"Profile">
   lastTested?: Prisma.StringNullableFilter<"Profile"> | string | null
   nextGoal?: Prisma.StringNullableFilter<"Profile"> | string | null
   overdueMetrics?: Prisma.IntFilter<"Profile"> | number
@@ -431,6 +437,7 @@ export type ProfileOrderByWithAggregationInput = {
   clientAccess?: Prisma.SortOrder
   status?: Prisma.SortOrder
   parqStatus?: Prisma.SortOrder
+  parqAnswers?: Prisma.SortOrderInput | Prisma.SortOrder
   lastTested?: Prisma.SortOrderInput | Prisma.SortOrder
   nextGoal?: Prisma.SortOrderInput | Prisma.SortOrder
   overdueMetrics?: Prisma.SortOrder
@@ -463,6 +470,7 @@ export type ProfileScalarWhereWithAggregatesInput = {
   clientAccess?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   status?: Prisma.EnumProfileStatusWithAggregatesFilter<"Profile"> | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusWithAggregatesFilter<"Profile"> | $Enums.ParqStatus
+  parqAnswers?: Prisma.JsonNullableWithAggregatesFilter<"Profile">
   lastTested?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   nextGoal?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   overdueMetrics?: Prisma.IntWithAggregatesFilter<"Profile"> | number
@@ -487,6 +495,7 @@ export type ProfileCreateInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -515,6 +524,7 @@ export type ProfileUncheckedCreateInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -543,6 +553,7 @@ export type ProfileUpdateInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -571,6 +582,7 @@ export type ProfileUncheckedUpdateInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -599,6 +611,7 @@ export type ProfileCreateManyInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -623,6 +636,7 @@ export type ProfileUpdateManyMutationInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -646,6 +660,7 @@ export type ProfileUncheckedUpdateManyInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -688,6 +703,7 @@ export type ProfileCountOrderByAggregateInput = {
   clientAccess?: Prisma.SortOrder
   status?: Prisma.SortOrder
   parqStatus?: Prisma.SortOrder
+  parqAnswers?: Prisma.SortOrder
   lastTested?: Prisma.SortOrder
   nextGoal?: Prisma.SortOrder
   overdueMetrics?: Prisma.SortOrder
@@ -915,6 +931,7 @@ export type ProfileCreateWithoutStaffInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -942,6 +959,7 @@ export type ProfileUncheckedCreateWithoutStaffInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -998,6 +1016,7 @@ export type ProfileScalarWhereInput = {
   clientAccess?: Prisma.StringFilter<"Profile"> | string
   status?: Prisma.EnumProfileStatusFilter<"Profile"> | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFilter<"Profile"> | $Enums.ParqStatus
+  parqAnswers?: Prisma.JsonNullableFilter<"Profile">
   lastTested?: Prisma.StringNullableFilter<"Profile"> | string | null
   nextGoal?: Prisma.StringNullableFilter<"Profile"> | string | null
   overdueMetrics?: Prisma.IntFilter<"Profile"> | number
@@ -1022,6 +1041,7 @@ export type ProfileCreateWithoutFormResponsesInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1049,6 +1069,7 @@ export type ProfileUncheckedCreateWithoutFormResponsesInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1092,6 +1113,7 @@ export type ProfileUpdateWithoutFormResponsesInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1119,6 +1141,7 @@ export type ProfileUncheckedUpdateWithoutFormResponsesInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1146,6 +1169,7 @@ export type ProfileCreateWithoutTasksInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1173,6 +1197,7 @@ export type ProfileUncheckedCreateWithoutTasksInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1216,6 +1241,7 @@ export type ProfileUpdateWithoutTasksInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1243,6 +1269,7 @@ export type ProfileUncheckedUpdateWithoutTasksInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1270,6 +1297,7 @@ export type ProfileCreateWithoutEventsInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1297,6 +1325,7 @@ export type ProfileUncheckedCreateWithoutEventsInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1340,6 +1369,7 @@ export type ProfileUpdateWithoutEventsInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1367,6 +1397,7 @@ export type ProfileUncheckedUpdateWithoutEventsInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1394,6 +1425,7 @@ export type ProfileCreateWithoutConversationsInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1421,6 +1453,7 @@ export type ProfileUncheckedCreateWithoutConversationsInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1464,6 +1497,7 @@ export type ProfileUpdateWithoutConversationsInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1491,6 +1525,7 @@ export type ProfileUncheckedUpdateWithoutConversationsInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1518,6 +1553,7 @@ export type ProfileCreateManyStaffInput = {
   clientAccess?: string
   status?: $Enums.ProfileStatus
   parqStatus?: $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: string | null
   nextGoal?: string | null
   overdueMetrics?: number
@@ -1541,6 +1577,7 @@ export type ProfileUpdateWithoutStaffInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1568,6 +1605,7 @@ export type ProfileUncheckedUpdateWithoutStaffInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1595,6 +1633,7 @@ export type ProfileUncheckedUpdateManyWithoutStaffInput = {
   clientAccess?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProfileStatusFieldUpdateOperationsInput | $Enums.ProfileStatus
   parqStatus?: Prisma.EnumParqStatusFieldUpdateOperationsInput | $Enums.ParqStatus
+  parqAnswers?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   lastTested?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nextGoal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   overdueMetrics?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1676,6 +1715,7 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   clientAccess?: boolean
   status?: boolean
   parqStatus?: boolean
+  parqAnswers?: boolean
   lastTested?: boolean
   nextGoal?: boolean
   overdueMetrics?: boolean
@@ -1706,6 +1746,7 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   clientAccess?: boolean
   status?: boolean
   parqStatus?: boolean
+  parqAnswers?: boolean
   lastTested?: boolean
   nextGoal?: boolean
   overdueMetrics?: boolean
@@ -1731,6 +1772,7 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   clientAccess?: boolean
   status?: boolean
   parqStatus?: boolean
+  parqAnswers?: boolean
   lastTested?: boolean
   nextGoal?: boolean
   overdueMetrics?: boolean
@@ -1756,6 +1798,7 @@ export type ProfileSelectScalar = {
   clientAccess?: boolean
   status?: boolean
   parqStatus?: boolean
+  parqAnswers?: boolean
   lastTested?: boolean
   nextGoal?: boolean
   overdueMetrics?: boolean
@@ -1765,7 +1808,7 @@ export type ProfileSelectScalar = {
   staffId?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "sex" | "birthday" | "heightFt" | "heightIn" | "profilePhoto" | "measurementSystem" | "clientAccess" | "status" | "parqStatus" | "lastTested" | "nextGoal" | "overdueMetrics" | "groups" | "createdAt" | "updatedAt" | "staffId", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "sex" | "birthday" | "heightFt" | "heightIn" | "profilePhoto" | "measurementSystem" | "clientAccess" | "status" | "parqStatus" | "parqAnswers" | "lastTested" | "nextGoal" | "overdueMetrics" | "groups" | "createdAt" | "updatedAt" | "staffId", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   staff?: boolean | Prisma.Profile$staffArgs<ExtArgs>
   tasks?: boolean | Prisma.Profile$tasksArgs<ExtArgs>
@@ -1805,6 +1848,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     clientAccess: string
     status: $Enums.ProfileStatus
     parqStatus: $Enums.ParqStatus
+    parqAnswers: runtime.JsonValue | null
     lastTested: string | null
     nextGoal: string | null
     overdueMetrics: number
@@ -2254,6 +2298,7 @@ export interface ProfileFieldRefs {
   readonly clientAccess: Prisma.FieldRef<"Profile", 'String'>
   readonly status: Prisma.FieldRef<"Profile", 'ProfileStatus'>
   readonly parqStatus: Prisma.FieldRef<"Profile", 'ParqStatus'>
+  readonly parqAnswers: Prisma.FieldRef<"Profile", 'Json'>
   readonly lastTested: Prisma.FieldRef<"Profile", 'String'>
   readonly nextGoal: Prisma.FieldRef<"Profile", 'String'>
   readonly overdueMetrics: Prisma.FieldRef<"Profile", 'Int'>

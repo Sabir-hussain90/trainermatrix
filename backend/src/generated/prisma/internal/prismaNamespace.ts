@@ -1619,6 +1619,7 @@ export const ProfileScalarFieldEnum = {
   clientAccess: 'clientAccess',
   status: 'status',
   parqStatus: 'parqStatus',
+  parqAnswers: 'parqAnswers',
   lastTested: 'lastTested',
   nextGoal: 'nextGoal',
   overdueMetrics: 'overdueMetrics',
@@ -1986,6 +1987,20 @@ export type ListEnumParqStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'AccessLevel'
  */
 export type EnumAccessLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccessLevel'>
@@ -2010,20 +2025,6 @@ export type EnumVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'Visibility[]'
  */
 export type ListEnumVisibilityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Visibility[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 

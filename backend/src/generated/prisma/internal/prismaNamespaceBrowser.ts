@@ -123,6 +123,7 @@ export const ProfileScalarFieldEnum = {
   clientAccess: 'clientAccess',
   status: 'status',
   parqStatus: 'parqStatus',
+  parqAnswers: 'parqAnswers',
   lastTested: 'lastTested',
   nextGoal: 'nextGoal',
   overdueMetrics: 'overdueMetrics',

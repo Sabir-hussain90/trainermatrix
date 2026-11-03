@@ -170,6 +170,7 @@ model Profile {
   status         ProfileStatus @default(ACTIVE)
 
   parqStatus     ParqStatus    @default(INCOMPLETE)
+  parqAnswers    Json?
   lastTested     String?
   nextGoal       String?
   overdueMetrics Int           @default(0)
