@@ -336,6 +336,12 @@ export default function ProfilesPage() {
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
+  // === SIGNATURE MODAL STATE ===
+  const [signatureModalOpen, setSignatureModalOpen] = useState(false);
+  const [signatureTab, setSignatureTab] = useState<'type' | 'draw' | 'upload'>('type');
+  const [signatureName, setSignatureName] = useState('');
+  const [signatureStyle, setSignatureStyle] = useState('1');
+
   // ====== HELPERS ======
   const getToken = (): string | null => {
     if (typeof window === 'undefined') return null;
@@ -606,7 +612,7 @@ export default function ProfilesPage() {
         clientAccess: formData.clientAccess,
         groups: formData.groups,
         profilePhoto: formData.profilePhoto || undefined,
-        parqAnswers: parqData, // <-- INJECTED PAR-Q DATA HERE
+        parqAnswers: parqData,
       };
       if (formData.staffId) body.staffId = formData.staffId;
 
@@ -616,12 +622,18 @@ export default function ProfilesPage() {
         throw new Error(errBody.message || `Failed to create profile (${res.status})`);
       }
       setCreateOpen(false);
+      setSignatureModalOpen(false);
       setToast({ message: 'Profile created successfully', type: 'success' });
       await fetchProfiles();
     } catch (err: any) {
       console.error('[createProfile]', err);
       setToast({ message: err.message || 'Failed to create profile', type: 'error' });
     } finally { setSaving(false); }
+  };
+
+  const handleApplySignature = () => {
+    setParqData({ ...parqData, signature: `Signed by: ${signatureName || 'Client'}` });
+    setSignatureModalOpen(false);
   };
 
   // ====== ACCOUNT INFO SAVE ======
@@ -1696,7 +1708,9 @@ export default function ProfilesPage() {
                     </div>
                     <div>
                       <label className="block text-[15px] font-medium text-gray-800 mb-2">9. Signature</label>
-                      <button type="button" onClick={() => setParqData({ ...parqData, signature: 'signed' })} className="px-6 py-2.5 border border-dashed border-gray-300 rounded-xl text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition">Add E-Signature</button>
+                      <button type="button" onClick={() => setSignatureModalOpen(true)} className="px-6 py-2.5 border border-dashed border-gray-300 rounded-xl text-[14px] font-medium text-gray-700 hover:bg-gray-50 transition">
+                        {parqData.signature ? parqData.signature : 'Add E-Signature'}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1789,6 +1803,74 @@ export default function ProfilesPage() {
               </button>
               <button onClick={() => setCreateOpen(false)} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
               <button onClick={handleSaveProfile} disabled={saving} className={`ml-auto px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
+                {saving ? 'Creating...' : 'Create Profile'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SIGNATURE MODAL */}
+      {signatureModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative overflow-hidden flex flex-col">
+            <div className="px-6 py-4 flex items-center justify-between border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900">
+                {signatureTab === 'type' && 'Type Your Signature'}
+                {signatureTab === 'draw' && 'Draw Your Signature'}
+                {signatureTab === 'upload' && 'Upload Your Signature'}
+              </h3>
+              <button onClick={() => setSignatureModalOpen(false)} className="text-gray-400 hover:text-gray-700">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-6 px-6 border-b border-gray-100 bg-gray-50/50">
+              <button onClick={() => setSignatureTab('type')} className={`py-3 text-[14px] font-medium border-b-2 transition ${signatureTab === 'type' ? 'border-[#1a73e8] text-[#1a73e8]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Type</button>
+              <button onClick={() => setSignatureTab('draw')} className={`py-3 text-[14px] font-medium border-b-2 transition ${signatureTab === 'draw' ? 'border-[#1a73e8] text-[#1a73e8]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Draw</button>
+              <button onClick={() => setSignatureTab('upload')} className={`py-3 text-[14px] font-medium border-b-2 transition ${signatureTab === 'upload' ? 'border-[#1a73e8] text-[#1a73e8]' : 'border-transparent text-gray-500 hover:text-gray-800'}`}>Upload</button>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto min-h-[300px]">
+              {signatureTab === 'type' && (
+                <div>
+                  <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Name</label>
+                  <input type="text" placeholder="Enter your name" value={signatureName} onChange={(e) => setSignatureName(e.target.value)} className="w-full h-11 px-4 border border-gray-200 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 mb-6" />
+                  
+                  <label className="block text-[13.5px] font-semibold text-gray-800 mb-3">Signature Style</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    {[1, 2, 3, 4].map(style => (
+                      <button key={style} onClick={() => setSignatureStyle(String(style))} className={`h-[80px] rounded-xl border-2 flex items-center justify-center transition ${signatureStyle === String(style) ? 'border-[#1a73e8] bg-blue-50/30' : 'border-gray-200 hover:border-gray-300 bg-white'}`}>
+                        <span className={`text-2xl ${style === 1 ? 'font-serif italic' : style === 2 ? 'font-sans italic font-bold' : style === 3 ? 'font-serif tracking-widest' : 'font-mono italic'}`}>
+                          {signatureName || 'Your Name'}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {signatureTab === 'draw' && (
+                <div className="flex flex-col h-full">
+                  <div className="w-full h-[200px] border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex items-center justify-center">
+                    <p className="text-gray-400 text-sm">Draw here (Canvas placeholder)</p>
+                  </div>
+                  <button className="text-left text-sm text-gray-500 hover:text-gray-800 mt-4 underline">Clear</button>
+                </div>
+              )}
+              {signatureTab === 'upload' && (
+                <div className="w-full h-[200px] border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-100 transition">
+                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mb-3">
+                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-800">Drag Files or Click to Browse</p>
+                  <p className="text-xs text-gray-500 mt-1">Max image size: 6MB</p>
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3 bg-white">
+              <button onClick={() => setSignatureModalOpen(false)} className="px-6 py-2.5 text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
+              <button onClick={handleSaveProfile} disabled={saving} className={`px-6 py-2.5 text-[14px] font-medium text-white rounded-lg transition ${saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
                 {saving ? 'Creating...' : 'Create Profile'}
               </button>
             </div>
