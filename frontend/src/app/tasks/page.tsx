@@ -1,10 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef, Suspense, useMemo } from 'react';
-import type { ChangeEvent, FormEvent, ReactNode } from 'react';
+import { useState, useEffect, useRef, FormEvent, Suspense, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 // ============ PRIVILEGES CONFIG ============
@@ -33,14 +31,12 @@ const METRICS_BASIC = [
   { id: 'metabolic_result', label: 'Metabolic Rate: Result', defaultDays: '', defaultShow: true },
   { id: 'metabolic_harris', label: 'Metabolic Rate: Harris-Benedict', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_HEALTH = [
   { id: 'systolic_inbody', label: 'Systolic Blood Pressure: InBody', defaultDays: '', defaultShow: true },
   { id: 'systolic_result', label: 'Systolic Blood Pressure: Result', defaultDays: '', defaultShow: true },
   { id: 'diastolic_inbody', label: 'Diastolic Blood Pressure: InBody', defaultDays: '', defaultShow: true },
   { id: 'diastolic_result', label: 'Diastolic Blood Pressure: Result', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_BODY_COMPOSITION = [
   { id: 'bf_3site', label: 'Body Fat %: 3 Site Skinfold (Jackson & Pollock)', defaultDays: '', defaultShow: true },
   { id: 'bf_4site_jp', label: 'Body Fat %: 4 Site Skinfold (Jackson & Pollock)', defaultDays: '', defaultShow: true },
@@ -67,7 +63,6 @@ const METRICS_BODY_COMPOSITION = [
   { id: 'circ_chest', label: 'Circumference: Chest', defaultDays: '', defaultShow: true },
   { id: 'circ_waist', label: 'Circumference: Waist', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_CARDIO = [
   { id: 'vo2_1mile', label: 'VO2Max: 1 Mile Walk', defaultDays: '', defaultShow: true },
   { id: 'vo2_ebbeling', label: 'VO2Max: Ebbeling Treadmill', defaultDays: '', defaultShow: true },
@@ -82,7 +77,6 @@ const METRICS_CARDIO = [
   { id: 'airbike_60', label: '60-Second Airbike', defaultDays: '', defaultShow: true },
   { id: 'step_ymca', label: 'Step Test (YMCA)', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_STRENGTH = [
   { id: '1rm_squat', label: '1-Rep Max: Back Squat', defaultDays: '', defaultShow: true },
   { id: '1rm_deadlift', label: '1-Rep Max: Deadlift', defaultDays: '', defaultShow: true },
@@ -93,13 +87,11 @@ const METRICS_STRENGTH = [
   { id: 'maxtime_plank', label: 'Max-Time: Plank', defaultDays: '', defaultShow: true },
   { id: 'maxtime_wallsit', label: 'Max-Time: Wall Sit', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_POWER = [
   { id: 'broad_jump', label: 'Broad Jump', defaultDays: '', defaultShow: true },
   { id: 'vertical_jump', label: 'Vertical Jump', defaultDays: '', defaultShow: true },
   { id: 'med_ball', label: 'Overhead Medicine Ball Toss', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_BIOMECHANICS = [
   { id: 'ymca_sit', label: 'YMCA Sit & Reach', defaultDays: '', defaultShow: true },
   { id: 'trunk_lift', label: 'Trunk Lift', defaultDays: '', defaultShow: true },
@@ -115,11 +107,9 @@ const METRICS_BIOMECHANICS = [
   { id: 'screen_trunk', label: 'Movement Screens: Trunk Stability Push Up', defaultDays: '', defaultShow: true },
   { id: 'screen_squat', label: 'Movement Screens: Deep Squat', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_PROGRESS_PHOTO = [
   { id: 'progress_photo', label: 'Progress photo', defaultDays: '', defaultShow: true },
 ];
-
 const METRICS_SENIOR = [
   { id: 'arm_curl_30s', label: '30-Second Arm Curl', defaultDays: '', defaultShow: true },
   { id: 'back_scratch', label: 'Back scratch', defaultDays: '', defaultShow: true },
@@ -130,18 +120,10 @@ const METRICS_SENIOR = [
 ];
 
 const ALL_METRICS = [
-  ...METRICS_BASIC,
-  ...METRICS_HEALTH,
-  ...METRICS_BODY_COMPOSITION,
-  ...METRICS_CARDIO,
-  ...METRICS_STRENGTH,
-  ...METRICS_POWER,
-  ...METRICS_BIOMECHANICS,
-  ...METRICS_PROGRESS_PHOTO,
-  ...METRICS_SENIOR,
+  ...METRICS_BASIC, ...METRICS_HEALTH, ...METRICS_BODY_COMPOSITION, ...METRICS_CARDIO,
+  ...METRICS_STRENGTH, ...METRICS_POWER, ...METRICS_BIOMECHANICS, ...METRICS_PROGRESS_PHOTO, ...METRICS_SENIOR,
 ];
 
-// ============ TESTING CONFIG ============
 const TESTING_COLUMNS = [
   { id: 'weight_lo', label: 'WEIGHT LO' },
   { id: 'stabilization', label: 'STABILIZATI' },
@@ -150,7 +132,6 @@ const TESTING_COLUMNS = [
   { id: 'power', label: 'POWER' },
 ];
 
-// ============ RESULTS CONFIG ============
 const INTERPRETATION_TEXT: { [key: string]: string } = {
   weight: "Weight can a tricky metric to use as a measurement of progress. Although it is a very easy to record, it must be combined with other factors such as height and body fat percentage. This is because weight fluctuates naturally by a few pounds during the day and is influenced by factors such as stress, hydration, or menstruation. Body Mass Index (BMI) takes into consideration your height and is a quick way to categorize someone as underweight, normal weight, overweight, or obese. Body fat measurements can be calculated in a variety of ways, but your trainer will most likely use skinfold calipers or a tape measure to perform these tests in the gym.",
   body_fat: "Keep in mind that the comparison classifications vary by age and by gender, so it wouldn't make sense to compare the body fat percentages of a 32 year old man vs a 32 year old woman, or a 32 year old woman vs a 65 year old woman. Skinfold measurements measure subcutaneous fat located under your skin and not visceral fat located within your abdomen. These metrics are best combined with circumference measurements and weight to create a complete picture of your health.",
@@ -176,31 +157,17 @@ const INTERPRETATION_TEXT: { [key: string]: string } = {
 
 function buildInitialMetricsData() {
   const initial: any = {};
-  ALL_METRICS.forEach((m) => {
-    initial[m.id] = { days: m.defaultDays, show: m.defaultShow };
-  });
+  ALL_METRICS.forEach((m) => { initial[m.id] = { days: m.defaultDays, show: m.defaultShow }; });
   return initial;
 }
-
 function buildInitialTestingData() {
   const initial: any = {};
-  ALL_METRICS.forEach((m) => {
-    initial[m.id] = {
-      weight_lo: true,
-      stabilization: true,
-      endurance: true,
-      strength: true,
-      power: true,
-    };
-  });
+  ALL_METRICS.forEach((m) => { initial[m.id] = { weight_lo: true, stabilization: true, endurance: true, strength: true, power: true }; });
   return initial;
 }
-
 function buildInitialResultsData() {
   const initial: any = {};
-  ALL_METRICS.forEach((m) => {
-    initial[m.id] = INTERPRETATION_TEXT[m.id] || "";
-  });
+  ALL_METRICS.forEach((m) => { initial[m.id] = INTERPRETATION_TEXT[m.id] || ""; });
   if (initial['weight']) initial['weight'] = INTERPRETATION_TEXT.weight;
   if (initial['body_fat']) initial['body_fat'] = INTERPRETATION_TEXT.body_fat;
   if (initial['lean_mass']) initial['lean_mass'] = INTERPRETATION_TEXT.lean_mass;
@@ -243,6 +210,8 @@ function TasksPageInner() {
   const [loading, setLoading] = useState(true);
   const [logoError, setLogoError] = useState(false);
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const [openSections, setOpenSections] = useState({
     home: true,
     organization: true,
@@ -255,7 +224,6 @@ function TasksPageInner() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
-  // ====== NOTIFICATIONS ======
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const [unreadConversations, setUnreadConversations] = useState<any[]>([]);
@@ -263,7 +231,10 @@ function TasksPageInner() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [deleteModalTask, setDeleteModalTask] = useState<any | null>(null);
+
+  // ✅ sub-screen (not a modal) — clicking sidebar "Tasks" clears this
   const [viewingTask, setViewingTask] = useState<any | null>(null);
+
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
 
   const [formData, setFormData] = useState({
@@ -309,7 +280,6 @@ function TasksPageInner() {
   const [profileOptions, setProfileOptions] = useState<{ id: string; name: string }[]>([]);
   const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
 
-  // ===== ACCOUNT INFO STATE =====
   const [activeTab, setActiveTab] = useState<'user' | 'business'>('user');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -328,7 +298,6 @@ function TasksPageInner() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [savingInfo, setSavingInfo] = useState(false);
 
-  // ===== ACCOUNT SETTINGS STATE =====
   type SettingsTab = 'privileges' | 'metrics' | 'testing' | 'results' | 'branding' | 'integrations';
   const [settingsTab, setSettingsTab] = useState<SettingsTab>('privileges');
   const [primaryColor, setPrimaryColor] = useState('#F59E0B');
@@ -343,23 +312,15 @@ function TasksPageInner() {
     styku: { enabled: false, apiKey: '', apiSecret: '', bodyFatMethod: 'BIA', circumferenceMeasurement: 'Left Side' },
   });
 
-  // ===== PRIVILEGES STATE =====
   const [privileges, setPrivileges] = useState<{ [key: string]: { admin: boolean; supervisor: boolean; staff: boolean } }>(() => {
     const defaults: any = {};
-    PRIVILEGE_ROWS.forEach((row) => {
-      defaults[row.id] = { admin: true, supervisor: true, staff: true };
-    });
+    PRIVILEGE_ROWS.forEach((row) => { defaults[row.id] = { admin: true, supervisor: true, staff: true }; });
     return defaults;
   });
 
-  // ===== METRICS STATE =====
   const [measurementSystem, setMeasurementSystem] = useState<'Imperial' | 'Metric'>('Imperial');
   const [metricsData, setMetricsData] = useState<{ [key: string]: { days: string; show: boolean } }>(() => buildInitialMetricsData());
-
-  // ===== TESTING STATE =====
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
-
-  // ===== RESULTS STATE =====
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
   useEffect(() => {
@@ -463,7 +424,6 @@ function TasksPageInner() {
     }
   };
 
-  // ✅ NEW: Fetch privileges from backend
   const fetchPrivileges = async (token: string) => {
     try {
       const res = await fetch(`${API_URL}/privileges`, { headers: { Authorization: `Bearer ${token}` } });
@@ -478,7 +438,6 @@ function TasksPageInner() {
     }
   };
 
-  // ✅ NEW: Call fetchPrivileges after user loads
   useEffect(() => {
     if (loading || !user) return;
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -502,10 +461,10 @@ function TasksPageInner() {
   }, []);
 
   useEffect(() => {
-    const anyModalOpen = createModalOpen || openActionsFor !== null || !!deleteModalTask || !!viewingTask;
+    const anyModalOpen = createModalOpen || openActionsFor !== null || !!deleteModalTask || isSidebarOpen;
     document.body.style.overflow = anyModalOpen ? 'hidden' : 'auto';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [createModalOpen, openActionsFor, deleteModalTask, viewingTask]);
+  }, [createModalOpen, openActionsFor, deleteModalTask, isSidebarOpen]);
 
   useEffect(() => {
     if (toast) { const timer = setTimeout(() => setToast(null), 3000); return () => clearTimeout(timer); }
@@ -526,6 +485,15 @@ function TasksPageInner() {
 
   const toggleSection = (key: keyof typeof openSections) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // ✅ SIDEBAR "Tasks" navigates back to the main tasks list
+  const goToTasks = () => {
+    setAccountMenuOpen(false);
+    setIsSidebarOpen(false);
+    setViewingTask(null);
+    setView('tasks');
+    setOpenActionsFor(null);
   };
 
   const toggleType = (type: string) => {
@@ -604,7 +572,11 @@ function TasksPageInner() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: 'COMPLETED', completedDate: new Date().toISOString() }),
       });
-      if (res.ok) { setToast({ message: 'Task marked as completed', type: 'success' }); fetchData(token as string); }
+      if (res.ok) {
+        setToast({ message: 'Task marked as completed', type: 'success' });
+        await fetchData(token as string);
+        setViewingTask((prev: any) => prev && prev.id === taskId ? { ...prev, status: 'COMPLETED', completedDate: new Date().toISOString() } : prev);
+      }
     } catch { setToast({ message: 'Failed to update task', type: 'error' }); }
     setOpenActionsFor(null);
   };
@@ -617,7 +589,11 @@ function TasksPageInner() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: 'OPEN', completedDate: null }),
       });
-      if (res.ok) { setToast({ message: 'Task reopened', type: 'success' }); fetchData(token as string); }
+      if (res.ok) {
+        setToast({ message: 'Task reopened', type: 'success' });
+        await fetchData(token as string);
+        setViewingTask((prev: any) => prev && prev.id === taskId ? { ...prev, status: 'OPEN', completedDate: null } : prev);
+      }
     } catch { setToast({ message: 'Failed to reopen task', type: 'error' }); }
     setOpenActionsFor(null);
   };
@@ -658,7 +634,12 @@ function TasksPageInner() {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) { setToast({ message: 'Task deleted successfully', type: 'success' }); setDeleteModalTask(null); fetchData(token as string); }
+        if (res.ok) {
+          setToast({ message: 'Task deleted successfully', type: 'success' });
+          if (viewingTask && viewingTask.id === deleteModalTask.id) setViewingTask(null);
+          setDeleteModalTask(null);
+          fetchData(token as string);
+        }
       } catch { setToast({ message: 'Failed to delete task', type: 'error' }); }
     }
   };
@@ -691,7 +672,7 @@ function TasksPageInner() {
     }
   };
 
-  const handleProfilePhotoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -705,7 +686,7 @@ function TasksPageInner() {
     e.target.value = '';
   };
 
-  const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { setToast({ message: 'Logo too large. Max 5MB.', type: 'error' }); e.target.value = ''; return; }
@@ -732,9 +713,7 @@ function TasksPageInner() {
     setToast({ message: 'Account logo removed', type: 'success' });
   };
 
-  // ✅ REPLACED: handleSaveSettings now saves privileges to backend for ADMIN
   const handleSaveSettings = async () => {
-    // Save non-privilege settings locally (as before)
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor,
       accountLogo,
@@ -745,13 +724,11 @@ function TasksPageInner() {
       resultsData,
     }));
 
-    // Non-ADMIN: only save personal settings, don't touch privileges
     if (user?.role !== 'ADMIN') {
       setToast({ message: 'Settings saved', type: 'success' });
       return;
     }
 
-    // ADMIN: save privileges to backend
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const res = await fetch(`${API_URL}/privileges`, {
@@ -775,16 +752,32 @@ function TasksPageInner() {
   };
 
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    setPrivileges((prev) => ({
-      ...prev,
-      [rowId]: {
-        ...prev[rowId],
-        [role]: !prev[rowId][role],
-      },
-    }));
+    setPrivileges((prev) => {
+      const currentRow = prev[rowId];
+      const newRow = { ...currentRow };
+
+      if (role === 'admin') {
+        newRow.admin = !currentRow.admin;
+        if (!newRow.admin) {
+          newRow.supervisor = false;
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for all roles', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for Admin', type: 'success' });
+        }
+      } else {
+        newRow[role] = !currentRow[role];
+        if (newRow[role]) {
+          setToast({ message: `Privilege added for ${role}`, type: 'success' });
+        } else {
+          setToast({ message: `Privilege removed for ${role}`, type: 'success' });
+        }
+      }
+
+      return { ...prev, [rowId]: newRow };
+    });
   };
 
-  // ✅ NEW: can() helper — checks if the current user's role has a given privilege
   const can = (key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
@@ -827,8 +820,18 @@ function TasksPageInner() {
   return (
     <div className="min-h-screen bg-[#f5f6f8]">
 
-      {/* SIDEBAR — FIXED */}
-      <aside className="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-100 flex flex-col z-40">
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside className={`
+        fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300
+        lg:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
           <div className="w-11 h-11 rounded-full flex items-center justify-center overflow-hidden bg-amber-600">
             {accountLogo ? (
@@ -839,9 +842,18 @@ function TasksPageInner() {
               <span className="text-white text-sm font-bold">{getInitials(user.name)}</span>
             )}
           </div>
-          <button className="text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+              aria-label="Close menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <button className="hidden lg:block text-gray-400 hover:text-gray-600">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3">
@@ -853,7 +865,14 @@ function TasksPageInner() {
             {openSections.home && (
               <nav className="px-3 pt-1 space-y-0.5">
                 <NavLink href="/dashboard" label="Dashboard" icon={<IconDashboard />} />
-                <NavLink href="/tasks" label="Tasks" active icon={<IconTask />} />
+                {/* ✅ Tasks link clears sub-screen and goes back to main tasks list */}
+                <NavLink
+                  href="/tasks"
+                  label="Tasks"
+                  active={view === 'tasks' && !viewingTask}
+                  icon={<IconTask />}
+                  onClick={(e: any) => { e.preventDefault(); goToTasks(); }}
+                />
                 <NavLink href="/calendar" label="Calendar" icon={<IconCalendar />} />
                 <NavLink href="/messages" label="Messages" icon={<IconMessage />} badge={unreadCount} />
               </nav>
@@ -911,96 +930,106 @@ function TasksPageInner() {
         </div>
       </aside>
 
-      <div className="ml-64 flex flex-col h-screen">
-        <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-end gap-4 flex-shrink-0">
+      <div className="lg:ml-64 flex flex-col h-screen">
+        <header className="bg-white border-b border-gray-100 px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between gap-3 flex-shrink-0">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100"
+            aria-label="Open menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
 
-          {/* NOTIFICATIONS BELL */}
-          <div className="relative" ref={notificationsRef}>
-            <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
-            </button>
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+            <div className="relative" ref={notificationsRef}>
+              <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
+              </button>
 
-            {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
-                </div>
-                <div className="max-h-[360px] overflow-y-auto">
-                  {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
-                    unreadConversations.map((c) => (
-                      <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
-                        <div className="flex items-start gap-2">
-                          <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile?.firstName} {c.profile?.lastName}</p>
-                            <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+              {notificationsOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[290px] sm:w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
+                  </div>
+                  <div className="max-h-[360px] overflow-y-auto">
+                    {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
+                      unreadConversations.map((c) => (
+                        <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
+                          <div className="flex items-start gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile?.firstName} {c.profile?.lastName}</p>
+                              <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))
-                  )}
+                        </Link>
+                      ))
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="relative" ref={accountMenuRef}>
-            <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-3 pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-2 py-1 transition">
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
-                {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : getInitials(user.name)}
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
-                <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
-              </div>
-            </button>
+            <div className="relative" ref={accountMenuRef}>
+              <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-1.5 sm:px-2 py-1 transition">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
+                  {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : getInitials(user.name)}
+                </div>
+                <div className="text-left hidden sm:block">
+                  <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
+                  <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
+                </div>
+              </button>
 
-            {accountMenuOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <p className="text-[15px] font-semibold text-gray-900">{user.name}</p>
-                  <p className="text-[12.5px] text-gray-500 mt-0.5">{user.role}</p>
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[280px] sm:w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-gray-100">
+                    <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
+                    <p className="text-[12.5px] text-gray-500 mt-0.5">{user.role}</p>
+                  </div>
+                  <div className="py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); goToTasks(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg><span>Switch to Classic</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); setViewingTask(null); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><span>Account Info</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); setViewingTask(null); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span>Account Settings</span>
+                    </button>
+                  </div>
+                  <div className="border-t border-gray-100 py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg><span className="font-medium">Logout</span>
+                    </button>
+                  </div>
                 </div>
-                <div className="py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); setView('tasks'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg><span>Switch to Classic</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><span>Account Info</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span>Account Settings</span>
-                  </button>
-                </div>
-                <div className="border-t border-gray-100 py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg><span className="font-medium">Logout</span>
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </header>
 
-        {/* ===== TASKS ===== */}
-        {view === 'tasks' && (
-          <div className="flex-1 p-8 overflow-y-auto bg-[#f7f8fa]">
-            <div className="flex items-start justify-between mb-8 flex-wrap gap-4">
+        {/* ================= TASKS LIST VIEW ================= */}
+        {view === 'tasks' && !viewingTask && (
+          <div className="flex-1 p-3 sm:p-4 lg:p-8 overflow-y-auto bg-[#f7f8fa]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Tasks</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Tasks</h1>
                 <p className="text-sm text-gray-500">Track and manage your daily tasks.</p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 <div className="relative" ref={groupFilterRef}>
-                  <button onClick={() => setGroupFilterOpen((v) => !v)} className="flex items-center gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    {groupFilter === 'all' ? 'All Groups' : groups.find((g) => g.id === groupFilter)?.name || 'All Groups'}
+                  <button onClick={() => setGroupFilterOpen((v) => !v)} className="flex items-center justify-between sm:justify-start gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium w-full sm:w-auto">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {groupFilter === 'all' ? 'All Groups' : groups.find((g) => g.id === groupFilter)?.name || 'All Groups'}
+                    </div>
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </button>
                   {groupFilterOpen && (
-                    <div className="absolute right-0 mt-2 w-56 max-h-72 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
+                    <div className="absolute right-0 sm:right-0 mt-2 w-full sm:w-56 max-h-72 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
                       <button onClick={() => { setGroupFilter('all'); setGroupFilterOpen(false); setCurrentPage(1); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${groupFilter === 'all' ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>All Groups</button>
                       {groups.map((g) => (
                         <button key={g.id} onClick={() => { setGroupFilter(g.id); setGroupFilterOpen(false); setCurrentPage(1); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${groupFilter === g.id ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>{g.name}</button>
@@ -1010,13 +1039,15 @@ function TasksPageInner() {
                 </div>
 
                 <div className="relative" ref={userFilterRef}>
-                  <button onClick={() => setUserFilterOpen((v) => !v)} className="flex items-center gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    {userFilter === 'all' ? 'All Users' : staffOptions.find((s) => s.id === userFilter)?.name || 'All Users'}
+                  <button onClick={() => setUserFilterOpen((v) => !v)} className="flex items-center justify-between sm:justify-start gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium w-full sm:w-auto">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {userFilter === 'all' ? 'All Users' : staffOptions.find((s) => s.id === userFilter)?.name || 'All Users'}
+                    </div>
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </button>
                   {userFilterOpen && (
-                    <div className="absolute right-0 mt-2 w-64 max-h-72 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
+                    <div className="absolute right-0 mt-2 w-full sm:w-64 max-h-72 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
                       <button onClick={() => { setUserFilter('all'); setUserFilterOpen(false); setCurrentPage(1); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${userFilter === 'all' ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>All Users</button>
                       {staffOptions.map((s) => (
                         <button key={s.id} onClick={() => { setUserFilter(s.id); setUserFilterOpen(false); setCurrentPage(1); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${userFilter === s.id ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>{s.name}</button>
@@ -1028,87 +1059,89 @@ function TasksPageInner() {
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl">
-              <div className="flex items-center justify-between px-6 py-5">
-                <h2 className="text-xl font-bold text-gray-900">All Tasks</h2>
-                <button onClick={() => { setEditingTaskId(null); setFormData({ title: '', type: '', priority: 'NORMAL', description: '', assignees: [], profiles: [], dueDate: '' }); setCreateModalOpen(true); }} className="bg-[#1a73e8] hover:bg-[#1557b0] text-white text-sm font-medium px-5 py-2.5 rounded-lg flex items-center gap-1.5 transition shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 sm:py-5 gap-3">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">All Tasks</h2>
+                <button onClick={() => { setEditingTaskId(null); setFormData({ title: '', type: '', priority: 'NORMAL', description: '', assignees: [], profiles: [], dueDate: '' }); setCreateModalOpen(true); }} className="bg-[#1a73e8] hover:bg-[#1557b0] text-white text-sm font-medium px-4 sm:px-5 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm w-full sm:w-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
                   Create task
                 </button>
               </div>
 
-              <div className="px-6 pb-5 flex items-center gap-3 flex-wrap border-b border-gray-100">
-                <div className="relative" ref={statusDropdownRef}>
-                  <button onClick={() => setStatusDropdownOpen(!statusDropdownOpen)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    {selectedStatus}
-                    <svg className={`w-3.5 h-3.5 transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {statusDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
-                      {['All', 'Open', 'Completed', 'Overdue'].map((s) => (
-                        <button key={s} onClick={() => { setSelectedStatus(s); setStatusDropdownOpen(false); setCurrentPage(1); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center justify-between ${selectedStatus === s ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>
-                          {s}
-                          {selectedStatus === s && (<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative" ref={typeDropdownRef}>
-                  <button onClick={() => setTypeDropdownOpen(!typeDropdownOpen)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    Type {selectedTypes.length > 0 ? `(${selectedTypes.length})` : ''}
-                    <svg className={`w-3.5 h-3.5 transition-transform ${typeDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {typeDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-4">
-                      <p className="text-[11px] font-bold text-gray-500 tracking-wider uppercase mb-0.5">Filter by type</p>
-                      <p className="text-xs text-gray-400 mb-4">Show tasks for any selected type</p>
-                      <div className="space-y-3">
-                        {['General', 'Metrics', 'Forms', 'Goals', 'Contact'].map((type) => {
-                          const checked = selectedTypes.includes(type);
-                          return (
-                            <label key={type} className="flex items-center gap-3 cursor-pointer select-none">
-                              <span className={`w-5 h-5 flex items-center justify-center rounded border-2 transition ${checked ? 'bg-[#1a73e8] border-[#1a73e8]' : 'bg-white border-gray-300'}`}>
-                                {checked && (<svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>)}
-                              </span>
-                              <input type="checkbox" className="hidden" checked={checked} onChange={() => toggleType(type)} />
-                              <span className="text-sm text-gray-800 font-medium">{type}</span>
-                            </label>
-                          );
-                        })}
+              <div className="px-4 sm:px-6 pb-4 sm:pb-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 border-b border-gray-100">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="relative" ref={statusDropdownRef}>
+                    <button onClick={() => setStatusDropdownOpen(!statusDropdownOpen)} className="flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {selectedStatus}
+                      <svg className={`w-3.5 h-3.5 transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {statusDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
+                        {['All', 'Open', 'Completed', 'Overdue'].map((s) => (
+                          <button key={s} onClick={() => { setSelectedStatus(s); setStatusDropdownOpen(false); setCurrentPage(1); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center justify-between ${selectedStatus === s ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>
+                            {s}
+                            {selectedStatus === s && (<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>)}
+                          </button>
+                        ))}
                       </div>
-                      <button onClick={clearTypes} className="mt-5 text-sm text-gray-500 hover:text-gray-800">Clear filter</button>
-                    </div>
-                  )}
+                    )}
+                  </div>
+
+                  <div className="relative" ref={typeDropdownRef}>
+                    <button onClick={() => setTypeDropdownOpen(!typeDropdownOpen)} className="flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      Type {selectedTypes.length > 0 ? `(${selectedTypes.length})` : ''}
+                      <svg className={`w-3.5 h-3.5 transition-transform ${typeDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {typeDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-lg z-50 p-4">
+                        <p className="text-[11px] font-bold text-gray-500 tracking-wider uppercase mb-0.5">Filter by type</p>
+                        <p className="text-xs text-gray-400 mb-4">Show tasks for any selected type</p>
+                        <div className="space-y-3">
+                          {['General', 'Metrics', 'Forms', 'Goals', 'Contact'].map((type) => {
+                            const checked = selectedTypes.includes(type);
+                            return (
+                              <label key={type} className="flex items-center gap-3 cursor-pointer select-none">
+                                <span className={`w-5 h-5 flex items-center justify-center rounded border-2 transition ${checked ? 'bg-[#1a73e8] border-[#1a73e8]' : 'bg-white border-gray-300'}`}>
+                                  {checked && (<svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>)}
+                                </span>
+                                <input type="checkbox" className="hidden" checked={checked} onChange={() => toggleType(type)} />
+                                <span className="text-sm text-gray-800 font-medium">{type}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                        <button onClick={clearTypes} className="mt-5 text-sm text-gray-500 hover:text-gray-800">Clear filter</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="relative flex-1 min-w-[200px] max-w-md">
+                <div className="relative flex-1 min-w-[140px] w-full sm:max-w-md">
                   <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                   <input type="text" placeholder="Search tasks..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-full w-full outline-none focus:border-blue-500" />
                 </div>
 
-                <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium">
+                <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium w-full sm:w-auto">
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                 </select>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto -mx-0">
+                <table className="w-full text-sm min-w-[900px]">
                   <thead>
                     <tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50/40">
-                      <th className="px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
-                      <th className="px-4 py-3 font-medium text-xs">Task Name</th>
-                      <th className="px-4 py-3 font-medium text-xs">Status</th>
-                      <th className="px-4 py-3 font-medium text-xs">Task Type</th>
-                      <th className="px-4 py-3 font-medium text-xs">Profile</th>
-                      <th className="px-4 py-3 font-medium text-xs">Task Date</th>
-                      <th className="px-4 py-3 font-medium text-xs">Completed Date</th>
-                      <th className="px-4 py-3 font-medium text-xs">Completed By</th>
-                      <th className="px-6 py-3 font-medium text-xs text-right">Actions</th>
+                      <th className="px-3 sm:px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Task Name</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Status</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Task Type</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Profile</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Task Date</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Completed Date</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Completed By</th>
+                      <th className="px-3 sm:px-6 py-3 font-medium text-xs text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1117,21 +1150,21 @@ function TasksPageInner() {
                     ) : (
                       filteredTasks.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((t: any) => (
                         <tr key={t.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="px-6 py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
-                          <td className="px-4 py-4 font-medium text-gray-800">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 font-medium text-gray-800">
                             <button onClick={() => handleViewTask(t.id)} className="hover:text-[#1a73e8] hover:underline text-left">{t.title}</button>
                           </td>
-                          <td className="px-4 py-4">
-                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${t.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : t.status === 'OVERDUE' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4">
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${t.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : t.status === 'OVERDUE' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
                               {t.status === 'COMPLETED' ? 'Completed' : t.status === 'OVERDUE' ? 'Overdue' : 'Open'}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-gray-600">{t.type ? t.type.charAt(0) + t.type.slice(1).toLowerCase() : '—'}</td>
-                          <td className="px-4 py-4 text-gray-600 max-w-[160px] truncate">{t.profiles?.length > 0 ? `${t.profiles.length} profile(s)` : '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{t.completedDate ? new Date(t.completedDate).toLocaleDateString() : '—'}</td>
-                          <td className="px-4 py-4 text-gray-600 max-w-[160px] truncate">{t.assignees?.length > 0 ? `${t.assignees.length} staff` : '—'}</td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{t.type ? t.type.charAt(0) + t.type.slice(1).toLowerCase() : '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600 max-w-[160px] truncate">{t.profiles?.length > 0 ? `${t.profiles.length} profile(s)` : '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600 whitespace-nowrap">{t.dueDate ? new Date(t.dueDate).toLocaleDateString() : '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600 whitespace-nowrap">{t.completedDate ? new Date(t.completedDate).toLocaleDateString() : '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600 max-w-[160px] truncate">{t.assignees?.length > 0 ? `${t.assignees.length} staff` : '—'}</td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                             <div className="inline-flex items-center gap-1">
                               <button onClick={() => handleViewTask(t.id)} className="text-[#1a73e8] text-xs font-medium hover:underline px-2">View</button>
                               <button onClick={() => setOpenActionsFor(t.id)} className="text-gray-400 hover:text-gray-700 p-1 rounded-md hover:bg-gray-100 transition inline-flex">
@@ -1146,14 +1179,14 @@ function TasksPageInner() {
                 </table>
               </div>
 
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-4 border-t border-gray-100 gap-3">
                 <p className="text-sm text-gray-500">Showing <span className="font-semibold text-gray-700">{startItem}–{endItem}</span> of <span className="font-semibold text-gray-700">{totalItems}</span></p>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                     Previous
                   </button>
-                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
                     Next
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                   </button>
@@ -1163,25 +1196,176 @@ function TasksPageInner() {
           </div>
         )}
 
-        {/* ===== ACCOUNT INFO ===== */}
+        {/* ================= TASK DETAILS SUB-SCREEN ================= */}
+        {view === 'tasks' && viewingTask && (
+          <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
+            <div className="bg-white border-b border-gray-100 px-3 sm:px-4 lg:px-6 py-2.5 flex items-center gap-2">
+              <button
+                onClick={() => setViewingTask(null)}
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-gray-600 hover:text-gray-900 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Tasks
+              </button>
+              <span className="text-gray-300">/</span>
+              <span className="text-[13px] text-gray-500 truncate max-w-[60%]">{viewingTask.title}</span>
+            </div>
+
+            <div className="px-3 sm:px-4 lg:px-8 py-6 sm:py-8">
+              <div className="max-w-[1100px] mx-auto space-y-4 sm:space-y-6">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[11px] font-bold text-gray-500 tracking-wider uppercase mb-1">Task Details</p>
+                      <h1 className="text-xl sm:text-2xl lg:text-[28px] font-bold text-gray-900 break-words leading-tight">
+                        {viewingTask.title}
+                      </h1>
+                      <div className="flex flex-wrap items-center gap-2 mt-3">
+                        <span className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full ${viewingTask.status === 'COMPLETED'
+                          ? 'bg-green-100 text-green-700'
+                          : viewingTask.status === 'OVERDUE'
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-amber-100 text-amber-700'
+                          }`}>
+                          {viewingTask.status === 'COMPLETED' ? 'Completed' : viewingTask.status === 'OVERDUE' ? 'Overdue' : 'Open'}
+                        </span>
+                        <span className="inline-block text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 capitalize">
+                          Priority: {(viewingTask.priority || 'normal').toLowerCase()}
+                        </span>
+                        <span className="inline-block text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 capitalize">
+                          {(viewingTask.type || '—').toLowerCase()}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-shrink-0 w-full lg:w-auto">
+                      <button
+                        onClick={() => handleEditTask(viewingTask.id)}
+                        className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+                      >
+                        Edit task
+                      </button>
+                      {viewingTask.status === 'COMPLETED' ? (
+                        <button
+                          onClick={() => handleReopen(viewingTask.id)}
+                          className="px-4 py-2.5 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition"
+                        >
+                          Reopen task
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleMarkCompleted(viewingTask.id)}
+                          className="px-4 py-2.5 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition"
+                        >
+                          Mark as completed
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                  <h3 className="text-[12px] font-bold text-gray-500 tracking-widest uppercase flex items-center gap-2 mb-4">
+                    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                    Details
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div>
+                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Due date</p>
+                      <p className="text-sm text-gray-800">
+                        {viewingTask.dueDate ? new Date(viewingTask.dueDate).toLocaleString() : '—'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Completed date</p>
+                      <p className="text-sm text-gray-800">
+                        {viewingTask.completedDate ? new Date(viewingTask.completedDate).toLocaleString() : '—'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Created</p>
+                      <p className="text-sm text-gray-800">
+                        {viewingTask.createdAt ? new Date(viewingTask.createdAt).toLocaleString() : '—'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {viewingTask.description && (
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Description</p>
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap">{viewingTask.description}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6">
+                    <h3 className="text-[12px] font-bold text-gray-500 tracking-widest uppercase flex items-center gap-2 mb-3">
+                      <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                      Assignees
+                    </h3>
+                    {viewingTask.assignees && viewingTask.assignees.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {viewingTask.assignees.map((id: string) => {
+                          const s = staffOptions.find((x) => x.id === id);
+                          return (
+                            <span key={id} className="inline-flex items-center bg-blue-100 text-blue-700 text-xs font-medium px-2.5 py-1.5 rounded-md">
+                              {s?.name || 'Unknown user'}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400">None</p>
+                    )}
+                  </div>
+
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6">
+                    <h3 className="text-[12px] font-bold text-gray-500 tracking-widest uppercase flex items-center gap-2 mb-3">
+                      <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                      Profiles
+                    </h3>
+                    {viewingTask.profiles && viewingTask.profiles.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {viewingTask.profiles.map((id: string) => {
+                          const p = profileOptions.find((x) => x.id === id);
+                          return (
+                            <span key={id} className="inline-flex items-center bg-amber-100 text-amber-700 text-xs font-medium px-2.5 py-1.5 rounded-md">
+                              {p?.name || 'Unknown profile'}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-400">None</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {view === 'account-info' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
               <p className="text-[13.5px] text-gray-500">Manage your personal profile and business details.</p>
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-8 pt-6 pb-5 border-b border-gray-100">
-                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1">
-                    <button onClick={() => { setActiveTab('user'); setErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
-                    <button onClick={() => { setActiveTab('business'); setErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
+                <div className="px-4 sm:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
+                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1 min-w-max">
+                    <button onClick={() => { setActiveTab('user'); setErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
+                    <button onClick={() => { setActiveTab('business'); setErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
                   </div>
                 </div>
 
                 {activeTab === 'user' && (
-                  <div className="p-8 lg:p-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-8 lg:gap-10">
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div>
@@ -1200,7 +1384,7 @@ function TasksPageInner() {
                           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }); }} className={`w-full h-[48px] px-4 border rounded-lg text-[14px] outline-none transition ${errors.email ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                           {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
                         </div>
-                        <div className="border border-gray-200 rounded-2xl p-6">
+                        <div className="border border-gray-200 rounded-2xl p-4 sm:p-6">
                           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-5">Change password — leave blank to keep current</p>
                           <div className="space-y-5">
                             <div>
@@ -1230,25 +1414,25 @@ function TasksPageInner() {
                       <div className="flex flex-col items-center justify-start pt-2">
                         <p className="text-[14px] font-semibold text-gray-800 mb-5">Profile Photo</p>
                         <input ref={profileInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={handleProfilePhotoUpload} className="hidden" />
-                        <div className="w-[220px] h-[220px] rounded-full bg-gray-200 flex items-center justify-center mb-6 overflow-hidden">
+                        <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] rounded-full bg-gray-200 flex items-center justify-center mb-6 overflow-hidden">
                           {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : <span className="text-[42px] font-semibold text-gray-600">{getInitials(user.name)}</span>}
                         </div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <button type="button" onClick={() => profileInputRef.current?.click()} className="px-6 h-[42px] border border-gray-300 rounded-full bg-white hover:bg-gray-50 text-[14px] font-medium text-gray-700 transition">Change photo</button>
-                          {profilePhoto && <button type="button" onClick={() => { setProfilePhoto(null); localStorage.removeItem('profile_photo'); }} className="px-4 h-[42px] border border-red-200 rounded-full bg-white hover:bg-red-50 text-[14px] font-medium text-red-600 transition">Remove</button>}
+                        <div className="flex flex-col sm:flex-row items-center gap-2 mb-2 w-full sm:w-auto">
+                          <button type="button" onClick={() => profileInputRef.current?.click()} className="px-6 h-[42px] border border-gray-300 rounded-full bg-white hover:bg-gray-50 text-[14px] font-medium text-gray-700 transition w-full sm:w-auto">Change photo</button>
+                          {profilePhoto && <button type="button" onClick={() => { setProfilePhoto(null); localStorage.removeItem('profile_photo'); }} className="px-4 h-[42px] border border-red-200 rounded-full bg-white hover:bg-red-50 text-[14px] font-medium text-red-600 transition w-full sm:w-auto">Remove</button>}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('tasks')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToTasks} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'business' && (
-                  <div className="p-8 lg:p-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -1283,9 +1467,9 @@ function TasksPageInner() {
                         <input type="url" placeholder="https://yoursite.com" value={website} onChange={(e) => setWebsite(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('tasks')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToTasks} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
@@ -1294,92 +1478,61 @@ function TasksPageInner() {
           </div>
         )}
 
-        {/* ===== ACCOUNT SETTINGS ===== */}
         {view === 'account-settings' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
               <p className="text-[13.5px] text-gray-500">Manage branding, metrics, testing, integrations, and system configuration.</p>
             </div>
 
-            <div className="px-10 pb-6">
-              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5">
+            <div className="px-4 sm:px-6 lg:px-10 pb-6 overflow-x-auto">
+              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 min-w-max">
                 {(['privileges', 'metrics', 'testing', 'results', 'branding', 'integrations'] as const).map((tab) => (
-                  <button key={tab} onClick={() => setSettingsTab(tab)} className={`px-5 py-2 text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
+                  <button key={tab} onClick={() => setSettingsTab(tab)} className={`px-3 sm:px-5 py-1.5 sm:py-2 text-[12px] sm:text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
                 ))}
               </div>
             </div>
 
-            <div className="px-10 pb-10 max-w-[1400px]">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-[1400px]">
               {settingsTab === 'privileges' && (
-                <div className="space-y-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
-                    <p className="text-[13px] text-gray-500 mb-6">
-                      Manage role-based permissions for account members.
-                      {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
-                    </p>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse min-w-[600px]">
-                        <thead>
-                          <tr className="border-b border-gray-200">
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Admin</th>
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                  <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
+                  <p className="text-[13px] text-gray-500 mb-6">
+                    Manage role-based permissions for account members.
+                    {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[560px]">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {PRIVILEGE_ROWS.map((row) => (
+                          <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
+                            <td className="py-3 sm:py-4 px-2 sm:px-4 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                            <td className="py-3 sm:py-4 px-2 sm:px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.admin ?? true} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
+                            <td className="py-3 sm:py-4 px-2 sm:px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.supervisor ?? true} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin || !privileges[row.id]?.admin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
+                            <td className="py-3 sm:py-4 px-2 sm:px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.staff ?? true} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin || !privileges[row.id]?.admin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {PRIVILEGE_ROWS.map((row) => (
-                            <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                              <td className="py-4 px-4 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                              <td className="py-4 px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.admin ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'admin')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                              <td className="py-4 px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.supervisor ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'supervisor')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                              <td className="py-4 px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.staff ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'staff')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               )}
 
               {settingsTab === 'metrics' && (
                 <div className="space-y-8">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <div className="flex items-center gap-4 mb-2">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
                       <label className="text-[14px] font-semibold text-gray-900">Measurement System</label>
-                      <div className="relative inline-block">
-                        <select
-                          value={measurementSystem}
-                          onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')}
-                          className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer"
-                        >
+                      <div className="relative inline-block w-full sm:w-auto">
+                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer w-full sm:w-auto">
                           <option value="Imperial">Imperial</option>
                           <option value="Metric">Metric</option>
                         </select>
@@ -1387,7 +1540,6 @@ function TasksPageInner() {
                       </div>
                     </div>
                   </div>
-
                   <MetricsSection title="Basic Data" rows={METRICS_BASIC} metricsData={metricsData} setMetricsData={setMetricsData} />
                   <MetricsSection title="Internal Health" rows={METRICS_HEALTH} metricsData={metricsData} setMetricsData={setMetricsData} />
                   <MetricsSection title="Body Composition" rows={METRICS_BODY_COMPOSITION} metricsData={metricsData} setMetricsData={setMetricsData} />
@@ -1433,13 +1585,13 @@ function TasksPageInner() {
                   <div>
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Primary Color</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Sets the main accent color for the account.</p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                       <div className="w-[100px] h-[52px] rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
                         <div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} />
                       </div>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
-                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
+                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-full sm:w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
                       </div>
                     </div>
                   </div>
@@ -1448,8 +1600,8 @@ function TasksPageInner() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Account Logo</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Upload your account logo. Max 5MB. The logo appears in the sidebar immediately.</p>
                     <input ref={logoInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" onChange={handleLogoUpload} className="hidden" />
-                    <div className="relative inline-block">
-                      <button type="button" onClick={() => logoInputRef.current?.click()} className="w-[400px] h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
+                    <div className="relative inline-block w-full sm:w-auto">
+                      <button type="button" onClick={() => logoInputRef.current?.click()} className="w-full sm:w-[400px] h-[160px] sm:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
                         {accountLogo ? <img src={accountLogo} alt="Account logo" className="w-full h-full object-contain p-4" /> : <p className="text-[14px] font-medium text-gray-500">Click to upload logo</p>}
                       </button>
                       {accountLogo && (
@@ -1464,7 +1616,7 @@ function TasksPageInner() {
 
               {settingsTab === 'integrations' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">InBody</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.inbody.enabled} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -1476,7 +1628,7 @@ function TasksPageInner() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Evolt</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.evolt.enabled} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -1488,7 +1640,7 @@ function TasksPageInner() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Styku</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.styku.enabled} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -1522,7 +1674,7 @@ function TasksPageInner() {
 
               {(settingsTab === 'privileges' || settingsTab === 'metrics' || settingsTab === 'testing' || settingsTab === 'results' || settingsTab === 'branding' || settingsTab === 'integrations') && (
                 <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                  <button type="button" onClick={handleSaveSettings} disabled={!isAdmin && settingsTab === 'privileges'} className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed">Save settings</button>
+                  <button type="button" onClick={handleSaveSettings} className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition w-full sm:w-auto">Save settings</button>
                 </div>
               )}
             </div>
@@ -1530,96 +1682,9 @@ function TasksPageInner() {
         )}
       </div>
 
-      {/* ===== VIEW TASK MODAL ===== */}
-      {viewingTask && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[120] flex items-center justify-center p-4" onClick={() => setViewingTask(null)}>
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-7 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between mb-5">
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 tracking-wider uppercase mb-1">Task Details</p>
-                <h2 className="text-2xl font-bold text-gray-900 pr-8">{viewingTask.title}</h2>
-              </div>
-              <button onClick={() => setViewingTask(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Status</p>
-                <span className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full ${viewingTask.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : viewingTask.status === 'OVERDUE' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
-                  {viewingTask.status === 'COMPLETED' ? 'Completed' : viewingTask.status === 'OVERDUE' ? 'Overdue' : 'Open'}
-                </span>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Priority</p>
-                <p className="text-sm text-gray-800 capitalize">{(viewingTask.priority || 'normal').toLowerCase()}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Type</p>
-                <p className="text-sm text-gray-800 capitalize">{(viewingTask.type || '—').toLowerCase()}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Due date</p>
-                <p className="text-sm text-gray-800">{viewingTask.dueDate ? new Date(viewingTask.dueDate).toLocaleString() : '—'}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Completed date</p>
-                <p className="text-sm text-gray-800">{viewingTask.completedDate ? new Date(viewingTask.completedDate).toLocaleString() : '—'}</p>
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Created</p>
-                <p className="text-sm text-gray-800">{viewingTask.createdAt ? new Date(viewingTask.createdAt).toLocaleString() : '—'}</p>
-              </div>
-            </div>
-
-            {viewingTask.description && (
-              <div className="mb-6">
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Description</p>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">{viewingTask.description}</p>
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Assignees</p>
-                {viewingTask.assignees && viewingTask.assignees.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {viewingTask.assignees.map((id: string) => {
-                      const s = staffOptions.find((x) => x.id === id);
-                      return <span key={id} className="inline-flex items-center bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-md">{s?.name || 'Unknown user'}</span>;
-                    })}
-                  </div>
-                ) : <p className="text-sm text-gray-400">None</p>}
-              </div>
-              <div>
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Profiles</p>
-                {viewingTask.profiles && viewingTask.profiles.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {viewingTask.profiles.map((id: string) => {
-                      const p = profileOptions.find((x) => x.id === id);
-                      return <span key={id} className="inline-flex items-center bg-amber-100 text-amber-700 text-xs font-medium px-2 py-1 rounded-md">{p?.name || 'Unknown profile'}</span>;
-                    })}
-                  </div>
-                ) : <p className="text-sm text-gray-400">None</p>}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-5 border-t border-gray-100">
-              <button onClick={() => { setViewingTask(null); handleEditTask(viewingTask.id); }} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Edit task</button>
-              {viewingTask.status === 'COMPLETED' ? (
-                <button disabled className="px-5 py-2.5 text-sm font-medium text-gray-300 bg-gray-100 rounded-lg cursor-not-allowed">Already completed</button>
-              ) : (
-                <button onClick={() => { const id = viewingTask.id; setViewingTask(null); handleMarkCompleted(id); }} className="px-5 py-2.5 text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition">Mark as completed</button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ===== ACTIONS MODAL (3 dots) ===== */}
+      {/* ACTIONS MODAL */}
       {openActionsFor !== null && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setOpenActionsFor(null)}>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4" onClick={() => setOpenActionsFor(null)}>
           <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold text-gray-900">Actions</h3>
@@ -1680,35 +1745,33 @@ function TasksPageInner() {
         </div>
       )}
 
-      {/* ===== DELETE CONFIRM ===== */}
       {deleteModalTask && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-7">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-5 sm:p-7">
             <button onClick={() => setDeleteModalTask(null)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-5">
               <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteModalTask.title}&quot;?</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteModalTask.title}&quot;?</h2>
             <p className="text-[15px] text-gray-500 mb-7">Are you sure you want to delete this task? This action cannot be undone.</p>
-            <div className="flex items-center justify-end gap-3">
-              <button onClick={() => setDeleteModalTask(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition">Cancel</button>
-              <button onClick={confirmDeleteTask} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition">Delete</button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+              <button onClick={() => setDeleteModalTask(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition w-full sm:w-auto">Cancel</button>
+              <button onClick={confirmDeleteTask} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition w-full sm:w-auto">Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ===== CREATE / EDIT MODAL ===== */}
       {createModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[92vh] flex flex-col">
             <button onClick={closeModal} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 z-10">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
 
-            <div className="px-7 pt-7 pb-4">
+            <div className="px-4 sm:px-7 pt-5 sm:pt-7 pb-4">
               <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-[#1a73e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {editingTaskId !== null ? (
@@ -1718,11 +1781,11 @@ function TasksPageInner() {
                   )}
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">{editingTaskId !== null ? 'Update Task' : 'Create Task'}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{editingTaskId !== null ? 'Update Task' : 'Create Task'}</h2>
               <p className="text-sm text-gray-500">{editingTaskId !== null ? 'Edit this task.' : 'Create a new task.'}</p>
             </div>
 
-            <form onSubmit={handleSaveTask} className="flex-1 overflow-y-auto px-7 pb-4" noValidate>
+            <form onSubmit={handleSaveTask} className="flex-1 overflow-y-auto px-4 sm:px-7 pb-4" noValidate>
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-semibold text-gray-800 mb-2">Title <span className="text-red-500">*</span></label>
@@ -1730,7 +1793,7 @@ function TasksPageInner() {
                   {validationErrors.title && <p className="text-xs text-red-500 mt-1.5">{validationErrors.title}</p>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">Type <span className="text-red-500">*</span></label>
                     <select value={formData.type} onChange={(e) => { setFormData({ ...formData, type: e.target.value }); if (validationErrors.type) setValidationErrors({ ...validationErrors, type: '' }); }} className={`w-full h-11 px-3 border rounded-lg text-sm outline-none transition bg-white appearance-none ${validationErrors.type ? 'border-red-400 focus:ring-4 focus:ring-red-500/10' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`}>
@@ -1848,19 +1911,18 @@ function TasksPageInner() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-gray-100 sticky bottom-0 bg-white">
-                <button type="button" onClick={closeModal} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
-                <button type="submit" disabled={saving} className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>{saving ? 'Saving...' : editingTaskId !== null ? 'Update' : 'Save'}</button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-6 mt-6 border-t border-gray-100 sticky bottom-0 bg-white">
+                <button type="button" onClick={closeModal} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition order-2 sm:order-1">Cancel</button>
+                <button type="submit" disabled={saving} className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition order-1 sm:order-2 ${saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>{saving ? 'Saving...' : editingTaskId !== null ? 'Update' : 'Save'}</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* TOAST */}
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] px-3">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-4 sm:px-5 flex items-center gap-3 min-w-[280px] sm:min-w-[320px] max-w-[92vw]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
               {toast.type === 'error' ? (
                 <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1881,9 +1943,9 @@ function TasksPageInner() {
 
 // ============== REUSABLE COMPONENTS ==============
 
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: ReactNode; active?: boolean; badge?: number; }) {
+function NavLink({ href, label, icon, active = false, onClick, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; onClick?: (e: any) => void; badge?: number; }) {
   return (
-    <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
+    <Link href={href} onClick={onClick} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
       {active && (<span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>)}
       <span className="text-gray-500">{icon}</span>
       <span className="flex-1">{label}</span>
@@ -1903,16 +1965,16 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
         <table className="w-full text-left border-collapse min-w-[500px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                <td className="py-4 px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input
                     type="text"
                     value={metricsData[row.id]?.days ?? ''}
@@ -1921,10 +1983,10 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
                       setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } }));
                     }}
                     placeholder="—"
-                    className="w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10"
+                    className="w-20 sm:w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10"
                   />
                 </td>
-                <td className="py-4 px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input
                     type="checkbox"
                     checked={metricsData[row.id]?.show ?? false}
@@ -1954,10 +2016,10 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
               {TESTING_COLUMNS.map(col => (
-                <th key={col.id} className="py-4 px-6 text-center">
-                  <span className="px-4 py-1.5 text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">
+                <th key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
+                  <span className="px-3 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">
                     {col.label}
                   </span>
                 </th>
@@ -1967,9 +2029,9 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
                 {TESTING_COLUMNS.map(col => (
-                  <td key={col.id} className="py-4 px-6 text-center">
+                  <td key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
                     <input
                       type="checkbox"
                       checked={testingData[row.id]?.[col.id] ?? false}
@@ -2006,15 +2068,15 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
         <table className="w-full text-left border-collapse min-w-[600px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600">Interpretation</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600">Interpretation</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium align-top pt-6">{row.label}</td>
-                <td className="py-4 px-6">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium align-top pt-4 sm:pt-6">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6">
                   <div className="relative">
                     <textarea
                       value={resultsData[row.id] ?? ''}
@@ -2023,9 +2085,9 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
                       }}
                       placeholder="Enter interpretation here..."
                       rows={4}
-                      className="w-full p-4 border border-gray-200 rounded-xl text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y"
+                      className="w-full p-3 sm:p-4 border border-gray-200 rounded-xl text-[13px] sm:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y"
                     />
-                    <div className="text-[11px] text-gray-400 mt-1 text-right">
+                    <div className="text-[10px] sm:text-[11px] text-gray-400 mt-1 text-right">
                       {(resultsData[row.id] ?? '').length} / 1500
                     </div>
                   </div>

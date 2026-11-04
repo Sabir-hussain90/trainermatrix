@@ -870,15 +870,59 @@ export default function Dashboard() {
     }
   };
 
-  // ===== PRIVILEGES TOGGLE =====
+  // ===== PRIVILEGES TOGGLE (with cascade: Admin ≥ Supervisor ≥ Staff) =====
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    setPrivileges((prev) => ({
-      ...prev,
-      [rowId]: {
-        ...prev[rowId],
-        [role]: !prev[rowId][role],
-      },
-    }));
+    if (user?.role !== 'ADMIN') {
+      setToast({ message: 'Only Admins can change privileges', type: 'error' });
+      return;
+    }
+
+    setPrivileges((prev) => {
+      const current = prev[rowId] || { admin: false, supervisor: false, staff: false };
+      const next = { ...current };
+      let changed = false;
+      let added = false;
+
+      if (role === 'admin') {
+        next.admin = !current.admin;
+        changed = true;
+        added = next.admin;
+
+        if (!next.admin) {
+          next.supervisor = false;
+          next.staff = false;
+        }
+      } else if (role === 'supervisor') {
+        if (!current.admin && !current.supervisor) {
+          setToast({ message: `Cannot enable Supervisor — Admin must be enabled first`, type: 'error' });
+          return prev;
+        }
+        next.supervisor = !current.supervisor;
+        changed = true;
+        added = next.supervisor;
+        if (!next.supervisor) {
+          next.staff = false;
+        }
+      } else if (role === 'staff') {
+        if (!current.supervisor && !current.staff) {
+          setToast({ message: `Cannot enable Staff — Supervisor must be enabled first`, type: 'error' });
+          return prev;
+        }
+        next.staff = !current.staff;
+        changed = true;
+        added = next.staff;
+      }
+
+      if (changed) {
+        // THIS IS THE EXACT MESSAGE FORMAT YOU WANT
+        setToast({
+          message: added ? `Privilege added for ${role}` : `Privilege removed for ${role}`,
+          type: 'success', // 'success' makes the checkmark green
+        });
+      }
+
+      return { ...prev, [rowId]: next };
+    });
   };
 
   // ✅ INLINE HELPER — check if the current user's role has a given privilege
@@ -963,7 +1007,6 @@ export default function Dashboard() {
 
   // ✅ SAVE SETTINGS — persists privileges to backend (ADMIN only)
   const handleSaveSettings = async () => {
-    // Save non-privilege settings locally (as before)
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor,
       accountLogo,
@@ -974,13 +1017,11 @@ export default function Dashboard() {
       resultsData,
     }));
 
-    // Non-ADMIN: only save personal settings, don't touch privileges
     if (user?.role !== 'ADMIN') {
-      setToast({ message: 'Settings saved', type: 'success' });
+      setToast({ message: 'Settings saved locally. Only Admins can modify global privileges.', type: 'success' });
       return;
     }
 
-    // ADMIN: save privileges to backend
     try {
       const token = getToken();
       const res = await fetch(`${API_URL}/privileges`, {
@@ -997,7 +1038,7 @@ export default function Dashboard() {
         throw new Error(err.message || 'Failed to save privileges');
       }
 
-      setToast({ message: 'Privileges saved', type: 'success' });
+      setToast({ message: 'Privileges saved to database successfully', type: 'success' });
     } catch (err: any) {
       setToast({ message: err.message || 'Failed to save privileges', type: 'error' });
     }
@@ -1026,17 +1067,30 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#f5f6f8] flex relative overflow-hidden">
+      {/* 
+        ========================================================
+        THIS IS THE TOAST UI THAT MATCHES YOUR IMAGE EXACTLY
+        ========================================================
+      */}
       {toast && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
+          <div className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 py-3.5 px-5 flex items-center gap-4 min-w-[360px] max-w-md">
+            {/* Green Checkmark Circle (or Red X for errors) */}
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50 text-red-500' : 'bg-[#eefdf5] text-[#10b981]'}`}>
               {toast.type === 'error' ? (
-                <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
               ) : (
-                <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
               )}
             </div>
-            <p className="text-sm font-medium text-gray-800 flex-1">{toast.message}</p>
+            
+            {/* Message Text */}
+            <p className="text-[15px] font-medium text-gray-700 flex-1">{toast.message}</p>
+            
+            {/* Close (X) Button */}
+            <button onClick={() => setToast(null)} className="text-gray-400 hover:text-gray-600 transition flex-shrink-0">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
           </div>
         </div>
       )}
@@ -1055,9 +1109,12 @@ export default function Dashboard() {
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
-          
-          {/* Logo Area - Updated to show full logo horizontally */}
-          <div className="flex items-center gap-3 w-full">
+          <button
+            type="button"
+            onClick={() => goTo('dashboard')}
+            title="Go to Dashboard"
+            className="flex items-center gap-3 w-full text-left cursor-pointer"
+          >
             <div className="h-10 flex-shrink-0 relative overflow-hidden">
               {accountLogo ? (
                 <img src={accountLogo} alt="Logo" className="h-full w-auto object-contain" />
@@ -1075,9 +1132,8 @@ export default function Dashboard() {
               <div className="hidden text-gray-400 font-bold text-lg">LOGO</div>
             </div>
             <div className="min-w-0 flex-1 hidden sm:block">
-               {/* Optional: Keep user name if desired, or remove to just show logo */}
             </div>
-          </div>
+          </button>
 
           <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-gray-600 lg:hidden ml-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1733,38 +1789,52 @@ export default function Dashboard() {
                           </tr>
                         </thead>
                         <tbody>
-                          {PRIVILEGE_ROWS.map((row) => (
-                            <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.admin ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'admin')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.supervisor ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'supervisor')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.staff ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'staff')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {PRIVILEGE_ROWS.map((row) => {
+                            const rowPriv = privileges[row.id] || { admin: false, supervisor: false, staff: false };
+                            const adminOn = rowPriv.admin;
+                            const supervisorOn = rowPriv.supervisor;
+                            
+                            return (
+                              <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
+                                <td className="py-3 md:py-4 px-2 md:px-4 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                                
+                                {/* Admin Checkbox */}
+                                <td className="py-3 md:py-4 px-2 md:px-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={adminOn}
+                                    onChange={() => handleTogglePrivilege(row.id, 'admin')}
+                                    disabled={!isAdmin}
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  />
+                                </td>
+                                
+                                {/* Supervisor Checkbox - Disabled if Admin is off */}
+                                <td className="py-3 md:py-4 px-2 md:px-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={rowPriv.supervisor}
+                                    onChange={() => handleTogglePrivilege(row.id, 'supervisor')}
+                                    disabled={!isAdmin || !adminOn}
+                                    title={!adminOn ? 'Enable Admin first' : undefined}
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                  />
+                                </td>
+                                
+                                {/* Staff Checkbox - Disabled if Supervisor is off */}
+                                <td className="py-3 md:py-4 px-2 md:px-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={rowPriv.staff}
+                                    onChange={() => handleTogglePrivilege(row.id, 'staff')}
+                                    disabled={!isAdmin || !supervisorOn}
+                                    title={!supervisorOn ? 'Enable Supervisor first' : undefined}
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                  />
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
@@ -3192,12 +3262,6 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {settingsTab !== 'privileges' && settingsTab !== 'metrics' && settingsTab !== 'testing' && settingsTab !== 'results' && settingsTab !== 'branding' && settingsTab !== 'integrations' && (
-                <div className="bg-white border border-gray-200 rounded-2xl p-16 text-center">
-                  <p className="text-[15px] text-gray-400 capitalize">{settingsTab} settings coming soon</p>
                 </div>
               )}
 

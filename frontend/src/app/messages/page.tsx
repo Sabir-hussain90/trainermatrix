@@ -216,6 +216,8 @@ export default function MessagesPage() {
   const [loading, setLoading] = useState(true);
   const [logoError, setLogoError] = useState(false);
 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const [openSections, setOpenSections] = useState({ home: true, organization: true, library: true, analytics: true });
   const [view, setView] = useState<'messages' | 'account-info' | 'account-settings'>('messages');
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
@@ -257,7 +259,6 @@ export default function MessagesPage() {
   const [reassignSaving, setReassignSaving] = useState(false);
   const reassignUserRef = useRef<HTMLDivElement>(null);
 
-  // Account info state
   const [activeInfoTab, setActiveInfoTab] = useState<'user' | 'business'>('user');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -278,7 +279,6 @@ export default function MessagesPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [savingInfo, setSavingInfo] = useState(false);
 
-  // Account settings state
   type SettingsTab = 'privileges' | 'metrics' | 'testing' | 'results' | 'branding' | 'integrations';
   const [settingsTab, setSettingsTab] = useState<SettingsTab>('privileges');
   const [primaryColor, setPrimaryColor] = useState('#F59E0B');
@@ -290,7 +290,6 @@ export default function MessagesPage() {
     styku: { enabled: false, apiKey: '', apiSecret: '', bodyFatMethod: 'BIA', circumferenceMeasurement: 'Left Side' },
   });
 
-  // New settings state
   const [privileges, setPrivileges] = useState<{ [key: string]: { admin: boolean; supervisor: boolean; staff: boolean } }>(() => {
     const defaults: any = {};
     PRIVILEGE_ROWS.forEach((row) => { defaults[row.id] = { admin: true, supervisor: true, staff: true }; });
@@ -301,7 +300,6 @@ export default function MessagesPage() {
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
-  // HELPERS
   const getToken = (): string | null => {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem('token') || localStorage.getItem('access_token') || sessionStorage.getItem('token') || sessionStorage.getItem('access_token');
@@ -361,7 +359,6 @@ export default function MessagesPage() {
     setDataLoading(false);
   };
 
-  // ✅ NEW: Fetch privileges from backend
   const fetchPrivileges = async () => {
     try {
       const res = await fetch(`${API_URL}/privileges`, { headers: authHeaders() });
@@ -434,7 +431,7 @@ export default function MessagesPage() {
 
     setLoading(false);
     refreshAll();
-    fetchPrivileges();   // ✅ NEW
+    fetchPrivileges();
   }, [router]);
 
   useEffect(() => {
@@ -467,6 +464,13 @@ export default function MessagesPage() {
   };
   const handleLogout = () => { localStorage.clear(); sessionStorage.clear(); router.push('/'); };
   const toggleSection = (key: keyof typeof openSections) => setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const goTo = (next: 'messages' | 'account-info' | 'account-settings') => {
+    setAccountMenuOpen(false);
+    setIsSidebarOpen(false);
+    setTimeout(() => setView(next), 0);
+  };
+
   const closeModal = () => { setNewConvModalOpen(false); setFormData({ profileId: '', trainerId: '', message: '' }); setProfileSearch(''); setValidationErrors({}); };
   const selectProfile = (p: ProfileOption) => { setFormData({ ...formData, profileId: p.id }); setProfileSearch(''); setProfileDropdownOpen(false); };
   const clearSelectedProfile = () => { setFormData({ ...formData, profileId: '' }); setProfileSearch(''); };
@@ -584,9 +588,7 @@ export default function MessagesPage() {
     setToast({ message: 'Account logo removed', type: 'success' });
   };
 
-  // ✅ REPLACED: handleSaveSettings now saves privileges to backend for ADMIN
   const handleSaveSettings = async () => {
-    // Save non-privilege settings locally (as before)
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor,
       accountLogo,
@@ -597,13 +599,11 @@ export default function MessagesPage() {
       resultsData,
     }));
 
-    // Non-ADMIN: only save personal settings, don't touch privileges
     if (user?.role !== 'ADMIN') {
       setToast({ message: 'Settings saved', type: 'success' });
       return;
     }
 
-    // ADMIN: save privileges to backend
     try {
       const res = await fetch(`${API_URL}/privileges`, {
         method: 'PUT',
@@ -622,11 +622,55 @@ export default function MessagesPage() {
     }
   };
 
+  // ✅ FIXED: cascade + toasts + guard
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    setPrivileges((prev) => ({ ...prev, [rowId]: { ...prev[rowId], [role]: !prev[rowId][role] } }));
+    if (!isAdmin) {
+      setToast({ message: 'Only Admins can change privileges', type: 'error' });
+      return;
+    }
+
+    setPrivileges((prev) => {
+      const currentRow = prev[rowId] || { admin: false, supervisor: false, staff: false };
+      const next = { ...currentRow };
+      let added = false;
+
+      if (role === 'admin') {
+        next.admin = !currentRow.admin;
+        added = next.admin;
+        if (!next.admin) {
+          next.supervisor = false;
+          next.staff = false;
+        }
+      } else if (role === 'supervisor') {
+        if (!currentRow.admin && !currentRow.supervisor) {
+          setToast({ message: 'Cannot enable Supervisor — Admin must be enabled first', type: 'error' });
+          return prev;
+        }
+        next.supervisor = !currentRow.supervisor;
+        added = next.supervisor;
+        if (!next.supervisor) next.staff = false;
+      } else if (role === 'staff') {
+        if (!currentRow.supervisor && !currentRow.staff) {
+          setToast({ message: 'Cannot enable Staff — Supervisor must be enabled first', type: 'error' });
+          return prev;
+        }
+        next.staff = !currentRow.staff;
+        added = next.staff;
+      }
+
+      const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+      if (!next.admin) {
+        setToast({ message: 'Privilege removed for all roles', type: 'success' });
+      } else if (added) {
+        setToast({ message: `Privilege added for ${roleLabel}`, type: 'success' });
+      } else {
+        setToast({ message: `Privilege removed for ${role}`, type: 'success' });
+      }
+
+      return { ...prev, [rowId]: next };
+    });
   };
 
-  // ✅ NEW: can() helper
   const can = (key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
@@ -658,22 +702,36 @@ export default function MessagesPage() {
   const isAdmin = user?.role === 'ADMIN';
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] flex">
+    <div className="min-h-screen bg-[#f5f6f8] flex relative overflow-hidden">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] w-[calc(100vw-2rem)] sm:w-auto flex justify-center">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 w-full sm:w-auto sm:min-w-[320px]">
             <p className="text-sm font-medium text-gray-800 flex-1">{toast.message}</p>
           </div>
         </div>
       )}
 
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen">
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 flex flex-col h-screen transition-transform duration-300
+        lg:translate-x-0 lg:static lg:z-auto
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
           <div className="w-11 h-11 rounded-full flex items-center justify-center overflow-hidden bg-amber-600">
             {accountLogo ? <img src={accountLogo} alt="Logo" className="w-full h-full object-cover" /> : !logoError ? <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" onError={() => setLogoError(true)} /> : <span className="text-white text-sm font-bold">{getInitials(user.name)}</span>}
           </div>
-          <button className="text-gray-400 hover:text-gray-600"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg></button>
+          <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-gray-600 lg:hidden ml-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          <button className="hidden lg:block text-gray-400 hover:text-gray-600"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg></button>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3">
@@ -681,10 +739,21 @@ export default function MessagesPage() {
             <button onClick={() => toggleSection('home')} className="w-full flex items-center justify-between px-6 py-1.5 text-[10px] font-bold text-gray-400 uppercase hover:text-gray-600">Home<svg className={`w-3 h-3 transition-transform ${openSections.home ? '' : '-rotate-90'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg></button>
             {openSections.home && (
               <nav className="px-3 pt-1 space-y-0.5">
-                <NavLink href="/dashboard" label="Dashboard" icon={<IconDashboard />} />
-                <NavLink href="/tasks" label="Tasks" icon={<IconTask />} />
-                <NavLink href="/calendar" label="Calendar" icon={<IconCalendar />} />
-                <NavLink href="/messages" label="Messages" active badge={unreadCount} icon={<IconMessage />} />
+                <NavLink href="/dashboard" label="Dashboard" icon={<IconDashboard />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/tasks" label="Tasks" icon={<IconTask />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/calendar" label="Calendar" icon={<IconCalendar />} onClick={() => setIsSidebarOpen(false)} />
+                {/* ✅ FIX: intercept Messages click so it resets to main view instead of remounting */}
+                <NavLink
+                  href="/messages"
+                  label="Messages"
+                  active
+                  badge={unreadCount}
+                  icon={<IconMessage />}
+                  onClick={(e?: any) => {
+                    e?.preventDefault?.();
+                    goTo('messages');
+                  }}
+                />
               </nav>
             )}
           </div>
@@ -692,9 +761,9 @@ export default function MessagesPage() {
             <button onClick={() => toggleSection('organization')} className="w-full flex items-center justify-between px-6 py-1.5 text-[10px] font-bold text-gray-400 uppercase hover:text-gray-600">Organization<svg className={`w-3 h-3 transition-transform ${openSections.organization ? '' : '-rotate-90'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg></button>
             {openSections.organization && (
               <nav className="px-3 pt-1 space-y-0.5">
-                <NavLink href="/profiles" label="Profiles" icon={<IconProfiles />} />
-                <NavLink href="/users" label="Users" icon={<IconUser />} />
-                <NavLink href="/groups" label="Groups" icon={<IconGroup />} />
+                <NavLink href="/profiles" label="Profiles" icon={<IconProfiles />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/users" label="Users" icon={<IconUser />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/groups" label="Groups" icon={<IconGroup />} onClick={() => setIsSidebarOpen(false)} />
               </nav>
             )}
           </div>
@@ -702,10 +771,10 @@ export default function MessagesPage() {
             <button onClick={() => toggleSection('library')} className="w-full flex items-center justify-between px-6 py-1.5 text-[10px] font-bold text-gray-400 uppercase hover:text-gray-600">Library<svg className={`w-3 h-3 transition-transform ${openSections.library ? '' : '-rotate-90'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg></button>
             {openSections.library && (
               <nav className="px-3 pt-1 space-y-0.5">
-                <NavLink href="/programs" label="Programs" icon={<IconBook />} />
-                <NavLink href="/workouts" label="Workouts" icon={<IconBolt />} />
-                <NavLink href="/exercises" label="Exercises" icon={<IconActivity />} />
-                <NavLink href="/forms" label="Forms" icon={<IconForm />} />
+                <NavLink href="/programs" label="Programs" icon={<IconBook />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/workouts" label="Workouts" icon={<IconBolt />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/exercises" label="Exercises" icon={<IconActivity />} onClick={() => setIsSidebarOpen(false)} />
+                <NavLink href="/forms" label="Forms" icon={<IconForm />} onClick={() => setIsSidebarOpen(false)} />
               </nav>
             )}
           </div>
@@ -713,7 +782,7 @@ export default function MessagesPage() {
             <button onClick={() => toggleSection('analytics')} className="w-full flex items-center justify-between px-6 py-1.5 text-[10px] font-bold text-gray-400 uppercase hover:text-gray-600">Analytics<svg className={`w-3 h-3 transition-transform ${openSections.analytics ? '' : '-rotate-90'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg></button>
             {openSections.analytics && (
               <nav className="px-3 pt-1 space-y-0.5">
-                <NavLink href="/reports" label="Reports" icon={<IconChart />} />
+                <NavLink href="/reports" label="Reports" icon={<IconChart />} onClick={() => setIsSidebarOpen(false)} />
               </nav>
             )}
           </div>
@@ -727,88 +796,92 @@ export default function MessagesPage() {
         </div>
       </aside>
 
-      {/* MAIN */}
-      <main className="flex-1 flex flex-col overflow-hidden h-screen">
-        <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-end gap-4 flex-shrink-0">
-          <div className="relative" ref={notificationsRef}>
-            <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
-            </button>
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 h-screen">
+        <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-shrink-0">
+          <button onClick={() => setIsSidebarOpen(true)} className="text-gray-500 hover:text-gray-700 lg:hidden">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
 
-            {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
-                  {unreadCount > 0 && <button onClick={markAllRead} className="text-[12px] font-medium text-[#1a73e8] hover:underline">Mark all read</button>}
-                </div>
-                <div className="max-h-[360px] overflow-y-auto">
-                  {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
-                    unreadConversations.map((c) => (
-                      <button key={c.id} onClick={() => { markAsRead(c); setViewConv(c); setNotificationsOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition">
-                        <div className="flex items-start gap-2">
-                          <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile}</p>
-                            <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+          <div className="flex items-center gap-2 md:gap-4 ml-auto">
+            <div className="relative" ref={notificationsRef}>
+              <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
+              </button>
+
+              {notificationsOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[calc(100vw-2rem)] max-w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
+                    {unreadCount > 0 && <button onClick={markAllRead} className="text-[12px] font-medium text-[#1a73e8] hover:underline">Mark all read</button>}
+                  </div>
+                  <div className="max-h-[360px] overflow-y-auto">
+                    {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
+                      unreadConversations.map((c) => (
+                        <button key={c.id} onClick={() => { markAsRead(c); setViewConv(c); setNotificationsOpen(false); }} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition">
+                          <div className="flex items-start gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile}</p>
+                              <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+                            </div>
                           </div>
-                        </div>
-                      </button>
-                    ))
-                  )}
+                        </button>
+                      ))
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="relative" ref={accountMenuRef}>
-            <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-3 pl-4 border-l border-gray-200">
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
-                {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : getInitials(user.name)}
-              </div>
-              <div className="text-left"><p className="text-sm font-semibold text-gray-800">{user.name}</p><p className="text-[11px] text-gray-500">{user.role}</p></div>
-            </button>
-            {accountMenuOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[200px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 p-2">
-                <button onClick={() => { setAccountMenuOpen(false); setView('messages'); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Messages</button>
-                <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Account Info</button>
-                <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Account Settings</button>
-                <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg mt-1 border-t border-gray-100">Logout</button>
-              </div>
-            )}
+            <div className="relative" ref={accountMenuRef}>
+              <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-3 pl-2 md:pl-4 border-l border-gray-200">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
+                  {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : getInitials(user.name)}
+                </div>
+                <div className="text-left hidden sm:block"><p className="text-sm font-semibold text-gray-800">{user.name}</p><p className="text-[11px] text-gray-500">{user.role}</p></div>
+              </button>
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[calc(100vw-2rem)] max-w-[220px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 p-2">
+                  <button onClick={() => goTo('messages')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Messages</button>
+                  <button onClick={() => goTo('account-info')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Account Info</button>
+                  <button onClick={() => goTo('account-settings')} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">Account Settings</button>
+                  <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg mt-1 border-t border-gray-100">Logout</button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
-        {/* MESSAGES VIEW */}
         {view === 'messages' && (
-          <div className="flex-1 p-8 overflow-y-auto bg-[#f7f8fa]">
-            <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
-              <div><h1 className="text-3xl font-bold text-gray-900 mb-2">Messages</h1><p className="text-sm text-gray-500">Manage conversations and flagged messages.</p></div>
-              <button onClick={() => setNewConvModalOpen(true)} className="bg-[#1a73e8] hover:bg-[#1557b0] text-white text-sm font-medium px-5 py-2.5 rounded-lg flex items-center gap-1.5 shadow-sm">+ New Conversation</button>
+          <div className="flex-1 p-4 md:p-8 overflow-y-auto bg-[#f7f8fa]">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+              <div><h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Messages</h1><p className="text-sm text-gray-500">Manage conversations and flagged messages.</p></div>
+              <button onClick={() => setNewConvModalOpen(true)} className="bg-[#1a73e8] hover:bg-[#1557b0] text-white text-sm font-medium px-5 py-2.5 rounded-lg flex items-center gap-1.5 shadow-sm whitespace-nowrap">+ New Conversation</button>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-              <div className="px-6 pt-5 flex items-center gap-3">
-                <button className="px-5 py-2 text-sm font-medium rounded-lg bg-gray-100 text-gray-900">Conversations</button>
-                <button className="px-5 py-2 text-sm font-medium rounded-lg text-gray-500 hover:text-gray-700">Flagged Messages</button>
+              <div className="px-4 md:px-6 pt-5 flex items-center gap-3 overflow-x-auto">
+                <button className="px-4 md:px-5 py-2 text-sm font-medium rounded-lg bg-gray-100 text-gray-900 whitespace-nowrap">Conversations</button>
+                <button className="px-4 md:px-5 py-2 text-sm font-medium rounded-lg text-gray-500 hover:text-gray-700 whitespace-nowrap">Flagged Messages</button>
               </div>
 
-              <div className="px-6 py-4 flex items-center gap-2 flex-wrap border-b border-gray-100">
-                <div className="flex items-center gap-1">
+              <div className="px-4 md:px-6 py-4 flex items-center gap-2 flex-wrap border-b border-gray-100">
+                <div className="flex items-center gap-1 overflow-x-auto max-w-full">
                   {['All', 'Active', 'Unassigned', 'Escalated'].map((tab) => (
-                    <button key={tab} onClick={() => { setStatusTab(tab as any); setCurrentPage(1); }} className={`px-4 py-2 text-sm font-medium rounded-lg transition ${statusTab === tab ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
+                    <button key={tab} onClick={() => { setStatusTab(tab as any); setCurrentPage(1); }} className={`px-3 md:px-4 py-2 text-sm font-medium rounded-lg transition whitespace-nowrap ${statusTab === tab ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
                   ))}
                 </div>
 
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="relative">
-                    <input type="text" placeholder="Search by name..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-4 pr-4 py-2 text-sm border border-gray-200 rounded-lg w-64 outline-none focus:border-[#1a73e8]" />
+                <div className="ml-auto flex items-center gap-2 w-full md:w-auto flex-wrap">
+                  <div className="relative flex-1 md:flex-none">
+                    <input type="text" placeholder="Search by name..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-4 pr-4 py-2 text-sm border border-gray-200 rounded-lg w-full md:w-64 outline-none focus:border-[#1a73e8]" />
                   </div>
                   <div className="flex items-center border border-gray-200 rounded-md overflow-hidden bg-white">
                     <button onClick={() => setLayoutView('list')} className={`p-2 border-r border-gray-200 ${layoutView === 'list' ? 'bg-blue-50 text-[#1a73e8]' : 'text-gray-500'}`}><IconList /></button>
                     <button onClick={() => setLayoutView('grid')} className={`p-2 ${layoutView === 'grid' ? 'bg-blue-50 text-[#1a73e8]' : 'text-gray-500'}`}><IconGrid /></button>
                   </div>
-                  <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium">
+                  <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="text-sm border border-gray-200 rounded-md px-2 md:px-3 py-2 outline-none bg-white font-medium">
                     <option value={10}>10</option><option value={25}>25</option><option value={50}>50</option>
                   </select>
                 </div>
@@ -816,14 +889,14 @@ export default function MessagesPage() {
 
               {layoutView === 'list' ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm min-w-[700px]">
                     <thead><tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50/40">
-                      <th className="px-6 py-3 font-medium text-xs">Profile</th><th className="px-4 py-3 font-medium text-xs">Trainer</th><th className="px-4 py-3 font-medium text-xs">Last Message</th><th className="px-4 py-3 font-medium text-xs">Time</th><th className="px-4 py-3 font-medium text-xs">Status</th><th className="px-6 py-3 font-medium text-xs text-right">Actions</th>
+                      <th className="px-4 md:px-6 py-3 font-medium text-xs">Profile</th><th className="px-4 py-3 font-medium text-xs">Trainer</th><th className="px-4 py-3 font-medium text-xs">Last Message</th><th className="px-4 py-3 font-medium text-xs">Time</th><th className="px-4 py-3 font-medium text-xs">Status</th><th className="px-4 md:px-6 py-3 font-medium text-xs text-right">Actions</th>
                     </tr></thead>
                     <tbody>
                       {paginatedConversations.map((c) => (
                         <tr key={c.id} className={`border-b border-gray-100 hover:bg-gray-50 ${c.unread ? 'bg-blue-50/30' : ''}`}>
-                          <td className="px-6 py-4">
+                          <td className="px-4 md:px-6 py-4">
                             <div className="flex items-center gap-2">
                               {c.unread && <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />}
                               <div><div className="font-medium text-gray-800">{c.profile}</div><div className="text-xs text-gray-500 mt-0.5">{c.profileEmail}</div></div>
@@ -833,7 +906,7 @@ export default function MessagesPage() {
                           <td className="px-4 py-4 text-gray-600 max-w-[280px] truncate">{c.lastMessage}</td>
                           <td className="px-4 py-4 text-gray-600">{c.time}</td>
                           <td className="px-4 py-4"><span className="text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700">{c.status}</span></td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-4 md:px-6 py-4 text-right">
                             <button onClick={() => openActions(c)} className="text-gray-400 hover:text-gray-700 p-1 rounded-md hover:bg-gray-100"><IconDots /></button>
                           </td>
                         </tr>
@@ -842,7 +915,7 @@ export default function MessagesPage() {
                   </table>
                 </div>
               ) : (
-                <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 bg-gray-50/30">
+                <div className="p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 bg-gray-50/30">
                   {paginatedConversations.map((c) => (
                     <div key={c.id} className={`bg-white border rounded-xl p-5 shadow-sm relative flex flex-col ${c.unread ? 'border-blue-200' : 'border-gray-200'}`}>
                        {c.unread && <span className="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-red-500" />}
@@ -871,35 +944,34 @@ export default function MessagesPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-white">
+              <div className="flex flex-col sm:flex-row items-center justify-between px-4 md:px-6 py-4 border-t border-gray-100 bg-white gap-3">
                 <p className="text-sm text-gray-500">Showing <span className="font-semibold text-gray-700">{startItem}–{endItem}</span> of <span className="font-semibold text-gray-700">{totalItems}</span></p>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>Previous</button>
-                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>Next</button>
+                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`flex items-center gap-1 px-3 md:px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>Previous</button>
+                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className={`flex items-center gap-1 px-3 md:px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>Next</button>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ACCOUNT INFO VIEW */}
         {view === 'account-info' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
+            <div className="px-4 md:px-10 pt-6 md:pt-10 pb-4 md:pb-6">
+              <h1 className="text-2xl md:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
               <p className="text-[13.5px] text-gray-500">Manage your personal profile and business details.</p>
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-4 md:px-10 pb-10">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-8 pt-6 pb-5 border-b border-gray-100">
-                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1">
-                    <button onClick={() => { setActiveInfoTab('user'); setErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
-                    <button onClick={() => { setActiveInfoTab('business'); setErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
+                <div className="px-4 md:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
+                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1 min-w-max">
+                    <button onClick={() => { setActiveInfoTab('user'); setErrors({}); }} className={`px-4 md:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
+                    <button onClick={() => { setActiveInfoTab('business'); setErrors({}); }} className={`px-4 md:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
                   </div>
                 </div>
 
                 {activeInfoTab === 'user' && (
-                  <div className="p-8 lg:p-10">
+                  <div className="p-4 md:p-8 lg:p-10">
                     <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -919,7 +991,7 @@ export default function MessagesPage() {
                           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }); }} className={`w-full h-[48px] px-4 border rounded-lg text-[14px] outline-none transition ${errors.email ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                           {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
                         </div>
-                        <div className="border border-gray-200 rounded-2xl p-6">
+                        <div className="border border-gray-200 rounded-2xl p-4 md:p-6">
                           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-5">Change password — leave blank to keep current</p>
                           <div className="space-y-5">
                             <div>
@@ -945,7 +1017,7 @@ export default function MessagesPage() {
                       <div className="flex flex-col items-center justify-start pt-2">
                         <p className="text-[14px] font-semibold text-gray-800 mb-5">Profile Photo</p>
                         <input ref={profileInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={handleProfilePhotoUpload} className="hidden" />
-                        <div className="w-[220px] h-[220px] rounded-full bg-gray-200 flex items-center justify-center mb-6 overflow-hidden">
+                        <div className="w-[160px] h-[160px] md:w-[220px] md:h-[220px] rounded-full bg-gray-200 flex items-center justify-center mb-6 overflow-hidden">
                           {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : <span className="text-[42px] font-semibold text-gray-600">{getInitials(user.name)}</span>}
                         </div>
                         <div className="flex items-center gap-2 mb-2">
@@ -955,14 +1027,14 @@ export default function MessagesPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('messages')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
+                      <button type="button" onClick={() => goTo('messages')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
                       <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
 
                 {activeInfoTab === 'business' && (
-                  <div className="p-8 lg:p-10">
+                  <div className="p-4 md:p-8 lg:p-10">
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Company name <span className="text-red-500">*</span></label><input type="text" placeholder="e.g. TMQA" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
@@ -977,7 +1049,7 @@ export default function MessagesPage() {
                       <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Website</label><input type="url" placeholder="https://yoursite.com" value={website} onChange={(e) => setWebsite(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
                     </div>
                     <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('messages')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
+                      <button type="button" onClick={() => goTo('messages')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
                       <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
@@ -987,70 +1059,96 @@ export default function MessagesPage() {
           </div>
         )}
 
-        {/* ACCOUNT SETTINGS VIEW */}
         {view === 'account-settings' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
+            <div className="px-4 md:px-10 pt-6 md:pt-10 pb-4 md:pb-6">
+              <h1 className="text-2xl md:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
               <p className="text-[13.5px] text-gray-500">Manage branding, metrics, testing, integrations, and system configuration.</p>
             </div>
 
-            <div className="px-10 pb-6">
-              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5">
+            <div className="px-4 md:px-10 pb-6 overflow-x-auto">
+              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 min-w-max">
                 {(['privileges', 'metrics', 'testing', 'results', 'branding', 'integrations'] as const).map((tab) => (
-                  <button key={tab} onClick={() => setSettingsTab(tab)} className={`px-5 py-2 text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
+                  <button key={tab} onClick={() => setSettingsTab(tab)} className={`px-3 md:px-5 py-1.5 md:py-2 text-[12px] md:text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
                 ))}
               </div>
             </div>
 
-            <div className="px-10 pb-10 max-w-[1400px]">
+            <div className="px-4 md:px-10 pb-10 max-w-[1400px]">
               {settingsTab === 'privileges' && (
-                <div className="space-y-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
-                    <p className="text-[13px] text-gray-500 mb-6">
-                      Manage role-based permissions for account members.
-                      {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
-                    </p>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse min-w-[600px]">
-                        <thead>
-                          <tr className="border-b border-gray-200">
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Admin</th>
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
-                            <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Staff</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {PRIVILEGE_ROWS.map((row) => (
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-8">
+                  <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
+                  <p className="text-[13px] text-gray-500 mb-6">
+                    Manage role-based permissions for account members.
+                    {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[600px]">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
+                          <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
+                          <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
+                          <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {PRIVILEGE_ROWS.map((row) => {
+                          const rowPriv = privileges[row.id] || { admin: false, supervisor: false, staff: false };
+                          const adminOn = rowPriv.admin;
+                          const supervisorOn = rowPriv.supervisor;
+
+                          return (
                             <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                              <td className="py-4 px-4 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                              <td className="py-4 px-4 text-center">
-                                <input type="checkbox" checked={privileges[row.id]?.admin ?? true} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+                              <td className="py-3 md:py-4 px-2 md:px-4 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
+
+                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={adminOn}
+                                  onChange={() => handleTogglePrivilege(row.id, 'admin')}
+                                  disabled={!isAdmin}
+                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                />
                               </td>
-                              <td className="py-4 px-4 text-center">
-                                <input type="checkbox" checked={privileges[row.id]?.supervisor ?? true} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+
+                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={rowPriv.supervisor}
+                                  onChange={() => handleTogglePrivilege(row.id, 'supervisor')}
+                                  disabled={!isAdmin || !adminOn}
+                                  title={!adminOn ? 'Enable Admin first' : undefined}
+                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                />
                               </td>
-                              <td className="py-4 px-4 text-center">
-                                <input type="checkbox" checked={privileges[row.id]?.staff ?? true} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+
+                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={rowPriv.staff}
+                                  onChange={() => handleTogglePrivilege(row.id, 'staff')}
+                                  disabled={!isAdmin || !supervisorOn}
+                                  title={!supervisorOn ? 'Enable Supervisor first' : undefined}
+                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                />
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               )}
 
               {settingsTab === 'metrics' && (
                 <div className="space-y-8">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <div className="flex items-center gap-4 mb-2">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-8">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2">
                       <label className="text-[14px] font-semibold text-gray-900">Measurement System</label>
-                      <div className="relative inline-block">
-                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer">
+                      <div className="relative inline-block w-full sm:w-auto">
+                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="w-full sm:w-auto h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer">
                           <option value="Imperial">Imperial</option>
                           <option value="Metric">Metric</option>
                         </select>
@@ -1105,10 +1203,10 @@ export default function MessagesPage() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Primary Color</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Sets the main accent color for the account.</p>
                     <div className="flex items-center gap-4">
-                      <div className="w-[100px] h-[52px] rounded-lg border border-gray-200 bg-white p-2 shadow-sm"><div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} /></div>
+                      <div className="w-[80px] md:w-[100px] h-[44px] md:h-[52px] rounded-lg border border-gray-200 bg-white p-1.5 md:p-2 shadow-sm"><div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} /></div>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
-                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
+                        <span className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
+                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[44px] md:h-[52px] pl-9 md:pl-11 pr-3 md:pr-4 w-[150px] md:w-[180px] border border-gray-200 rounded-lg text-[13px] md:text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
                       </div>
                     </div>
                   </div>
@@ -1116,11 +1214,11 @@ export default function MessagesPage() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Account Logo</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Upload your account logo. Max 5MB (PNG, JPG, GIF recommended).</p>
                     <input ref={logoInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" onChange={handleLogoUpload} className="hidden" />
-                    <div className="relative inline-block">
-                      <button type="button" onClick={() => logoInputRef.current?.click()} className="w-[400px] h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
+                    <div className="relative inline-block w-full max-w-[300px] md:max-w-none md:w-auto">
+                      <button type="button" onClick={() => logoInputRef.current?.click()} className="w-full md:w-[400px] h-[140px] md:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
                         {accountLogo ? <img src={accountLogo} alt="Account logo" className="w-full h-full object-contain p-4" /> : <p className="text-[14px] font-medium text-gray-500">Click to upload logo</p>}
                       </button>
-                      {accountLogo && <button type="button" onClick={(e) => { e.stopPropagation(); removeAccountLogo(); }} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-md transition"><svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg></button>}
+                      {accountLogo && <button type="button" onClick={(e) => { e.stopPropagation(); removeAccountLogo(); }} className="absolute top-2 right-2 md:top-3 md:right-3 w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-md transition"><svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg></button>}
                     </div>
                   </div>
                 </div>
@@ -1128,43 +1226,43 @@ export default function MessagesPage() {
 
               {settingsTab === 'integrations' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">InBody</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.inbody.enabled} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
                       <span className="text-[14px] text-gray-800">Integration enabled?</span>
                     </label>
                     <div className="space-y-5">
-                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Username</label><input type="text" value={integrations.inbody.apiUsername} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiUsername: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
-                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Key</label><input type="text" value={integrations.inbody.apiKey} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiKey: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
+                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Username</label><input type="text" value={integrations.inbody.apiUsername} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiUsername: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
+                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Key</label><input type="text" value={integrations.inbody.apiKey} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiKey: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Evolt</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.evolt.enabled} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
                       <span className="text-[14px] text-gray-800">Integration enabled?</span>
                     </label>
                     <div className="space-y-5">
-                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Client ID</label><input type="text" value={integrations.evolt.clientId} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientId: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
-                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Client Secret</label><input type="text" value={integrations.evolt.clientSecret} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientSecret: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
+                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Client ID</label><input type="text" value={integrations.evolt.clientId} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientId: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
+                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Client Secret</label><input type="text" value={integrations.evolt.clientSecret} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientSecret: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Styku</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.styku.enabled} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
                       <span className="text-[14px] text-gray-800">Integration enabled?</span>
                     </label>
                     <div className="space-y-5">
-                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Key</label><input type="text" value={integrations.styku.apiKey} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiKey: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
-                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Secret</label><input type="text" value={integrations.styku.apiSecret} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiSecret: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
+                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Key</label><input type="text" value={integrations.styku.apiKey} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiKey: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
+                      <div><label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Secret</label><input type="text" value={integrations.styku.apiSecret} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiSecret: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" /></div>
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Body Fat Method</label>
                         <div className="relative">
-                          <select value={integrations.styku.bodyFatMethod} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, bodyFatMethod: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                          <select value={integrations.styku.bodyFatMethod} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, bodyFatMethod: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             <option value="BIA">BIA</option><option value="DEXA">DEXA</option><option value="Navy">Navy</option><option value="Skinfold">Skinfold</option><option value="3D Scan">3D Scan</option>
                           </select>
                           <svg className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -1173,7 +1271,7 @@ export default function MessagesPage() {
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Circumference Measurement</label>
                         <div className="relative">
-                          <select value={integrations.styku.circumferenceMeasurement} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, circumferenceMeasurement: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                          <select value={integrations.styku.circumferenceMeasurement} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, circumferenceMeasurement: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             <option value="Left Side">Left Side</option><option value="Right Side">Right Side</option><option value="Average">Average</option>
                           </select>
                           <svg className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -1189,7 +1287,7 @@ export default function MessagesPage() {
                   type="button"
                   onClick={handleSaveSettings}
                   disabled={!isAdmin && settingsTab === 'privileges'}
-                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 md:px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Save settings
                 </button>
@@ -1199,20 +1297,19 @@ export default function MessagesPage() {
         )}
       </main>
 
-      {/* ACTIONS MODAL */}
       {actionsConv && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setActionsConv(null)}>
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-5 md:p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-2xl font-semibold text-gray-900">Actions</h3>
+              <h3 className="text-xl md:text-2xl font-semibold text-gray-900">Actions</h3>
               <button onClick={() => setActionsConv(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
             <div className="space-y-3">
-              <button onClick={handleViewConversation} className="w-full flex items-center gap-3 px-5 py-4 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium text-left transition">
+              <button onClick={handleViewConversation} className="w-full flex items-center gap-3 px-4 md:px-5 py-4 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium text-left transition">
                 <svg className="w-5 h-5 text-[#1a73e8] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                 <span className="font-semibold text-gray-900">View conversation</span>
               </button>
-              <button onClick={handleOpenReassign} className="w-full flex items-center gap-3 px-5 py-4 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium text-left transition">
+              <button onClick={handleOpenReassign} className="w-full flex items-center gap-3 px-4 md:px-5 py-4 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium text-left transition">
                 <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
                 <span className="font-semibold text-gray-900">Reassign trainer</span>
               </button>
@@ -1221,36 +1318,34 @@ export default function MessagesPage() {
         </div>
       )}
 
-      {/* VIEW CONVERSATION MODAL */}
       {viewConv && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col">
             <button onClick={() => setViewConv(null)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 z-10"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-            <div className="px-7 pt-7 pb-4"><h2 className="text-2xl font-bold text-gray-900 mb-1">Conversation</h2><p className="text-sm text-gray-500">With {viewConv.profile}</p></div>
-            <div className="flex-1 overflow-y-auto px-7 pb-6">
-              <div className="bg-gray-50 rounded-xl p-5 space-y-4">
+            <div className="px-4 md:px-7 pt-6 md:pt-7 pb-4"><h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Conversation</h2><p className="text-sm text-gray-500">With {viewConv.profile}</p></div>
+            <div className="flex-1 overflow-y-auto px-4 md:px-7 pb-6">
+              <div className="bg-gray-50 rounded-xl p-4 md:p-5 space-y-4">
                 <div><p className="text-xs font-medium text-gray-500 mb-1">Profile</p><p className="text-sm text-gray-800">{viewConv.profile}</p><p className="text-xs text-gray-500">{viewConv.profileEmail}</p></div>
                 <div><p className="text-xs font-medium text-gray-500 mb-1">Trainer</p><p className="text-sm text-gray-800">{viewConv.user}</p></div>
                 <div><p className="text-xs font-medium text-gray-500 mb-1">Status</p><span className="inline-block text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700">{viewConv.status}</span></div>
                 <div><p className="text-xs font-medium text-gray-500 mb-1">Last Message</p><p className="text-sm text-gray-800">{viewConv.lastMessage}</p><p className="text-xs text-gray-400 mt-1">{viewConv.time}</p></div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 px-7 py-5 border-t border-gray-100"><button onClick={() => setViewConv(null)} className="px-6 py-2.5 text-sm font-medium text-white bg-[#1a73e8] hover:bg-[#1557b0] rounded-lg transition">Close</button></div>
+            <div className="flex items-center justify-end gap-3 px-4 md:px-7 py-5 border-t border-gray-100"><button onClick={() => setViewConv(null)} className="px-6 py-2.5 text-sm font-medium text-white bg-[#1a73e8] hover:bg-[#1557b0] rounded-lg transition">Close</button></div>
           </div>
         </div>
       )}
 
-      {/* REASSIGN MODAL */}
       {reassignConv && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onClick={closeReassign} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 z-10"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-            <div className="px-7 pt-7 pb-4">
+            <div className="px-4 md:px-7 pt-6 md:pt-7 pb-4">
               <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-4"><svg className="w-7 h-7 text-[#1a73e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg></div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Reassign Conversation</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Reassign Conversation</h2>
               <p className="text-sm text-gray-500">Reassign <span className="font-medium text-gray-700">{reassignConv.profile}</span>&apos;s conversation to a different user.</p>
             </div>
-            <div className="px-7 pb-2">
+            <div className="px-4 md:px-7 pb-2">
               <p className="text-sm text-gray-600 mb-5">Current user: <span className="font-bold text-gray-900">{reassignConv.user}</span></p>
               <div className="relative" ref={reassignUserRef}>
                 <label className="block text-sm font-semibold text-gray-800 mb-2">New User <span className="text-red-500">*</span></label>
@@ -1274,7 +1369,7 @@ export default function MessagesPage() {
                 <textarea rows={3} placeholder="User leaving company, schedule change..." value={reassignForm.reason} onChange={(e) => setReassignForm({ ...reassignForm, reason: e.target.value })} className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 transition resize-none" />
               </div>
             </div>
-            <div className="flex items-center justify-end gap-3 px-7 py-6">
+            <div className="flex items-center justify-end gap-3 px-4 md:px-7 py-6">
               <button type="button" onClick={closeReassign} className="px-6 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Cancel</button>
               <button type="button" onClick={handleConfirmReassign} disabled={!reassignForm.newUser || reassignSaving} className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${!reassignForm.newUser || reassignSaving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>{reassignSaving ? 'Reassigning...' : 'Reassign Thread'}</button>
             </div>
@@ -1282,16 +1377,15 @@ export default function MessagesPage() {
         </div>
       )}
 
-      {/* NEW CONVERSATION MODAL */}
       {newConvModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col">
             <button onClick={closeModal} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 z-10"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
-            <div className="px-7 pt-7 pb-4">
-              <div className="flex items-center gap-3 mb-1"><svg className="w-6 h-6 text-[#1a73e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg><h2 className="text-2xl font-bold text-gray-900">New Conversation</h2></div>
+            <div className="px-4 md:px-7 pt-6 md:pt-7 pb-4">
+              <div className="flex items-center gap-3 mb-1"><svg className="w-6 h-6 text-[#1a73e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg><h2 className="text-xl md:text-2xl font-bold text-gray-900">New Conversation</h2></div>
               <p className="text-sm text-gray-500">Start a new message thread with a profile.</p>
             </div>
-            <form onSubmit={handleStartConversation} className="flex-1 overflow-y-auto px-7 pb-4" noValidate>
+            <form onSubmit={handleStartConversation} className="flex-1 overflow-y-auto px-4 md:px-7 pb-4" noValidate>
               <div className="space-y-5">
                 <div className="relative" ref={profileRef}>
                   <label className="block text-sm font-semibold text-gray-800 mb-2">Profile <span className="text-red-500">*</span></label>
@@ -1358,9 +1452,23 @@ export default function MessagesPage() {
 }
 
 // ============== REUSABLE ==============
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; }) {
+function NavLink({
+  href,
+  label,
+  icon,
+  active = false,
+  badge = 0,
+  onClick,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  active?: boolean;
+  badge?: number;
+  onClick?: (e?: React.MouseEvent<HTMLAnchorElement>) => void;
+}) {
   return (
-    <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
+    <Link href={href} onClick={onClick} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
       {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>}
       <span className="text-gray-500">{icon}</span>
       <span className="flex-1">{label}</span>
@@ -1378,18 +1486,18 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[500px]">
           <thead><tr className="border-b border-gray-100 bg-gray-50/50">
-            <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
-            <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
-            <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
+            <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
+            <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
+            <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
           </tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                <td className="py-4 px-6 text-center">
-                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                <td className="py-3 md:py-4 px-3 md:px-6 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 md:py-4 px-3 md:px-6 text-center">
+                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-20 md:w-24 h-[34px] md:h-9 text-center border border-gray-300 rounded-lg text-[13px] md:text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                 </td>
-                <td className="py-4 px-6 text-center">
+                <td className="py-3 md:py-4 px-3 md:px-6 text-center">
                   <input type="checkbox" checked={metricsData[row.id]?.show ?? false} onChange={() => { setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], show: !prev[row.id].show } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                 </td>
               </tr>
@@ -1410,19 +1518,19 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead><tr className="border-b border-gray-100 bg-gray-50/50">
-            <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
+            <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
             {TESTING_COLUMNS.map(col => (
-              <th key={col.id} className="py-4 px-6 text-center">
-                <span className="px-4 py-1.5 text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
+              <th key={col.id} className="py-3 md:py-4 px-3 md:px-6 text-center">
+                <span className="px-2 md:px-4 py-1.5 text-[10px] md:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
               </th>
             ))}
           </tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 md:py-4 px-3 md:px-6 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
                 {TESTING_COLUMNS.map(col => (
-                  <td key={col.id} className="py-4 px-6 text-center">
+                  <td key={col.id} className="py-3 md:py-4 px-3 md:px-6 text-center">
                     <input type="checkbox" checked={testingData[row.id]?.[col.id] ?? false} onChange={() => { setTestingData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], [col.id]: !prev[row.id]?.[col.id] } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                   </td>
                 ))}
@@ -1444,17 +1552,17 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[600px]">
           <thead><tr className="border-b border-gray-100 bg-gray-50/50">
-            <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
-            <th className="py-4 px-6 text-[13px] font-semibold text-gray-600">Interpretation</th>
+            <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
+            <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600">Interpretation</th>
           </tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium align-top pt-6">{row.label}</td>
-                <td className="py-4 px-6">
+                <td className="py-3 md:py-4 px-3 md:px-6 text-[13px] md:text-[14px] text-gray-800 font-medium align-top pt-4 md:pt-6">{row.label}</td>
+                <td className="py-3 md:py-4 px-3 md:px-6">
                   <div className="relative">
-                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-4 border border-gray-200 rounded-xl text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
-                    <div className="text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
+                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-3 md:p-4 border border-gray-200 rounded-xl text-[13px] md:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
+                    <div className="text-[10px] md:text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
                   </div>
                 </td>
               </tr>

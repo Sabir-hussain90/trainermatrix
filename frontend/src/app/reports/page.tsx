@@ -237,38 +237,38 @@ function ChooseReportTypeModal({
   const filtered = REPORT_TYPE_GROUPS.filter((g) => g.title.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white w-full max-w-[560px] max-h-[90vh] rounded-2xl shadow-2xl relative flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center z-10">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
+      <div className="bg-white w-full max-w-[560px] max-h-[92vh] rounded-2xl shadow-2xl relative flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 sm:top-5 sm:right-5 text-gray-400 hover:text-gray-700 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center z-10">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
 
-        <div className="px-8 pt-8 pb-4">
+        <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4">
           <div className="w-12 h-12 rounded-full bg-[#e8f0fe] flex items-center justify-center mb-4">
             <svg className="w-6 h-6 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 20v-8M12 20V4M19 20v-12" /></svg>
           </div>
-          <h2 className="text-[20px] font-bold text-gray-900 leading-tight">Choose Report Type</h2>
+          <h2 className="text-lg sm:text-[20px] font-bold text-gray-900 leading-tight">Choose Report Type</h2>
         </div>
 
-        <div className="px-8 pb-4">
+        <div className="px-4 sm:px-8 pb-4">
           <div className="relative">
             <svg className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input type="text" autoFocus placeholder="Search report types..." value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-[52px] pl-11 pr-4 border-2 border-[#1a73e8] rounded-full text-[14.5px] outline-none transition focus:ring-4 focus:ring-[#1a73e8]/10" />
+              className="w-full h-[48px] sm:h-[52px] pl-11 pr-4 border-2 border-[#1a73e8] rounded-full text-[14px] sm:text-[14.5px] outline-none transition focus:ring-4 focus:ring-[#1a73e8]/10" />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-8 pb-6">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-8 pb-6">
           {filtered.length === 0 ? (
             <div className="py-12 text-center text-sm text-gray-400">No report types found.</div>
           ) : filtered.map((g) => {
             const isHovered = hovered === g.title;
             return (
               <button key={g.title} type="button" onMouseEnter={() => setHovered(g.title)} onMouseLeave={() => setHovered(null)} onClick={() => onChoose(g.title)}
-                className="w-full flex items-center justify-between py-4 border-b border-gray-100 text-left transition">
-                <div>
-                  <p className={`text-[15.5px] font-semibold transition ${isHovered ? 'text-[#1a73e8]' : 'text-gray-900'}`}>{g.title}</p>
-                  <p className={`text-[13px] mt-0.5 transition ${isHovered ? 'text-[#1a73e8]/80' : 'text-gray-500'}`}>{g.subtitle}</p>
+                className="w-full flex items-center justify-between py-3.5 sm:py-4 border-b border-gray-100 text-left transition">
+                <div className="min-w-0 pr-3">
+                  <p className={`text-[14px] sm:text-[15.5px] font-semibold transition truncate ${isHovered ? 'text-[#1a73e8]' : 'text-gray-900'}`}>{g.title}</p>
+                  <p className={`text-[12.5px] sm:text-[13px] mt-0.5 transition ${isHovered ? 'text-[#1a73e8]/80' : 'text-gray-500'}`}>{g.subtitle}</p>
                 </div>
                 <svg className={`w-4 h-4 flex-shrink-0 transition ${isHovered ? 'text-[#1a73e8]' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
               </button>
@@ -280,7 +280,7 @@ function ChooseReportTypeModal({
   );
 }
 
-// ==================== SETTINGS SECTIONS ====================
+// ==================== SETTINGS SECTIONS (RESPONSIVE) ====================
 function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: string; rows: { id: string; label: string }[]; metricsData: any; setMetricsData: any; }) {
   return (
     <div>
@@ -288,22 +288,22 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[500px]">
+        <table className="w-full text-left border-collapse min-w-[480px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                <td className="py-4 px-6 text-center">
-                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
+                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-20 sm:w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                 </td>
-                <td className="py-4 px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input type="checkbox" checked={metricsData[row.id]?.show ?? false} onChange={() => { setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], show: !prev[row.id].show } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                 </td>
               </tr>
@@ -322,13 +322,13 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[700px]">
+        <table className="w-full text-left border-collapse min-w-[680px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
               {TESTING_COLUMNS.map(col => (
-                <th key={col.id} className="py-4 px-6 text-center">
-                  <span className="px-4 py-1.5 text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
+                <th key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
+                  <span className="px-3 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
                 </th>
               ))}
             </tr>
@@ -336,9 +336,9 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
                 {TESTING_COLUMNS.map(col => (
-                  <td key={col.id} className="py-4 px-6 text-center">
+                  <td key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
                     <input type="checkbox" checked={testingData[row.id]?.[col.id] ?? false} onChange={() => { setTestingData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], [col.id]: !prev[row.id]?.[col.id] } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                   </td>
                 ))}
@@ -358,21 +358,21 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[600px]">
+        <table className="w-full text-left border-collapse min-w-[560px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600">Interpretation</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600">Interpretation</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium align-top pt-6">{row.label}</td>
-                <td className="py-4 px-6">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium align-top pt-4 sm:pt-6">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6">
                   <div className="relative">
-                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-4 border border-gray-200 rounded-xl text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
-                    <div className="text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
+                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-3 sm:p-4 border border-gray-200 rounded-xl text-[13px] sm:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
+                    <div className="text-[10px] sm:text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
                   </div>
                 </td>
               </tr>
@@ -384,7 +384,7 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
   );
 }
 
-// ==================== REPORT BUILDER ====================
+// ==================== REPORT BUILDER (RESPONSIVE) ====================
 function ReportBuilder({
   reportType,
   onBack,
@@ -438,9 +438,7 @@ function ReportBuilder({
         ]);
         if (gRes.ok) {
           const gd = await gRes.json();
-          if (Array.isArray(gd)) {
-            setGroupOptions(gd.map((g: any) => ({ id: g.id, name: g.name || g.id })));
-          }
+          if (Array.isArray(gd)) setGroupOptions(gd.map((g: any) => ({ id: g.id, name: g.name || g.id })));
         }
         if (uRes.ok) {
           const ud = await uRes.json();
@@ -452,11 +450,8 @@ function ReportBuilder({
             })));
           }
         }
-      } catch (err) {
-        console.error('[report builder options]', err);
-      } finally {
-        setOptionsLoading(false);
-      }
+      } catch (err) { console.error('[report builder options]', err); }
+      finally { setOptionsLoading(false); }
     })();
   }, [token]);
 
@@ -519,11 +514,9 @@ function ReportBuilder({
 
       const filtered = allProfiles.filter((p: any) => {
         if (ageFrom || ageTo) {
-          const age = typeof p.age === 'number'
-            ? p.age
-            : p.dateOfBirth
-              ? Math.floor((Date.now() - new Date(p.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000))
-              : null;
+          const age = typeof p.age === 'number' ? p.age : p.dateOfBirth
+            ? Math.floor((Date.now() - new Date(p.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000))
+            : null;
           if (age != null) {
             if (ageFrom && age < Number(ageFrom)) return false;
             if (ageTo && age > Number(ageTo)) return false;
@@ -534,9 +527,7 @@ function ReportBuilder({
           if (pg && !pg.startsWith(gender.toLowerCase())) return false;
         }
         if (selectedGroupIds.length > 0) {
-          const pgIds: string[] =
-            (Array.isArray(p.groups) && p.groups.map((g: any) => g.id || g.groupId || g)) ||
-            (p.groupId ? [p.groupId] : []);
+          const pgIds: string[] = (Array.isArray(p.groups) && p.groups.map((g: any) => g.id || g.groupId || g)) || (p.groupId ? [p.groupId] : []);
           if (!pgIds.some((id) => selectedGroupIds.includes(String(id)))) return false;
         }
         if (selectedUserIds.length > 0) {
@@ -548,44 +539,20 @@ function ReportBuilder({
 
       const rows = filtered.map((p: any) => ({
         id: p.id,
-        name:
-          `${p.firstName || ''} ${p.lastName || ''}`.trim() ||
-          p.name ||
-          p.email ||
-          '—',
+        name: `${p.firstName || ''} ${p.lastName || ''}`.trim() || p.name || p.email || '—',
         email: p.email || '—',
-        age:
-          typeof p.age === 'number'
-            ? p.age
-            : p.dateOfBirth
-              ? Math.floor((Date.now() - new Date(p.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000))
-              : '—',
+        age: typeof p.age === 'number' ? p.age : p.dateOfBirth
+          ? Math.floor((Date.now() - new Date(p.dateOfBirth).getTime()) / (365.25 * 24 * 3600 * 1000))
+          : '—',
         gender: p.gender || p.sex || '—',
         metric,
-        value:
-          p.metricValue ??
-          p.metrics?.[metric] ??
-          p[metric] ??
-          p[metric.replace(/\s+/g, '').toLowerCase()] ??
-          '—',
+        value: p.metricValue ?? p.metrics?.[metric] ?? p[metric] ?? p[metric.replace(/\s+/g, '').toLowerCase()] ?? '—',
       }));
 
       setRunResult({
-        filters: {
-          reportType,
-          metric,
-          ageFrom: ageFrom || null,
-          ageTo: ageTo || null,
-          gender: gender || null,
-          groupIds: selectedGroupIds,
-          userIds: selectedUserIds,
-        },
+        filters: { reportType, metric, ageFrom: ageFrom || null, ageTo: ageTo || null, gender: gender || null, groupIds: selectedGroupIds, userIds: selectedUserIds },
         rows,
-        summary: {
-          total: rows.length,
-          metric,
-          generatedAt: new Date().toISOString(),
-        },
+        summary: { total: rows.length, metric, generatedAt: new Date().toISOString() },
       });
 
       setToast({ message: `Report ran — ${rows.length} row(s)`, type: 'success' });
@@ -595,10 +562,7 @@ function ReportBuilder({
   };
 
   const handleSave = async () => {
-    if (!canCreate) {
-      setToast({ message: 'You do not have permission to save reports.', type: 'error' });
-      return;
-    }
+    if (!canCreate) { setToast({ message: 'You do not have permission to save reports.', type: 'error' }); return; }
     if (!token) { setToast({ message: 'Missing auth token', type: 'error' }); return; }
     if (!metric) { setToast({ message: 'Please select a metric first', type: 'error' }); return; }
     if (!runResult) { setToast({ message: 'Run the report first, then save.', type: 'error' }); return; }
@@ -608,11 +572,7 @@ function ReportBuilder({
       const body = {
         name: `${reportType} — ${metric} — ${new Date().toLocaleDateString('en-US')}`,
         type: 'metrics',
-        data: {
-          ...runResult.filters,
-          summary: runResult.summary,
-          rows: runResult.rows.slice(0, 500),
-        },
+        data: { ...runResult.filters, summary: runResult.summary, rows: runResult.rows.slice(0, 500) },
         periodStart: null,
         periodEnd: null,
       };
@@ -622,45 +582,29 @@ function ReportBuilder({
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(body),
       });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.message || `Failed (${res.status})`);
-      }
-
+      if (!res.ok) { const errBody = await res.json().catch(() => ({})); throw new Error(errBody.message || `Failed (${res.status})`); }
       setToast({ message: 'Report saved', type: 'success' });
       await onSaved();
     } catch (err: any) {
       setToast({ message: err.message || 'Save failed', type: 'error' });
-    } finally {
-      setSaving(false);
-    }
+    } finally { setSaving(false); }
   };
 
   const handleExport = () => {
     if (!runResult) { setToast({ message: 'Run the report first, then export.', type: 'error' }); return; }
     try {
       const header = ['ID', 'Name', 'Email', 'Age', 'Gender', 'Metric', 'Value'];
-      const rows = runResult.rows.map((r) => [
-        r.id, r.name, r.email, String(r.age), r.gender, r.metric, String(r.value),
-      ]);
-      const csv = [header, ...rows]
-        .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))
-        .join('\n');
-
+      const rows = runResult.rows.map((r) => [r.id, r.name, r.email, String(r.age), r.gender, r.metric, String(r.value)]);
+      const csv = [header, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `${reportType.replace(/\s+/g, '_')}_${Date.now()}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(url);
       setToast({ message: 'CSV exported', type: 'success' });
-    } catch {
-      setToast({ message: 'Export failed', type: 'error' });
-    }
+    } catch { setToast({ message: 'Export failed', type: 'error' }); }
   };
 
   const canSave = !!metric && !!runResult && canCreate;
@@ -668,8 +612,8 @@ function ReportBuilder({
   return (
     <div className="flex-1 overflow-y-auto bg-[#f5f6f8]">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] px-3">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-4 sm:px-5 flex items-center gap-3 min-w-[280px] sm:min-w-[320px] max-w-[92vw]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
               {toast.type === 'error' ? (
                 <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -682,32 +626,32 @@ function ReportBuilder({
         </div>
       )}
 
-      <div className="bg-white border-b border-gray-100 px-8 pt-7 pb-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3.5">
+      <div className="bg-white border-b border-gray-100 px-4 sm:px-6 lg:px-8 pt-6 sm:pt-7 pb-4 sm:pb-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <button onClick={onBack} className="w-10 h-10 rounded-full border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center flex-shrink-0 transition">
               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <div>
-              <h1 className="text-[22px] font-bold text-gray-900 leading-tight">{reportType}</h1>
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-[22px] font-bold text-gray-900 leading-tight truncate">{reportType}</h1>
               <p className="text-[13px] text-gray-500 leading-tight mt-0.5">Standard</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
             <button type="button" onClick={handleExport} disabled={!runResult}
-              className={`flex items-center gap-2 px-4 h-[42px] rounded-full border border-gray-200 bg-white text-[14px] font-medium transition ${!runResult ? 'opacity-60 cursor-not-allowed text-gray-400' : 'hover:bg-gray-50 text-gray-700'}`}>
+              className={`flex items-center gap-2 px-3 sm:px-4 h-[42px] rounded-full border border-gray-200 bg-white text-[13px] sm:text-[14px] font-medium transition flex-1 sm:flex-none justify-center ${!runResult ? 'opacity-60 cursor-not-allowed text-gray-400' : 'hover:bg-gray-50 text-gray-700'}`}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0-12l-4 4m4-4l4 4" /></svg>
               Export
             </button>
             <button type="button" onClick={handleSave} disabled={saving || !canSave}
               title={!canCreate ? 'You do not have permission to save reports' : undefined}
-              className={`flex items-center gap-2 px-4 h-[42px] rounded-full border border-gray-200 bg-white text-[14px] font-medium transition ${(saving || !canSave) ? 'opacity-60 cursor-not-allowed text-gray-400' : 'hover:bg-gray-50 text-gray-700'}`}>
+              className={`flex items-center gap-2 px-3 sm:px-4 h-[42px] rounded-full border border-gray-200 bg-white text-[13px] sm:text-[14px] font-medium transition flex-1 sm:flex-none justify-center ${(saving || !canSave) ? 'opacity-60 cursor-not-allowed text-gray-400' : 'hover:bg-gray-50 text-gray-700'}`}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M8 7h8" /></svg>
               {saving ? 'Saving...' : 'Save'}
             </button>
             <button type="button" onClick={handleRun}
-              className="flex items-center gap-2 px-5 h-[42px] rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white text-[14px] font-semibold transition shadow-sm">
+              className="flex items-center justify-center gap-2 px-4 sm:px-5 h-[42px] rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white text-[13px] sm:text-[14px] font-semibold transition shadow-sm flex-1 sm:flex-none">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
               Run
             </button>
@@ -715,13 +659,13 @@ function ReportBuilder({
         </div>
       </div>
 
-      <div className="px-8 py-7 max-w-[1400px] mx-auto space-y-6">
-        <div className="bg-white border border-gray-200 rounded-2xl p-7 shadow-sm">
-          <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-6">Report Filters</p>
+      <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-7 max-w-[1400px] mx-auto space-y-4 sm:space-y-6">
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 shadow-sm">
+          <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-4 sm:mb-6">Report Filters</p>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-5 mb-5">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 sm:gap-5 mb-4 sm:mb-5">
             <div>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Metric: <span className="text-red-500">*</span></label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Metric: <span className="text-red-500">*</span></label>
               <div className="relative">
                 <select value={metric} onChange={(e) => setMetric(e.target.value)}
                   className={`w-full h-[48px] px-4 border rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10 ${!metric ? 'text-gray-400' : 'text-gray-800'} border-gray-300`}>
@@ -733,7 +677,7 @@ function ReportBuilder({
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Age From:</label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Age From:</label>
               <div className="relative">
                 <select value={ageFrom} onChange={(e) => setAgeFrom(e.target.value)}
                   className={`w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10 ${!ageFrom ? 'text-gray-400' : 'text-gray-800'}`}>
@@ -745,7 +689,7 @@ function ReportBuilder({
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Age To:</label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Age To:</label>
               <div className="relative">
                 <select value={ageTo} onChange={(e) => setAgeTo(e.target.value)}
                   className={`w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10 ${!ageTo ? 'text-gray-400' : 'text-gray-800'}`}>
@@ -757,9 +701,9 @@ function ReportBuilder({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 sm:gap-5">
             <div>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Gender:</label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Gender:</label>
               <div className="relative">
                 <select value={gender} onChange={(e) => setGender(e.target.value)}
                   className={`w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10 ${!gender ? 'text-gray-400' : 'text-gray-800'}`}>
@@ -771,7 +715,7 @@ function ReportBuilder({
             </div>
 
             <div>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Date:</label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Date:</label>
               <button type="button" className="w-full h-[48px] px-4 border border-gray-300 rounded-full bg-white flex items-center gap-2.5 text-[14px] text-gray-800 outline-none transition hover:bg-gray-50">
                 <svg className="w-4 h-4 text-[#1a73e8] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                 <span className="truncate">10/15/2025 – 10/15/2026</span>
@@ -780,7 +724,7 @@ function ReportBuilder({
             </div>
 
             <div className="relative" ref={groupsRef}>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Groups:</label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Groups:</label>
               <button type="button" onClick={() => setGroupsOpen((v) => !v)}
                 className="w-full h-[48px] px-4 border border-gray-300 rounded-full bg-white flex items-center gap-2.5 text-[14px] text-gray-800 outline-none transition hover:bg-gray-50">
                 <svg className="w-4 h-4 text-[#1a73e8] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
@@ -797,26 +741,24 @@ function ReportBuilder({
                   </div>
                   {groupOptions.length === 0 ? (
                     <div className="px-4 py-6 text-sm text-gray-400 text-center">No groups available</div>
-                  ) : (
-                    groupOptions.map((g) => {
-                      const checked = selectedGroupIds.includes(g.id);
-                      return (
-                        <label key={g.id} className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer select-none transition ${checked ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
-                          <span className={`w-4 h-4 flex items-center justify-center rounded border-2 transition flex-shrink-0 ${checked ? 'bg-[#1a73e8] border-[#1a73e8]' : 'bg-white border-gray-300'}`}>
-                            {checked && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>}
-                          </span>
-                          <input type="checkbox" className="hidden" checked={checked} onChange={() => toggleGroup(g.id)} />
-                          <span className="text-[13.5px] text-gray-800 truncate">{g.name}</span>
-                        </label>
-                      );
-                    })
-                  )}
+                  ) : groupOptions.map((g) => {
+                    const checked = selectedGroupIds.includes(g.id);
+                    return (
+                      <label key={g.id} className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer select-none transition ${checked ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
+                        <span className={`w-4 h-4 flex items-center justify-center rounded border-2 transition flex-shrink-0 ${checked ? 'bg-[#1a73e8] border-[#1a73e8]' : 'bg-white border-gray-300'}`}>
+                          {checked && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>}
+                        </span>
+                        <input type="checkbox" className="hidden" checked={checked} onChange={() => toggleGroup(g.id)} />
+                        <span className="text-[13.5px] text-gray-800 truncate">{g.name}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
             <div className="relative" ref={usersRef}>
-              <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Users:</label>
+              <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Users:</label>
               <button type="button" onClick={() => setUsersOpen((v) => !v)}
                 className="w-full h-[48px] px-4 border border-gray-300 rounded-full bg-white flex items-center gap-2.5 text-[14px] text-gray-800 outline-none transition hover:bg-gray-50">
                 <svg className="w-4 h-4 text-[#1a73e8] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -833,44 +775,42 @@ function ReportBuilder({
                   </div>
                   {userOptions.length === 0 ? (
                     <div className="px-4 py-6 text-sm text-gray-400 text-center">No users available</div>
-                  ) : (
-                    userOptions.map((u) => {
-                      const checked = selectedUserIds.includes(u.id);
-                      return (
-                        <label key={u.id} className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer select-none transition ${checked ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
-                          <span className={`w-4 h-4 flex items-center justify-center rounded border-2 transition flex-shrink-0 ${checked ? 'bg-[#1a73e8] border-[#1a73e8]' : 'bg-white border-gray-300'}`}>
-                            {checked && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>}
-                          </span>
-                          <input type="checkbox" className="hidden" checked={checked} onChange={() => toggleUser(u.id)} />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[13.5px] text-gray-800 truncate">{u.name}</p>
-                            {u.email && <p className="text-[11.5px] text-gray-500 truncate">{u.email}</p>}
-                          </div>
-                        </label>
-                      );
-                    })
-                  )}
+                  ) : userOptions.map((u) => {
+                    const checked = selectedUserIds.includes(u.id);
+                    return (
+                      <label key={u.id} className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer select-none transition ${checked ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
+                        <span className={`w-4 h-4 flex items-center justify-center rounded border-2 transition flex-shrink-0 ${checked ? 'bg-[#1a73e8] border-[#1a73e8]' : 'bg-white border-gray-300'}`}>
+                          {checked && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3.5} d="M5 13l4 4L19 7" /></svg>}
+                        </span>
+                        <input type="checkbox" className="hidden" checked={checked} onChange={() => toggleUser(u.id)} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[13.5px] text-gray-800 truncate">{u.name}</p>
+                          {u.email && <p className="text-[11.5px] text-gray-500 truncate">{u.email}</p>}
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-7 shadow-sm min-h-[260px]">
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 shadow-sm min-h-[260px]">
           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-4">Report Details</p>
 
           {!runResult ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center">
               <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
                 <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 20v-8M12 20V4M19 20v-12" /></svg>
               </div>
-              <p className="text-[14px] text-gray-500">
+              <p className="text-[13px] sm:text-[14px] text-gray-500 px-4">
                 Select a metric and click <span className="font-semibold text-gray-800">Run</span> to see report details.
               </p>
             </div>
           ) : (
             <div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-5">
                 <div className="border border-gray-200 rounded-xl p-4">
                   <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Rows</p>
                   <p className="text-[22px] font-bold text-gray-900">{runResult.summary.total}</p>
@@ -879,43 +819,35 @@ function ReportBuilder({
                   <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Metric</p>
                   <p className="text-[16px] font-semibold text-gray-900 truncate">{runResult.summary.metric}</p>
                 </div>
-                <div className="border border-gray-200 rounded-xl p-4">
+                <div className="border border-gray-200 rounded-xl p-4 sm:col-span-2 md:col-span-1">
                   <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Generated</p>
-                  <p className="text-[13.5px] text-gray-700">
-                    {new Date(runResult.summary.generatedAt).toLocaleString()}
-                  </p>
+                  <p className="text-[13.5px] text-gray-700">{new Date(runResult.summary.generatedAt).toLocaleString()}</p>
                 </div>
               </div>
 
               <div className="overflow-x-auto border border-gray-200 rounded-xl">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[640px]">
                   <thead>
                     <tr className="text-left text-gray-500 bg-gray-50/40 border-b border-gray-100">
-                      <th className="px-4 py-3 font-medium text-xs">Name</th>
-                      <th className="px-4 py-3 font-medium text-xs">Email</th>
-                      <th className="px-4 py-3 font-medium text-xs">Age</th>
-                      <th className="px-4 py-3 font-medium text-xs">Gender</th>
-                      <th className="px-4 py-3 font-medium text-xs">{runResult.summary.metric}</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Name</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Email</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Age</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Gender</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">{runResult.summary.metric}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {runResult.rows.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="px-4 py-12 text-center text-gray-400 text-sm">
-                          No matching records for the selected filters.
-                        </td>
+                      <tr><td colSpan={5} className="px-4 py-12 text-center text-gray-400 text-sm">No matching records for the selected filters.</td></tr>
+                    ) : runResult.rows.slice(0, 100).map((r) => (
+                      <tr key={r.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="px-3 sm:px-4 py-3 text-gray-800 font-medium">{r.name}</td>
+                        <td className="px-3 sm:px-4 py-3 text-gray-600">{r.email}</td>
+                        <td className="px-3 sm:px-4 py-3 text-gray-600">{r.age}</td>
+                        <td className="px-3 sm:px-4 py-3 text-gray-600">{r.gender}</td>
+                        <td className="px-3 sm:px-4 py-3 text-gray-800 font-semibold">{String(r.value)}</td>
                       </tr>
-                    ) : (
-                      runResult.rows.slice(0, 100).map((r) => (
-                        <tr key={r.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="px-4 py-3 text-gray-800 font-medium">{r.name}</td>
-                          <td className="px-4 py-3 text-gray-600">{r.email}</td>
-                          <td className="px-4 py-3 text-gray-600">{r.age}</td>
-                          <td className="px-4 py-3 text-gray-600">{r.gender}</td>
-                          <td className="px-4 py-3 text-gray-800 font-semibold">{String(r.value)}</td>
-                        </tr>
-                      ))
-                    )}
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -937,6 +869,9 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
   const [logoError, setLogoError] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+
+  // ✅ NEW: mobile sidebar drawer
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [view, setView] = useState<'list' | 'builder' | 'account-info' | 'account-settings'>('list');
 
@@ -996,7 +931,6 @@ export default function ReportsPage() {
     styku: { enabled: false, apiKey: '', apiSecret: '', bodyFatMethod: 'BIA', circumferenceMeasurement: 'Left Side' },
   });
 
-  // NEW: settings data
   const [privileges, setPrivileges] = useState<{ [key: string]: { admin: boolean; supervisor: boolean; staff: boolean } }>(() => {
     const defaults: any = {};
     PRIVILEGE_ROWS.forEach((row) => { defaults[row.id] = { admin: true, supervisor: true, staff: true }; });
@@ -1007,7 +941,6 @@ export default function ReportsPage() {
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
-  // ============ ✅ PRIVILEGE HELPER ============
   const can = useCallback((key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
@@ -1050,29 +983,25 @@ export default function ReportsPage() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (Array.isArray(data)) {
-        setReports(
-          data.map((r: any) => ({
-            id: r.id,
-            name: r.name || '',
-            type: r.type || 'metrics',
-            category: r.data?.reportType || r.category || '—',
-            description: r.description || '',
-            creator: creatorName(r),
-            creatorId: r.creatorId,
-            createdAt: r.createdAt,
-            updatedAt: r.updatedAt,
-            data: r.data || {},
-            periodStart: r.periodStart || null,
-            periodEnd: r.periodEnd || null,
-            raw: r,
-          })),
-        );
+        setReports(data.map((r: any) => ({
+          id: r.id,
+          name: r.name || '',
+          type: r.type || 'metrics',
+          category: r.data?.reportType || r.category || '—',
+          description: r.description || '',
+          creator: creatorName(r),
+          creatorId: r.creatorId,
+          createdAt: r.createdAt,
+          updatedAt: r.updatedAt,
+          data: r.data || {},
+          periodStart: r.periodStart || null,
+          periodEnd: r.periodEnd || null,
+          raw: r,
+        })));
       }
     } catch (err: any) {
       setToast({ message: err.message || 'Failed to load reports', type: 'error' });
-    } finally {
-      setDataLoading(false);
-    }
+    } finally { setDataLoading(false); }
   }, []);
 
   const fetchPrivileges = useCallback(async () => {
@@ -1080,9 +1009,7 @@ export default function ReportsPage() {
       const res = await fetch(`${API_URL}/privileges`, { headers: authHeaders() });
       if (!res.ok) return;
       const data = await res.json();
-      if (data && typeof data === 'object') {
-        setPrivileges((prev) => ({ ...prev, ...data }));
-      }
+      if (data && typeof data === 'object') setPrivileges((prev) => ({ ...prev, ...data }));
     } catch { /* non-fatal */ }
   }, []);
 
@@ -1094,15 +1021,9 @@ export default function ReportsPage() {
       if (!res.ok) return;
       const data = await res.json();
       if (Array.isArray(data)) {
-        setUnreadConversations(
-          data.filter(
-            (c: any) => c.unread === true || (typeof c.unreadCount === 'number' && c.unreadCount > 0),
-          ),
-        );
+        setUnreadConversations(data.filter((c: any) => c.unread === true || (typeof c.unreadCount === 'number' && c.unreadCount > 0)));
       }
-    } catch (err) {
-      console.error('[fetchUnreadMessages]', err);
-    }
+    } catch (err) { console.error('[fetchUnreadMessages]', err); }
   }, []);
 
   useEffect(() => {
@@ -1110,7 +1031,6 @@ export default function ReportsPage() {
     const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
 
     if (!tk || !storedUser) { router.push('/'); return; }
-
     setToken(tk);
 
     let parsed: any = {};
@@ -1146,13 +1066,7 @@ export default function ReportsPage() {
         const s = JSON.parse(storedSettings);
         setPrimaryColor(s.primaryColor || '#F59E0B');
         setAccountLogo(s.accountLogo || null);
-        if (s.integrations) {
-          setIntegrations((prev) => ({
-            ...prev,
-            ...s.integrations,
-            styku: { ...prev.styku, ...(s.integrations.styku || {}) },
-          }));
-        }
+        if (s.integrations) setIntegrations((prev) => ({ ...prev, ...s.integrations, styku: { ...prev.styku, ...(s.integrations.styku || {}) } }));
         if (s.privileges) setPrivileges((prev) => ({ ...prev, ...s.privileges }));
         if (s.measurementSystem) setMeasurementSystem(s.measurementSystem);
         if (s.metricsData) setMetricsData((prev) => ({ ...prev, ...s.metricsData }));
@@ -1166,9 +1080,7 @@ export default function ReportsPage() {
     fetchPrivileges();
     fetchUnreadMessages(tk);
 
-    const interval = setInterval(() => {
-      if (tk) fetchUnreadMessages(tk);
-    }, 30000);
+    const interval = setInterval(() => { if (tk) fetchUnreadMessages(tk); }, 30000);
     return () => clearInterval(interval);
   }, [router, fetchReports, fetchPrivileges, fetchUnreadMessages]);
 
@@ -1183,10 +1095,10 @@ export default function ReportsPage() {
   }, []);
 
   useEffect(() => {
-    if (deleteReport || actionsReport || chooseTypeOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+    const anyOverlay = deleteReport || actionsReport || chooseTypeOpen || isSidebarOpen;
+    document.body.style.overflow = anyOverlay ? 'hidden' : 'auto';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [deleteReport, actionsReport, chooseTypeOpen]);
+  }, [deleteReport, actionsReport, chooseTypeOpen, isSidebarOpen]);
 
   useEffect(() => {
     if (toast) { const t = setTimeout(() => setToast(null), 3000); return () => clearTimeout(t); }
@@ -1200,10 +1112,8 @@ export default function ReportsPage() {
 
   const formatDate = (iso?: string) => {
     if (!iso) return '—';
-    try {
-      const d = new Date(iso);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    } catch { return '—'; }
+    try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    catch { return '—'; }
   };
 
   const handleLogout = () => {
@@ -1216,12 +1126,17 @@ export default function ReportsPage() {
 
   const toggleSection = (key: keyof typeof openSections) => setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  // ============ ✅ PRIVILEGE-CHECKED ACTIONS ============
+  // ✅ NEW: goToReports — sidebar "Reports" resets to main list
+  const goToReports = () => {
+    setAccountMenuOpen(false);
+    setIsSidebarOpen(false);
+    setView('list');
+    setEditingReport(null);
+    setSelectedType('');
+  };
+
   const openNewReportFlow = () => {
-    if (!canCreateReport) {
-      setToast({ message: 'You do not have permission to create reports.', type: 'error' });
-      return;
-    }
+    if (!canCreateReport) { setToast({ message: 'You do not have permission to create reports.', type: 'error' }); return; }
     setEditingReport(null);
     setChooseTypeOpen(true);
   };
@@ -1234,11 +1149,7 @@ export default function ReportsPage() {
 
   const handleDuplicateReport = async () => {
     if (!actionsReport || !token) return;
-    if (!canCreateReport) {
-      setToast({ message: 'You do not have permission to duplicate reports.', type: 'error' });
-      setActionsReport(null);
-      return;
-    }
+    if (!canCreateReport) { setToast({ message: 'You do not have permission to duplicate reports.', type: 'error' }); setActionsReport(null); return; }
     try {
       const src = actionsReport.raw || {};
       const body = {
@@ -1248,11 +1159,7 @@ export default function ReportsPage() {
         periodStart: src.periodStart || null,
         periodEnd: src.periodEnd || null,
       };
-      const res = await fetch(`${API_URL}/reports`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify(body),
-      });
+      const res = await fetch(`${API_URL}/reports`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setToast({ message: `"${actionsReport.name}" duplicated`, type: 'success' });
       setActionsReport(null);
@@ -1263,20 +1170,13 @@ export default function ReportsPage() {
   };
 
   const handleOpenDelete = () => {
-    if (!canDeleteReport) {
-      setToast({ message: 'You do not have permission to delete reports.', type: 'error' });
-      return;
-    }
+    if (!canDeleteReport) { setToast({ message: 'You do not have permission to delete reports.', type: 'error' }); return; }
     if (actionsReport) { setDeleteReport(actionsReport); setActionsReport(null); }
   };
 
   const confirmDeleteReport = async () => {
     if (!deleteReport) return;
-    if (!canDeleteReport) {
-      setToast({ message: 'You do not have permission to delete reports.', type: 'error' });
-      setDeleteReport(null);
-      return;
-    }
+    if (!canDeleteReport) { setToast({ message: 'You do not have permission to delete reports.', type: 'error' }); setDeleteReport(null); return; }
     try {
       const res = await fetch(`${API_URL}/reports/${deleteReport.id}`, { method: 'DELETE', headers: authHeaders() });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1369,16 +1269,12 @@ export default function ReportsPage() {
     reader.readAsDataURL(file);
   };
 
-  // ============ ✅ SAVE SETTINGS — persist privileges to backend for ADMIN ============
   const handleSaveSettings = async () => {
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor, accountLogo, integrations, privileges, measurementSystem, metricsData, testingData, resultsData,
     }));
 
-    if (!isAdmin) {
-      setToast({ message: 'Account settings saved', type: 'success' });
-      return;
-    }
+    if (!isAdmin) { setToast({ message: 'Account settings saved', type: 'success' }); return; }
 
     try {
       const res = await fetch(`${API_URL}/privileges`, {
@@ -1396,10 +1292,53 @@ export default function ReportsPage() {
     }
   };
 
-  // ============ ✅ ONLY ADMIN CAN TOGGLE PRIVILEGES ============
+  // ✅ PRIVILEGES TOGGLE — identical to Tasks/Calendar/Messages (cascade + admin guard)
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    if (!isAdmin) return;
-    setPrivileges((prev) => ({ ...prev, [rowId]: { ...prev[rowId], [role]: !prev[rowId][role] } }));
+    if (user?.role !== 'ADMIN') {
+      setToast({ message: 'Only Admins can change privileges', type: 'error' });
+      return;
+    }
+
+    setPrivileges((prev) => {
+      const currentRow = prev[rowId] || { admin: true, supervisor: true, staff: true };
+      const newRow = { ...currentRow };
+
+      if (role === 'admin') {
+        newRow.admin = !currentRow.admin;
+        if (!newRow.admin) {
+          newRow.supervisor = false;
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for all roles', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for Admin', type: 'success' });
+        }
+      } else if (role === 'supervisor') {
+        if (!currentRow.admin) {
+          setToast({ message: 'Cannot enable Supervisor — Admin must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.supervisor = !currentRow.supervisor;
+        if (!newRow.supervisor) {
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for supervisor', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for supervisor', type: 'success' });
+        }
+      } else {
+        if (!currentRow.supervisor) {
+          setToast({ message: 'Cannot enable Staff — Supervisor must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.staff = !currentRow.staff;
+        if (newRow.staff) {
+          setToast({ message: 'Privilege added for staff', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege removed for staff', type: 'success' });
+        }
+      }
+
+      return { ...prev, [rowId]: newRow };
+    });
   };
 
   const filteredReports = useMemo(() => {
@@ -1423,23 +1362,17 @@ export default function ReportsPage() {
   const paginatedReports = filteredReports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const unreadCount = unreadConversations.length;
 
-  useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [totalPages, currentPage]);
+  useEffect(() => { if (currentPage > totalPages) setCurrentPage(totalPages); }, [totalPages, currentPage]);
 
   if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-[#f5f6f8] flex items-center justify-center">
-        <p className="text-gray-400 text-sm">Loading...</p>
-      </div>
-    );
+    return <div className="min-h-screen bg-[#f5f6f8] flex items-center justify-center"><p className="text-gray-400 text-sm">Loading...</p></div>;
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] flex">
+    <div className="min-h-screen bg-[#f5f6f8]">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] px-3">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-4 sm:px-5 flex items-center gap-3 min-w-[280px] sm:min-w-[320px] max-w-[92vw]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
               {toast.type === 'error' ? (
                 <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1452,7 +1385,17 @@ export default function ReportsPage() {
         </div>
       )}
 
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen">
+      {/* Mobile overlay */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      {/* SIDEBAR — responsive drawer */}
+      <aside className={`
+        fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300
+        lg:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
           <div className="w-11 h-11 rounded-full flex items-center justify-center overflow-hidden bg-white">
             {!logoError ? (
@@ -1461,9 +1404,14 @@ export default function ReportsPage() {
               <span className="text-white text-sm font-bold bg-amber-600 w-full h-full flex items-center justify-center">{getInitials(user.name)}</span>
             )}
           </div>
-          <button className="text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100" aria-label="Close menu">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <button className="hidden lg:block text-gray-400 hover:text-gray-600">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3">
@@ -1515,7 +1463,14 @@ export default function ReportsPage() {
             </button>
             {openSections.analytics && (
               <nav className="px-3 pt-1 space-y-0.5">
-                <NavLink href="/reports" label="Reports" active icon={<IconChart />} />
+                {/* ✅ Reports link resets to main list */}
+                <NavLink
+                  href="/reports"
+                  label="Reports"
+                  active={view === 'list'}
+                  icon={<IconChart />}
+                  onClick={(e: any) => { e.preventDefault(); goToReports(); }}
+                />
               </nav>
             )}
           </div>
@@ -1533,30 +1488,34 @@ export default function ReportsPage() {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col overflow-hidden h-screen">
-        <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-end gap-4 flex-shrink-0">
-          <div className="relative" ref={notificationsRef}>
-            <button onClick={() => setNotificationsOpen((v) => !v)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition" aria-label="Notifications">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
-            </button>
+      <div className="lg:ml-64 flex flex-col h-screen">
+        <header className="bg-white border-b border-gray-100 px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between gap-3 flex-shrink-0">
+          <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100" aria-label="Open menu">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
 
-            {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <p className="text-[14px] font-semibold text-gray-900">
-                    Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}
-                  </p>
-                </div>
-                <div className="max-h-[360px] overflow-y-auto">
-                  {unreadConversations.length === 0 ? (
-                    <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div>
-                  ) : (
-                    unreadConversations.map((c) => (
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+            <div className="relative" ref={notificationsRef}>
+              <button onClick={() => setNotificationsOpen((v) => !v)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition" aria-label="Notifications">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {notificationsOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[290px] sm:w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <p className="text-[14px] font-semibold text-gray-900">
+                      Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}
+                    </p>
+                  </div>
+                  <div className="max-h-[360px] overflow-y-auto">
+                    {unreadConversations.length === 0 ? (
+                      <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div>
+                    ) : unreadConversations.map((c) => (
                       <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
                         <div className="flex items-start gap-2">
                           <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
@@ -1564,83 +1523,76 @@ export default function ReportsPage() {
                             <p className="text-[13px] font-semibold text-gray-900 truncate">
                               {c.profile?.firstName || c.firstName || ''} {c.profile?.lastName || c.lastName || ''}
                             </p>
-                            <p className="text-[12px] text-gray-500 truncate">
-                              {c.lastMessage || c.message || 'New message'}
-                            </p>
+                            <p className="text-[12px] text-gray-500 truncate">{c.lastMessage || c.message || 'New message'}</p>
                           </div>
                         </div>
                       </Link>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="relative" ref={accountMenuRef}>
-            <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-3 pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-2 py-1 transition">
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
-                {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
-                <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
-              </div>
-            </button>
-
-            {accountMenuOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-semibold overflow-hidden flex-shrink-0">
-                    {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
-                    <p className="text-[12.5px] text-gray-500 mt-0.5 truncate">{user.role}</p>
+                    ))}
                   </div>
                 </div>
-                <div className="py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); setView('list'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
-                    <span>Switch to Classic</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    <span>Account Info</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    <span>Account Settings</span>
-                  </button>
-                  <button onClick={() => setAccountMenuOpen(false)} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                    <span>Billing</span>
-                  </button>
+              )}
+            </div>
+
+            <div className="relative" ref={accountMenuRef}>
+              <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-1.5 sm:px-2 py-1 transition">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
+                  {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
                 </div>
-                <div className="border-t border-gray-100 py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                    <span className="font-medium">Logout</span>
-                  </button>
+                <div className="text-left hidden sm:block">
+                  <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
+                  <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
                 </div>
-              </div>
-            )}
+              </button>
+
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[280px] sm:w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-semibold overflow-hidden flex-shrink-0">
+                      {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
+                      <p className="text-[12.5px] text-gray-500 mt-0.5 truncate">{user.role}</p>
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); goToReports(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
+                      <span>Switch to Classic</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      <span>Account Info</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      <span>Account Settings</span>
+                    </button>
+                  </div>
+                  <div className="border-t border-gray-100 py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                      <span className="font-medium">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
         {view === 'list' && (
-          <div className="flex-1 p-8 overflow-y-auto bg-white">
-            <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+          <div className="flex-1 p-3 sm:p-4 lg:p-8 overflow-y-auto bg-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Reports</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Reports</h1>
                 <p className="text-sm text-gray-500">Build and run analytics reports across profiles, users, groups, and more.</p>
               </div>
-              {/* ✅ New Report — gated by create_forms (privilege proxy for reports) */}
               <button
                 onClick={openNewReportFlow}
                 disabled={!canCreateReport}
                 title={!canCreateReport ? 'You do not have permission to create reports' : undefined}
-                className={`text-sm font-medium px-5 py-2.5 rounded-lg flex items-center gap-1.5 transition shadow-sm ${
+                className={`text-sm font-medium px-4 sm:px-5 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm w-full sm:w-auto ${
                   canCreateReport
                     ? 'bg-[#1a73e8] hover:bg-[#1557b0] text-white'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
@@ -1652,14 +1604,14 @@ export default function ReportsPage() {
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 flex items-center gap-3 flex-wrap border-b border-gray-100">
-                <div className="relative flex-1 min-w-[240px] max-w-md">
+              <div className="px-3 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap border-b border-gray-100">
+                <div className="relative flex-1 min-w-[200px] sm:max-w-md w-full">
                   <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                   <input type="text" placeholder="Search reports..." value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                     className="pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-lg w-full outline-none focus:border-[#1a73e8]" />
                 </div>
-                <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto sm:ml-auto">
                   <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
                     <button type="button" onClick={() => setViewMode('list')} title="List view" className={`w-8 h-8 flex items-center justify-center rounded-full transition ${viewMode === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
@@ -1689,28 +1641,28 @@ export default function ReportsPage() {
                 </div>
               ) : viewMode === 'list' ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm min-w-[720px]">
                     <thead>
                       <tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50/40">
-                        <th className="px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
-                        <th className="px-4 py-3 font-medium text-xs">Report Name</th>
-                        <th className="px-4 py-3 font-medium text-xs">Report Type</th>
-                        <th className="px-4 py-3 font-medium text-xs">Category</th>
-                        <th className="px-4 py-3 font-medium text-xs">Created By</th>
-                        <th className="px-4 py-3 font-medium text-xs">Updated</th>
-                        <th className="px-6 py-3 font-medium text-xs text-right">Actions</th>
+                        <th className="px-3 sm:px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
+                        <th className="px-3 sm:px-4 py-3 font-medium text-xs">Report Name</th>
+                        <th className="px-3 sm:px-4 py-3 font-medium text-xs">Report Type</th>
+                        <th className="px-3 sm:px-4 py-3 font-medium text-xs">Category</th>
+                        <th className="px-3 sm:px-4 py-3 font-medium text-xs">Created By</th>
+                        <th className="px-3 sm:px-4 py-3 font-medium text-xs">Updated</th>
+                        <th className="px-3 sm:px-6 py-3 font-medium text-xs text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {paginatedReports.map((r) => (
                         <tr key={r.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="px-6 py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
-                          <td className="px-4 py-4 font-medium text-gray-800">{r.name}</td>
-                          <td className="px-4 py-4 text-gray-600">{r.type || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{r.category || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{r.creator || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{formatDate(r.updatedAt || r.createdAt)}</td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 font-medium text-gray-800">{r.name}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{r.type || '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{r.category || '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{r.creator || '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600 whitespace-nowrap">{formatDate(r.updatedAt || r.createdAt)}</td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                             <button onClick={() => setActionsReport(r)} className="p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 inline-flex">
                               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
@@ -1723,11 +1675,11 @@ export default function ReportsPage() {
                   </table>
                 </div>
               ) : (
-                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="p-3 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                   {paginatedReports.map((r) => (
                     <div key={r.id} className="group relative border border-gray-200 rounded-2xl bg-white hover:shadow-md hover:border-gray-300 transition flex flex-col">
-                      <div className="p-5 flex items-start gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-700 flex-shrink-0">
+                      <div className="p-4 sm:p-5 flex items-start gap-3">
+                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-indigo-100 to-blue-100 flex items-center justify-center text-indigo-700 flex-shrink-0">
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
                         </div>
                         <div className="min-w-0 flex-1">
@@ -1739,7 +1691,7 @@ export default function ReportsPage() {
                         </button>
                       </div>
 
-                      <div className="px-5 pb-4 flex-1">
+                      <div className="px-4 sm:px-5 pb-4 flex-1">
                         <div className="flex flex-wrap gap-1.5 mb-3">
                           <span className="inline-flex items-center px-2 py-1 rounded-md bg-indigo-50 text-indigo-700 text-[11px] font-medium border border-indigo-200">
                             {r.type || 'report'}
@@ -1756,8 +1708,7 @@ export default function ReportsPage() {
                         </div>
                       </div>
 
-                      <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        {/* ✅ Open (edit) — gated by create_forms */}
+                      <div className="px-4 sm:px-5 py-3 border-t border-gray-100 flex items-center justify-between">
                         <button
                           onClick={() => { setEditingReport(r); setSelectedType(r.category || r.type || 'Profiles and Metric'); setView('builder'); }}
                           disabled={!canCreateReport}
@@ -1773,18 +1724,18 @@ export default function ReportsPage() {
                 </div>
               )}
 
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row items-center justify-between px-3 sm:px-6 py-4 border-t border-gray-100 gap-3">
                 <p className="text-sm text-gray-500">
                   Showing <span className="font-semibold text-gray-700">{startItem}–{endItem}</span> of <span className="font-semibold text-gray-700">{totalItems}</span>
                 </p>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
                   <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1}
-                    className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                    className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                     Previous
                   </button>
                   <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages}
-                    className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                    className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
                     Next
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                   </button>
@@ -1808,22 +1759,22 @@ export default function ReportsPage() {
         {/* ACCOUNT INFO */}
         {view === 'account-info' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
               <p className="text-[13.5px] text-gray-500">Manage your personal profile and business details.</p>
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-8 pt-6 pb-5 border-b border-gray-100">
-                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1">
-                    <button onClick={() => { setActiveInfoTab('user'); setInfoErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
-                    <button onClick={() => { setActiveInfoTab('business'); setInfoErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
+                <div className="px-4 sm:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
+                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1 min-w-max">
+                    <button onClick={() => { setActiveInfoTab('user'); setInfoErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
+                    <button onClick={() => { setActiveInfoTab('business'); setInfoErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
                   </div>
                 </div>
 
                 {activeInfoTab === 'user' && (
-                  <div className="p-8 lg:p-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-8 lg:gap-10">
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div>
@@ -1842,7 +1793,7 @@ export default function ReportsPage() {
                           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (infoErrors.email) setInfoErrors({ ...infoErrors, email: '' }); }} className={`w-full h-[48px] px-4 border rounded-lg text-[14px] outline-none transition ${infoErrors.email ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                           {infoErrors.email && <p className="text-xs text-red-500 mt-1.5">{infoErrors.email}</p>}
                         </div>
-                        <div className="border border-gray-200 rounded-2xl p-6">
+                        <div className="border border-gray-200 rounded-2xl p-4 sm:p-6">
                           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-5">Change password — leave blank to keep current</p>
                           <div className="space-y-5">
                             <div>
@@ -1871,7 +1822,7 @@ export default function ReportsPage() {
                       <div className="flex flex-col items-center justify-start pt-2">
                         <p className="text-[14px] font-semibold text-gray-800 mb-5">Profile Photo</p>
                         <input ref={accountPhotoInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" className="hidden" onChange={handleAccountPhotoChange} />
-                        <div className="relative w-[220px] h-[220px] mb-6">
+                        <div className="relative w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] mb-6">
                           <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                             {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : <span className="text-[42px] font-semibold text-gray-600">{getInitials(user.name)}</span>}
                           </div>
@@ -1885,34 +1836,17 @@ export default function ReportsPage() {
                           {accountPhoto ? 'Change photo' : 'Upload photo'}
                         </button>
                         <p className="text-xs text-gray-500 mt-3">JPG, PNG, GIF or WebP. Max 6MB.</p>
-
-                        <div className="w-full border-t border-gray-100 my-8"></div>
-
-                        <button
-                          type="button"
-                          onClick={() => setToast({ message: 'Google account connection coming soon', type: 'success' })}
-                          className="w-full flex items-center justify-center gap-3 h-[52px] border border-gray-200 rounded-full bg-white hover:bg-gray-50 text-[14.5px] font-medium text-gray-800 transition"
-                        >
-                          <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 48 48">
-                            <path fill="#FFC107" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-1.657,2.372-4.354,4-7.5,4c-4.971,0-9-4.029-9-9s4.029-9,9-9 c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658C35.68,3.5,30.151,2,24,2C11.85,2,2,11.85,2,24s9.85,22,22,22c11.046,0,20.62-8.134,21.773-18.916 C45.937,25.023,45.5,22.5,45.5,20C45.5,19.566,45.451,19.145,45.354,18.738L43.611,20.083z" />
-                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658 C35.68,3.5,30.151,2,24,2C16.318,2,9.656,6.337,6.306,14.691z" />
-                            <path fill="#4CAF50" d="M24,46c5.152,0,9.861-1.971,13.409-5.192l-6.19-5.238C29.145,36.091,26.705,37,24,37 c-3.184,0-5.905-1.616-7.5-4.145l-6.531,5.027C13.18,42.317,18.223,46,24,46z" />
-                            <path fill="#1976D2" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-0.796,1.14-1.848,2.084-3.076,2.774 c0.001-0.001,6.192,5.238,6.192,5.238C36.971,34.174,46,28,46,20C46,19.653,45.973,19.312,45.921,18.983L43.611,20.083z" />
-                          </svg>
-                          Continue with Google
-                        </button>
-                        <p className="text-xs text-gray-500 mt-3 text-center">Link a Google account to sign in faster.</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('list')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToReports} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
 
                 {activeInfoTab === 'business' && (
-                  <div className="p-8 lg:p-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -1947,9 +1881,9 @@ export default function ReportsPage() {
                         <input type="url" placeholder="https://yoursite.com" value={website} onChange={(e) => setWebsite(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('list')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToReports} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
@@ -1961,49 +1895,67 @@ export default function ReportsPage() {
         {/* ACCOUNT SETTINGS */}
         {view === 'account-settings' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
               <p className="text-[13.5px] text-gray-500">Manage branding, metrics, testing, integrations, and system configuration.</p>
             </div>
 
-            <div className="px-10 pb-6">
-              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 flex-wrap">
+            <div className="px-4 sm:px-6 lg:px-10 pb-6 overflow-x-auto">
+              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 min-w-max">
                 {(['privileges', 'metrics', 'testing', 'results', 'branding', 'integrations'] as const).map((tab) => (
                   <button key={tab} onClick={() => setSettingsTab(tab)}
-                    className={`px-5 py-2 text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-3 sm:px-5 py-1.5 sm:py-2 text-[12px] sm:text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {tab}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="px-10 pb-10 max-w-[1400px]">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-[1400px]">
               {settingsTab === 'privileges' && (
-                <div className="bg-white border border-gray-200 rounded-2xl p-8">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
                   <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
                   <p className="text-[13px] text-gray-500 mb-6">
                     Manage role-based permissions for account members.
                     {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
                   </p>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[600px]">
+                    <table className="w-full text-left border-collapse min-w-[560px]">
                       <thead>
                         <tr className="border-b border-gray-200">
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Admin</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {PRIVILEGE_ROWS.map((row) => (
-                          <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                            <td className="py-4 px-4 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.admin ?? true} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.supervisor ?? true} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.staff ?? true} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                          </tr>
-                        ))}
+                        {PRIVILEGE_ROWS.map((row) => {
+                          const rowPriv = privileges[row.id] || { admin: true, supervisor: true, staff: true };
+                          const adminOn = rowPriv.admin;
+                          const supervisorOn = rowPriv.supervisor;
+
+                          return (
+                            <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <input type="checkbox" checked={adminOn} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+                              </td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <input type="checkbox" checked={supervisorOn} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin || !adminOn} title={!adminOn ? 'Enable Admin first' : undefined} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" />
+                                  {!adminOn && isAdmin && (<span className="text-[9px] text-amber-600 leading-tight md:hidden">Admin first</span>)}
+                                </div>
+                              </td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <input type="checkbox" checked={rowPriv.staff} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin || !supervisorOn} title={!supervisorOn ? 'Enable Supervisor first' : undefined} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" />
+                                  {!supervisorOn && isAdmin && (<span className="text-[9px] text-amber-600 leading-tight md:hidden">Supervisor first</span>)}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -2012,11 +1964,11 @@ export default function ReportsPage() {
 
               {settingsTab === 'metrics' && (
                 <div className="space-y-8">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <div className="flex items-center gap-4 mb-2">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
                       <label className="text-[14px] font-semibold text-gray-900">Measurement System</label>
-                      <div className="relative inline-block">
-                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer">
+                      <div className="relative inline-block w-full sm:w-auto">
+                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer w-full sm:w-auto">
                           <option value="Imperial">Imperial</option><option value="Metric">Metric</option>
                         </select>
                         <svg className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -2068,13 +2020,13 @@ export default function ReportsPage() {
                   <div>
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Primary Color</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Sets the main accent color for the account.</p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                       <div className="w-[100px] h-[52px] rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
                         <div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} />
                       </div>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
-                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
+                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-full sm:w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
                       </div>
                     </div>
                   </div>
@@ -2082,8 +2034,8 @@ export default function ReportsPage() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Account Logo</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Upload your account logo. Max 5MB (PNG, JPG, GIF recommended).</p>
                     <input ref={accountLogoInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml" onChange={handleAccountLogoUpload} className="hidden" />
-                    <div className="relative inline-block">
-                      <button type="button" onClick={() => accountLogoInputRef.current?.click()} className="w-[400px] h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
+                    <div className="relative inline-block w-full sm:w-auto">
+                      <button type="button" onClick={() => accountLogoInputRef.current?.click()} className="w-full sm:w-[400px] h-[160px] sm:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
                         {accountLogo ? <img src={accountLogo} alt="Account logo" className="w-full h-full object-contain p-4" /> : <p className="text-[14px] font-medium text-gray-500">Logo</p>}
                       </button>
                       {accountLogo && (
@@ -2098,7 +2050,7 @@ export default function ReportsPage() {
 
               {settingsTab === 'integrations' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">InBody</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.inbody.enabled} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2116,7 +2068,7 @@ export default function ReportsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Evolt</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.evolt.enabled} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2134,7 +2086,7 @@ export default function ReportsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Styku</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.styku.enabled} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2177,7 +2129,7 @@ export default function ReportsPage() {
                   type="button"
                   onClick={handleSaveSettings}
                   disabled={settingsTab === 'privileges' && !isAdmin}
-                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   Save settings
                 </button>
@@ -2185,58 +2137,49 @@ export default function ReportsPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       <ChooseReportTypeModal open={chooseTypeOpen} onClose={() => setChooseTypeOpen(false)} onChoose={handleChooseType} />
 
       {actionsReport && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setActionsReport(null)}>
-          <div className="bg-white w-full max-w-[480px] rounded-2xl shadow-2xl p-7" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between mb-6">
-              <h3 className="text-[22px] font-bold text-gray-900 leading-tight">Report actions</h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4" onClick={() => setActionsReport(null)}>
+          <div className="bg-white w-full max-w-[480px] rounded-2xl shadow-2xl p-5 sm:p-7" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4 sm:mb-6">
+              <h3 className="text-xl sm:text-[22px] font-bold text-gray-900 leading-tight">Report actions</h3>
               <button onClick={() => setActionsReport(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 -mt-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="space-y-3">
-              {/* ✅ Edit — gated by create_forms */}
               <button
                 onClick={() => { setEditingReport(actionsReport); setSelectedType(actionsReport.category || actionsReport.type || 'Profiles and Metric'); setView('builder'); setActionsReport(null); }}
                 disabled={!canCreateReport}
                 title={!canCreateReport ? 'You do not have permission to edit reports' : undefined}
-                className={`w-full flex items-center gap-3.5 px-5 py-[16px] rounded-xl border text-left transition ${
-                  canCreateReport
-                    ? 'border-gray-200 hover:bg-gray-50'
-                    : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
+                className={`w-full flex items-center gap-3.5 px-4 sm:px-5 py-4 rounded-xl border text-left transition ${
+                  canCreateReport ? 'border-gray-200 hover:bg-gray-50' : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
                 }`}>
-                <svg className={`w-[20px] h-[20px] flex-shrink-0 ${canCreateReport ? 'text-[#1a73e8]' : 'text-gray-300'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                <span className="text-[15px] font-semibold">Edit report</span>
+                <svg className={`w-5 h-5 flex-shrink-0 ${canCreateReport ? 'text-[#1a73e8]' : 'text-gray-300'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                <span className="text-[14px] sm:text-[15px] font-semibold">Edit report</span>
               </button>
-              {/* ✅ Duplicate — gated by create_forms */}
               <button
                 onClick={handleDuplicateReport}
                 disabled={!canCreateReport}
                 title={!canCreateReport ? 'You do not have permission to duplicate reports' : undefined}
-                className={`w-full flex items-center gap-3.5 px-5 py-[16px] rounded-xl border text-left transition ${
-                  canCreateReport
-                    ? 'border-gray-200 hover:bg-gray-50'
-                    : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
+                className={`w-full flex items-center gap-3.5 px-4 sm:px-5 py-4 rounded-xl border text-left transition ${
+                  canCreateReport ? 'border-gray-200 hover:bg-gray-50' : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
                 }`}>
-                <svg className={`w-[20px] h-[20px] flex-shrink-0 ${canCreateReport ? 'text-gray-700' : 'text-gray-300'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
-                <span className="text-[15px] font-semibold">Duplicate report</span>
+                <svg className={`w-5 h-5 flex-shrink-0 ${canCreateReport ? 'text-gray-700' : 'text-gray-300'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
+                <span className="text-[14px] sm:text-[15px] font-semibold">Duplicate report</span>
               </button>
-              {/* ✅ Delete — gated by delete_forms */}
               <button
                 onClick={handleOpenDelete}
                 disabled={!canDeleteReport}
                 title={!canDeleteReport ? 'You do not have permission to delete reports' : undefined}
-                className={`w-full flex items-center gap-3.5 px-5 py-[16px] rounded-xl border text-left transition ${
-                  canDeleteReport
-                    ? 'border-red-200 bg-red-50/50 text-[#b83232] hover:bg-red-50'
-                    : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
+                className={`w-full flex items-center gap-3.5 px-4 sm:px-5 py-4 rounded-xl border text-left transition ${
+                  canDeleteReport ? 'border-red-200 bg-red-50/50 text-[#b83232] hover:bg-red-50' : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
                 }`}>
-                <svg className="w-[20px] h-[20px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
-                <span className="text-[15px] font-semibold">Delete report</span>
+                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
+                <span className="text-[14px] sm:text-[15px] font-semibold">Delete report</span>
               </button>
             </div>
           </div>
@@ -2244,19 +2187,19 @@ export default function ReportsPage() {
       )}
 
       {deleteReport && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-7">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-5 sm:p-7">
             <button onClick={() => setDeleteReport(null)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-5">
               <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteReport.name}&quot;?</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteReport.name}&quot;?</h2>
             <p className="text-[15px] text-gray-500 mb-7">Are you sure you want to delete this report? This action cannot be undone.</p>
-            <div className="flex items-center justify-end gap-3">
-              <button onClick={() => setDeleteReport(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition">Cancel</button>
-              <button onClick={confirmDeleteReport} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition">Delete</button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+              <button onClick={() => setDeleteReport(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition w-full sm:w-auto">Cancel</button>
+              <button onClick={confirmDeleteReport} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition w-full sm:w-auto">Delete</button>
             </div>
           </div>
         </div>
@@ -2265,9 +2208,10 @@ export default function ReportsPage() {
   );
 }
 
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number }) {
+// ============== REUSABLE ==============
+function NavLink({ href, label, icon, active = false, badge = 0, onClick }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; onClick?: (e: any) => void; }) {
   return (
-    <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md transition ${active ? 'bg-[#eef2fb] text-[#1a73e8] font-medium' : 'text-gray-600 hover:bg-[#f4f6fb] font-medium'}`}>
+    <Link href={href} onClick={onClick} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md transition ${active ? 'bg-[#eef2fb] text-[#1a73e8] font-medium' : 'text-gray-600 hover:bg-[#f4f6fb] font-medium'}`}>
       {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>}
       <span className={active ? 'text-[#1a73e8]' : 'text-gray-500'}>{icon}</span>
       <span className="flex-1">{label}</span>

@@ -298,7 +298,7 @@ type ExerciseItem = { id: number; name: string; section?: string; sets?: number;
 type SectionItem = { id: number; name: string };
 type CanvasItem = { kind: 'section'; data: SectionItem } | { kind: 'exercise'; data: ExerciseItem };
 
-// ====== CreateExerciseModal ======
+// ====== CreateExerciseModal — responsive ======
 function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose: () => void; onSave: (exercise: any) => void; }) {
   const [name, setName] = useState('');
   const [access, setAccess] = useState('Myself');
@@ -336,48 +336,48 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
   const videoThumbnail = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : vimeoId ? `https://vumbnail.com/${vimeoId}.jpg` : '';
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] flex items-center justify-center p-3 sm:p-4">
       <div className="bg-white w-full max-w-[1060px] max-h-[92vh] rounded-2xl shadow-2xl relative overflow-hidden flex flex-col">
-        <button onClick={onClose} className="absolute top-5 right-5 z-10 text-gray-400 hover:text-gray-700 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
+        <button onClick={onClose} className="absolute top-4 right-4 sm:top-5 sm:right-5 z-10 text-gray-400 hover:text-gray-700 w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
         <div className="overflow-y-auto flex-1">
-          <div className="px-10 pt-9 pb-6">
-            <h2 className="text-[26px] font-bold text-gray-900 leading-tight">Create Exercise</h2>
-            <p className="text-[14px] text-gray-500 mt-1">Fill in the details to add a new exercise.</p>
+          <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-9 pb-4 sm:pb-6">
+            <h2 className="text-xl sm:text-[26px] font-bold text-gray-900 leading-tight">Create Exercise</h2>
+            <p className="text-[13px] sm:text-[14px] text-gray-500 mt-1">Fill in the details to add a new exercise.</p>
           </div>
-          <div className="px-10 pb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-6">
-                <div className="border border-gray-200 rounded-2xl p-7">
-                  <h3 className="text-[16px] font-bold text-gray-900 mb-5">Basic Info</h3>
-                  <div className="mb-5">
+          <div className="px-4 sm:px-6 lg:px-10 pb-6 sm:pb-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
+                  <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-5">Basic Info</h3>
+                  <div className="mb-4 sm:mb-5">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-[13.5px] font-semibold text-gray-800">Exercise Name <span className="text-red-500">*</span></label>
-                      <span className="text-[12px] text-gray-400">{name.length}/100</span>
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800">Exercise Name <span className="text-red-500">*</span></label>
+                      <span className="text-[11.5px] sm:text-[12px] text-gray-400">{name.length}/100</span>
                     </div>
                     <input type="text" maxLength={100} autoFocus placeholder="e.g. Barbell Back Squat" value={name}
                       onChange={(e) => { setName(e.target.value); if (errors.name) setErrors({ ...errors, name: '' }); }}
-                      className={`w-full h-[52px] px-4 border rounded-lg text-[14px] outline-none transition ${errors.name ? 'border-red-400 focus:ring-4 focus:ring-red-500/10' : 'border-[#1a73e8] ring-4 ring-[#1a73e8]/10'}`} />
+                      className={`w-full h-[48px] sm:h-[52px] px-4 border rounded-lg text-[14px] outline-none transition ${errors.name ? 'border-red-400 focus:ring-4 focus:ring-red-500/10' : 'border-[#1a73e8] ring-4 ring-[#1a73e8]/10'}`} />
                     {errors.name && <p className="text-xs text-red-500 mt-1.5">{errors.name}</p>}
                   </div>
                   <div>
-                    <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Access</label>
+                    <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Access</label>
                     <div className="relative">
-                      <select value={access} onChange={(e) => setAccess(e.target.value)} className="w-full h-[52px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                      <select value={access} onChange={(e) => setAccess(e.target.value)} className="w-full h-[48px] sm:h-[52px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                         {ACCESS_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
                       </select>
                       <svg className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </div>
                   </div>
                 </div>
-                <div className="border border-gray-200 rounded-2xl p-7">
-                  <h3 className="text-[16px] font-bold text-gray-900 mb-5">Classification</h3>
-                  <div className="space-y-5">
+                <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
+                  <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-5">Classification</h3>
+                  <div className="space-y-4 sm:space-y-5">
                     <div>
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Category</label>
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Category</label>
                       <div className="relative">
-                        <select value={classification.category} onChange={(e) => setClassification({ ...classification, category: e.target.value })} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                        <select value={classification.category} onChange={(e) => setClassification({ ...classification, category: e.target.value })} className="w-full h-[46px] sm:h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           <option value="">Select category...</option>
                           {EXERCISE_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                         </select>
@@ -385,9 +385,9 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Muscle Group</label>
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Muscle Group</label>
                       <div className="relative">
-                        <select value={classification.muscleGroup} onChange={(e) => setClassification({ ...classification, muscleGroup: e.target.value })} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                        <select value={classification.muscleGroup} onChange={(e) => setClassification({ ...classification, muscleGroup: e.target.value })} className="w-full h-[46px] sm:h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           <option value="">Select muscle group...</option>
                           {MUSCLE_GROUPS.map((m) => <option key={m} value={m}>{m}</option>)}
                         </select>
@@ -395,9 +395,9 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Equipment</label>
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Equipment</label>
                       <div className="relative">
-                        <select value={classification.equipment} onChange={(e) => setClassification({ ...classification, equipment: e.target.value })} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                        <select value={classification.equipment} onChange={(e) => setClassification({ ...classification, equipment: e.target.value })} className="w-full h-[46px] sm:h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           <option value="">Select equipment...</option>
                           {EQUIPMENT_OPTIONS.map((eq) => <option key={eq} value={eq}>{eq}</option>)}
                         </select>
@@ -407,31 +407,31 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
                   </div>
                 </div>
               </div>
-              <div className="space-y-6">
-                <div className="border border-gray-200 rounded-2xl p-7">
-                  <h3 className="text-[16px] font-bold text-gray-900 mb-5">Video</h3>
-                  <div className="aspect-video bg-[#0f172a] rounded-xl flex flex-col items-center justify-center mb-6 relative overflow-hidden">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
+                  <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-5">Video</h3>
+                  <div className="aspect-video bg-[#0f172a] rounded-xl flex flex-col items-center justify-center mb-4 sm:mb-6 relative overflow-hidden">
                     {embedUrl ? (
                       <iframe key={embedUrl} src={embedUrl} title="Exercise video" className="w-full h-full" frameBorder={0} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
                     ) : videoThumbnail ? (
                       <img src={videoThumbnail} alt="Video preview" className="w-full h-full object-cover" />
                     ) : (
                       <>
-                        <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
-                          <svg className="w-7 h-7 text-white/80 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/10 flex items-center justify-center mb-3 sm:mb-4">
+                          <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white/80 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                         </div>
-                        <p className="text-[13.5px] text-white/60">Select a platform and enter a URL</p>
+                        <p className="text-[12px] sm:text-[13.5px] text-white/60 px-3 text-center">Select a platform and enter a URL</p>
                       </>
                     )}
                   </div>
-                  <div className="mb-5">
-                    <label className="block text-[14px] font-bold text-gray-900 mb-3">Platform</label>
-                    <div className="flex items-center gap-3 flex-wrap">
+                  <div className="mb-4 sm:mb-5">
+                    <label className="block text-[13px] sm:text-[14px] font-bold text-gray-900 mb-2 sm:mb-3">Platform</label>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                       {(['None', 'YouTube', 'Vimeo'] as const).map((p) => {
                         const isActive = videoPlatform === p;
                         return (
                           <button key={p} type="button" onClick={() => setVideoPlatform(p)}
-                            className={`px-6 h-[46px] rounded-full text-[15px] font-medium transition ${isActive ? 'bg-[#1e293b] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+                            className={`px-4 sm:px-6 h-[42px] sm:h-[46px] rounded-full text-[13px] sm:text-[15px] font-medium transition ${isActive ? 'bg-[#1e293b] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                             {p}
                           </button>
                         );
@@ -440,9 +440,9 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
                   </div>
                   {videoPlatform !== 'None' && (
                     <div>
-                      <label className="block text-[14px] font-bold text-gray-900 mb-3">Video URL</label>
+                      <label className="block text-[13px] sm:text-[14px] font-bold text-gray-900 mb-2 sm:mb-3">Video URL</label>
                       <input type="text" placeholder={`Paste ${videoPlatform} URL...`} value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)}
-                        className="w-full h-[52px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        className="w-full h-[48px] sm:h-[52px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       {videoUrl && !embedUrl && (
                         <p className="text-xs text-red-500 mt-2">
                           {videoPlatform === 'YouTube' ? 'Could not detect a valid YouTube video ID in that URL.' : 'Could not detect a valid Vimeo video ID in that URL.'}
@@ -452,8 +452,8 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
                     </div>
                   )}
                 </div>
-                <div className="border border-gray-200 rounded-2xl p-7">
-                  <h3 className="text-[16px] font-bold text-gray-900 mb-4">Instructions (optional)</h3>
+                <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
+                  <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4">Instructions (optional)</h3>
                   <textarea rows={5} placeholder="Add coaching cues or step-by-step instructions..." value={instructions} onChange={(e) => setInstructions(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg text-[14px] outline-none transition resize-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                 </div>
@@ -461,10 +461,10 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-100 px-10 py-5 bg-white flex items-center justify-end gap-3 flex-shrink-0">
-          <button type="button" onClick={onClose} className="px-7 h-[46px] text-[14.5px] font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition">Cancel</button>
+        <div className="border-t border-gray-100 px-4 sm:px-6 lg:px-10 py-4 sm:py-5 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 flex-shrink-0">
+          <button type="button" onClick={onClose} className="px-6 sm:px-7 h-[44px] sm:h-[46px] text-[14px] sm:text-[14.5px] font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition order-2 sm:order-1">Cancel</button>
           <button type="button" onClick={handleSubmit} disabled={!name.trim()}
-            className={`px-7 h-[46px] text-[14.5px] font-semibold rounded-full transition ${!name.trim() ? 'bg-[#a9c1e8] text-white cursor-not-allowed' : 'bg-[#1a73e8] text-white hover:bg-[#1557b0]'}`}>
+            className={`px-6 sm:px-7 h-[44px] sm:h-[46px] text-[14px] sm:text-[14.5px] font-semibold rounded-full transition order-1 sm:order-2 ${!name.trim() ? 'bg-[#a9c1e8] text-white cursor-not-allowed' : 'bg-[#1a73e8] text-white hover:bg-[#1557b0]'}`}>
             Create Exercise
           </button>
         </div>
@@ -473,7 +473,6 @@ function CreateExerciseModal({ open, onClose, onSave }: { open: boolean; onClose
   );
 }
 
-// ====== Reusable Settings Section components ======
 function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: string; rows: { id: string; label: string }[]; metricsData: any; setMetricsData: any; }) {
   return (
     <div>
@@ -481,22 +480,22 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[500px]">
+        <table className="w-full text-left border-collapse min-w-[480px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                <td className="py-4 px-6 text-center">
-                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
+                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-20 sm:w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                 </td>
-                <td className="py-4 px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input type="checkbox" checked={metricsData[row.id]?.show ?? false} onChange={() => { setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], show: !prev[row.id].show } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                 </td>
               </tr>
@@ -515,13 +514,13 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[700px]">
+        <table className="w-full text-left border-collapse min-w-[680px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
               {TESTING_COLUMNS.map(col => (
-                <th key={col.id} className="py-4 px-6 text-center">
-                  <span className="px-4 py-1.5 text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
+                <th key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
+                  <span className="px-3 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
                 </th>
               ))}
             </tr>
@@ -529,9 +528,9 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
                 {TESTING_COLUMNS.map(col => (
-                  <td key={col.id} className="py-4 px-6 text-center">
+                  <td key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
                     <input type="checkbox" checked={testingData[row.id]?.[col.id] ?? false} onChange={() => { setTestingData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], [col.id]: !prev[row.id]?.[col.id] } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                   </td>
                 ))}
@@ -551,21 +550,21 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[600px]">
+        <table className="w-full text-left border-collapse min-w-[560px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600">Interpretation</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600">Interpretation</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium align-top pt-6">{row.label}</td>
-                <td className="py-4 px-6">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium align-top pt-4 sm:pt-6">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6">
                   <div className="relative">
-                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-4 border border-gray-200 rounded-xl text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
-                    <div className="text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
+                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-3 sm:p-4 border border-gray-200 rounded-xl text-[13px] sm:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
+                    <div className="text-[10px] sm:text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
                   </div>
                 </td>
               </tr>
@@ -583,6 +582,9 @@ export default function ProgramsPage() {
   const [user, setUser] = useState<{ id?: string; name: string; email: string; role: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [logoError, setLogoError] = useState(false);
+
+  // ✅ NEW: mobile sidebar drawer
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [view, setView] = useState<'list' | 'create' | 'createWorkout' | 'account-info' | 'account-settings'>('list');
 
@@ -699,7 +701,6 @@ export default function ProgramsPage() {
     styku: { enabled: false, apiKey: '', apiSecret: '', bodyFatMethod: 'BIA', circumferenceMeasurement: 'Left Side' },
   });
 
-  // NEW: settings data
   const [privileges, setPrivileges] = useState<{ [key: string]: { admin: boolean; supervisor: boolean; staff: boolean } }>(() => {
     const defaults: any = {};
     PRIVILEGE_ROWS.forEach((row) => { defaults[row.id] = { admin: true, supervisor: true, staff: true }; });
@@ -710,7 +711,6 @@ export default function ProgramsPage() {
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
-  // ============ ✅ PRIVILEGE HELPER ============
   const can = useCallback((key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
@@ -722,7 +722,6 @@ export default function ProgramsPage() {
   const canCreateProgram = can('create_programs');
   const canDeleteProgram = can('delete_programs');
 
-  // ====== HELPERS ======
   const getToken = (): string | null => {
     if (typeof window === 'undefined') return null;
     return (
@@ -892,10 +891,10 @@ export default function ProgramsPage() {
   }, []);
 
   useEffect(() => {
-    if (deleteProgram || actionsProgram || addActivityFor || createExerciseOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+    const anyOverlay = deleteProgram || actionsProgram || addActivityFor || createExerciseOpen || isSidebarOpen;
+    document.body.style.overflow = anyOverlay ? 'hidden' : 'auto';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [deleteProgram, actionsProgram, addActivityFor, createExerciseOpen]);
+  }, [deleteProgram, actionsProgram, addActivityFor, createExerciseOpen, isSidebarOpen]);
 
   useEffect(() => {
     if (toast) { const t = setTimeout(() => setToast(null), 3000); return () => clearTimeout(t); }
@@ -920,7 +919,14 @@ export default function ProgramsPage() {
   };
   const toggleSection = (key: keyof typeof openSections) => setOpenSections((p) => ({ ...p, [key]: !p[key] }));
 
-  // ============ ✅ PRIVILEGE-CHECKED ACTIONS ============
+  // ✅ NEW: goToPrograms — sidebar "Programs" resets to main list
+  const goToPrograms = () => {
+    setAccountMenuOpen(false);
+    setIsSidebarOpen(false);
+    setView('list');
+    setEditingProgramId(null);
+  };
+
   const openCreateForm = () => {
     if (!canCreateProgram) {
       setToast({ message: 'You do not have permission to create programs.', type: 'error' });
@@ -1140,7 +1146,6 @@ export default function ProgramsPage() {
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
 
-    // ✅ Privilege guard (defense-in-depth)
     if (!canCreateProgram) {
       setToast({ message: 'You do not have permission to save programs.', type: 'error' });
       return;
@@ -1313,7 +1318,6 @@ export default function ProgramsPage() {
     reader.readAsDataURL(file);
   };
 
-  // ============ ✅ SAVE SETTINGS — persist privileges to backend for ADMIN ============
   const handleSaveSettings = async () => {
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor, accountLogo, integrations, privileges, measurementSystem, metricsData, testingData, resultsData,
@@ -1340,10 +1344,53 @@ export default function ProgramsPage() {
     }
   };
 
-  // ============ ✅ ONLY ADMIN CAN TOGGLE PRIVILEGES ============
+  // ✅ PRIVILEGES TOGGLE — cascade + admin guard, identical to Tasks/Calendar/Messages/Reports
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    if (!isAdmin) return;
-    setPrivileges((prev) => ({ ...prev, [rowId]: { ...prev[rowId], [role]: !prev[rowId][role] } }));
+    if (!isAdmin) {
+      setToast({ message: 'Only Admins can change privileges', type: 'error' });
+      return;
+    }
+
+    setPrivileges((prev) => {
+      const currentRow = prev[rowId] || { admin: true, supervisor: true, staff: true };
+      const newRow = { ...currentRow };
+
+      if (role === 'admin') {
+        newRow.admin = !currentRow.admin;
+        if (!newRow.admin) {
+          newRow.supervisor = false;
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for all roles', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for Admin', type: 'success' });
+        }
+      } else if (role === 'supervisor') {
+        if (!currentRow.admin) {
+          setToast({ message: 'Cannot enable Supervisor — Admin must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.supervisor = !currentRow.supervisor;
+        if (!newRow.supervisor) {
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for supervisor', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for supervisor', type: 'success' });
+        }
+      } else {
+        if (!currentRow.supervisor) {
+          setToast({ message: 'Cannot enable Staff — Supervisor must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.staff = !currentRow.staff;
+        if (newRow.staff) {
+          setToast({ message: 'Privilege added for staff', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege removed for staff', type: 'success' });
+        }
+      }
+
+      return { ...prev, [rowId]: newRow };
+    });
   };
 
   const filteredPrograms = programs.filter((p) => {
@@ -1373,10 +1420,10 @@ export default function ProgramsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] flex">
+    <div className="min-h-screen bg-[#f5f6f8]">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] px-3">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-4 sm:px-5 flex items-center gap-3 min-w-[280px] sm:min-w-[320px] max-w-[92vw]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
               {toast.type === 'error' ? (
                 <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1389,8 +1436,17 @@ export default function ProgramsPage() {
         </div>
       )}
 
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen">
+      {/* Mobile overlay */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      {/* SIDEBAR — responsive drawer */}
+      <aside className={`
+        fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300
+        lg:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
           <div className="w-11 h-11 rounded-full flex items-center justify-center overflow-hidden bg-white">
             {!logoError ? (
@@ -1399,9 +1455,14 @@ export default function ProgramsPage() {
               <span className="text-white text-sm font-bold bg-amber-600 w-full h-full flex items-center justify-center">{getInitials(user.name)}</span>
             )}
           </div>
-          <button className="text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100" aria-label="Close menu">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <button className="hidden lg:block text-gray-400 hover:text-gray-600">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3">
@@ -1439,7 +1500,14 @@ export default function ProgramsPage() {
             </button>
             {openSections.library && (
               <nav className="px-3 pt-1 space-y-0.5">
-                <NavLink href="/programs" label="Programs" active icon={<IconBook />} />
+                {/* ✅ Programs link resets to main list */}
+                <NavLink
+                  href="/programs"
+                  label="Programs"
+                  active={view === 'list'}
+                  icon={<IconBook />}
+                  onClick={(e: any) => { e.preventDefault(); goToPrograms(); }}
+                />
                 <NavLink href="/workouts" label="Workouts" icon={<IconBolt />} />
                 <NavLink href="/exercises" label="Exercises" icon={<IconActivity />} />
                 <NavLink href="/forms" label="Forms" icon={<IconForm />} />
@@ -1471,103 +1539,104 @@ export default function ProgramsPage() {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col overflow-hidden h-screen">
-        <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-end gap-4 flex-shrink-0">
-          <div className="relative" ref={notificationsRef}>
-            <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
-            </button>
+      <div className="lg:ml-64 flex flex-col h-screen">
+        <header className="bg-white border-b border-gray-100 px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between gap-3 flex-shrink-0">
+          <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100" aria-label="Open menu">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
 
-            {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
-                </div>
-                <div className="max-h-[360px] overflow-y-auto">
-                  {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
-                    unreadConversations.map((c) => (
-                      <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
-                        <div className="flex items-start gap-2">
-                          <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile?.firstName} {c.profile?.lastName}</p>
-                            <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+            <div className="relative" ref={notificationsRef}>
+              <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
+              </button>
+
+              {notificationsOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[290px] sm:w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
+                  </div>
+                  <div className="max-h-[360px] overflow-y-auto">
+                    {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
+                      unreadConversations.map((c) => (
+                        <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
+                          <div className="flex items-start gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile?.firstName} {c.profile?.lastName}</p>
+                              <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="relative" ref={accountMenuRef}>
-            <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-3 pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-2 py-1 transition">
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
-                {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
-                <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
-              </div>
-            </button>
-
-            {accountMenuOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-semibold overflow-hidden flex-shrink-0">
-                    {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
-                    <p className="text-[12.5px] text-gray-500 mt-0.5 truncate">{user.role}</p>
+                        </Link>
+                      ))
+                    )}
                   </div>
                 </div>
-                <div className="py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); setView('list'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
-                    <span>Switch to Classic</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    <span>Account Info</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    <span>Account Settings</span>
-                  </button>
-                  <button onClick={() => setAccountMenuOpen(false)} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                    <span>Billing</span>
-                  </button>
+              )}
+            </div>
+
+            <div className="relative" ref={accountMenuRef}>
+              <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-1.5 sm:px-2 py-1 transition">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
+                  {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
                 </div>
-                <div className="border-t border-gray-100 py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                    <span className="font-medium">Logout</span>
-                  </button>
+                <div className="text-left hidden sm:block">
+                  <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
+                  <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
                 </div>
-              </div>
-            )}
+              </button>
+
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[280px] sm:w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-semibold overflow-hidden flex-shrink-0">
+                      {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
+                      <p className="text-[12.5px] text-gray-500 mt-0.5 truncate">{user.role}</p>
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); goToPrograms(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
+                      <span>Switch to Classic</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      <span>Account Info</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      <span>Account Settings</span>
+                    </button>
+                  </div>
+                  <div className="border-t border-gray-100 py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                      <span className="font-medium">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
         {/* LIST VIEW */}
         {view === 'list' && (
-          <div className="flex-1 p-8 overflow-y-auto bg-white">
-            <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+          <div className="flex-1 p-3 sm:p-4 lg:p-8 overflow-y-auto bg-white">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Programs</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Programs</h1>
                 <p className="text-sm text-gray-500">Manage your program library and assign workouts to profiles.</p>
               </div>
-              {/* ✅ Create Program — gated by create_programs */}
               <button
                 onClick={openCreateForm}
                 disabled={!canCreateProgram}
                 title={!canCreateProgram ? 'You do not have permission to create programs' : undefined}
-                className={`text-sm font-medium px-5 py-2.5 rounded-lg flex items-center gap-1.5 transition shadow-sm ${
+                className={`text-sm font-medium px-4 sm:px-5 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm w-full sm:w-auto ${
                   canCreateProgram
                     ? 'bg-[#1a73e8] hover:bg-[#1557b0] text-white'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
@@ -1579,17 +1648,17 @@ export default function ProgramsPage() {
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 flex items-center gap-3 flex-nowrap overflow-x-auto border-b border-gray-100">
-                <div className="flex items-center gap-1 flex-shrink-0 bg-gray-100 rounded-full p-1">
+              <div className="px-3 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 border-b border-gray-100">
+                <div className="flex items-center gap-1 flex-shrink-0 bg-gray-100 rounded-full p-1 self-start overflow-x-auto max-w-full">
                   {['All Programs', 'My Programs'].map((tab) => (
-                    <button key={tab} onClick={() => { setActiveTab(tab); setCurrentPage(1); }} className={`px-4 py-2 text-sm font-medium rounded-full transition whitespace-nowrap ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    <button key={tab} onClick={() => { setActiveTab(tab); setCurrentPage(1); }} className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-full transition whitespace-nowrap ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                       {tab}
                     </button>
                   ))}
                 </div>
 
-                <div className="relative flex-shrink-0" ref={createdByRef}>
-                  <button onClick={() => setCreatedByOpen(!createdByOpen)} className="flex items-center gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium whitespace-nowrap">
+                <div className="relative flex-shrink-0 self-start" ref={createdByRef}>
+                  <button onClick={() => setCreatedByOpen(!createdByOpen)} className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium whitespace-nowrap">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                     {createdByFilter === 'All' ? 'Created By' : createdByFilter}
                     <svg className={`w-3 h-3 transition-transform ${createdByOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -1606,12 +1675,12 @@ export default function ProgramsPage() {
                   )}
                 </div>
 
-                <div className="ml-auto flex items-center gap-2 flex-shrink-0">
-                  <div className="relative">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto sm:ml-auto">
+                  <div className="relative flex-1 sm:flex-none">
                     <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    <input type="text" placeholder="Search programs..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-lg w-64 outline-none focus:border-[#1a73e8]" />
+                    <input type="text" placeholder="Search programs..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-lg w-full sm:w-64 outline-none focus:border-[#1a73e8]" />
                   </div>
-                  <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+                  <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1 self-start sm:self-auto">
                     <button onClick={() => setViewMode('list')} className={`w-8 h-8 flex items-center justify-center rounded-full transition ${viewMode === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500'}`}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
                     </button>
@@ -1619,7 +1688,7 @@ export default function ProgramsPage() {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                     </button>
                   </div>
-                  <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium">
+                  <select value={itemsPerPage} onChange={(e) => setItemsPerPage(Number(e.target.value))} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium self-start sm:self-auto">
                     <option value={10}>10</option>
                     <option value={25}>25</option>
                     <option value={50}>50</option>
@@ -1628,16 +1697,16 @@ export default function ProgramsPage() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm min-w-[820px]">
                   <thead>
                     <tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50/40">
-                      <th className="px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
-                      <th className="px-4 py-3 font-medium text-xs">Name <span className="text-[#1a73e8]">▲</span></th>
-                      <th className="px-4 py-3 font-medium text-xs">Description</th>
-                      <th className="px-4 py-3 font-medium text-xs">Weeks</th>
-                      <th className="px-4 py-3 font-medium text-xs">Access</th>
-                      <th className="px-4 py-3 font-medium text-xs">Created By</th>
-                      <th className="px-6 py-3 font-medium text-xs text-right">Actions</th>
+                      <th className="px-3 sm:px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Name <span className="text-[#1a73e8]">▲</span></th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Description</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Weeks</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Access</th>
+                      <th className="px-3 sm:px-4 py-3 font-medium text-xs">Created By</th>
+                      <th className="px-3 sm:px-6 py-3 font-medium text-xs text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1657,18 +1726,18 @@ export default function ProgramsPage() {
                     ) : (
                       paginatedPrograms.map((p: any) => (
                         <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="px-6 py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
-                          <td className="px-4 py-4">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold flex-shrink-0">{getInitials(p.name)}</div>
                               <span className="font-medium text-gray-800">{p.name}</span>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-gray-600 max-w-[280px] truncate">{p.description || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{p.weeks || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{p.access || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{p.createdBy || '—'}</td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600 max-w-[280px] truncate">{p.description || '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{p.weeks || '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{p.access || '—'}</td>
+                          <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{p.createdBy || '—'}</td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
                             <button onClick={() => setActionsProgram(p)} className="p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 inline-flex">
                               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" /></svg>
                             </button>
@@ -1680,14 +1749,14 @@ export default function ProgramsPage() {
                 </table>
               </div>
 
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row items-center justify-between px-3 sm:px-6 py-4 border-t border-gray-100 gap-3">
                 <p className="text-sm text-gray-500">Showing <span className="font-semibold text-gray-700">{startItem}–{endItem}</span> of <span className="font-semibold text-gray-700">{totalItems}</span></p>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                     Previous
                   </button>
-                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
                     Next
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                   </button>
@@ -1700,20 +1769,20 @@ export default function ProgramsPage() {
         {/* CREATE / EDIT PROGRAM VIEW */}
         {view === 'create' && (
           <div className="flex-1 overflow-y-auto bg-[#f5f6f8]">
-            <div className="bg-white px-8 pt-7 pb-5 border-b border-gray-100">
-              <div className="flex items-center gap-3.5">
+            <div className="bg-white px-4 sm:px-6 lg:px-8 pt-5 sm:pt-7 pb-4 sm:pb-5 border-b border-gray-100">
+              <div className="flex items-center gap-3">
                 <button onClick={closeCreateForm} className="w-9 h-9 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center flex-shrink-0 transition">
                   <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <div>
-                  <h1 className="text-[19px] font-bold text-gray-900 leading-tight">{editingProgramId ? 'Edit Program' : 'Create Program'}</h1>
-                  <p className="text-[13px] text-gray-500 leading-tight mt-0.5">{editingProgramId ? 'Update program details below.' : 'Fill in the details to create a new program.'}</p>
+                <div className="min-w-0">
+                  <h1 className="text-lg sm:text-[19px] font-bold text-gray-900 leading-tight truncate">{editingProgramId ? 'Edit Program' : 'Create Program'}</h1>
+                  <p className="text-[12.5px] sm:text-[13px] text-gray-500 leading-tight mt-0.5">{editingProgramId ? 'Update program details below.' : 'Fill in the details to create a new program.'}</p>
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleSave} className="p-8 space-y-7 max-w-[1400px] mx-auto">
-              <div className="bg-white border border-gray-200 rounded-2xl p-8 space-y-7 shadow-sm">
+            <form onSubmit={handleSave} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-7 max-w-[1400px] mx-auto">
+              <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-7 shadow-sm">
                 <div>
                   <label className="block text-sm font-semibold text-gray-800 mb-2">Program Name <span className="text-red-500">*</span></label>
                   <input type="text" placeholder="e.g. 12-Week Strength Builder" value={formData.name} autoFocus
@@ -1722,7 +1791,7 @@ export default function ProgramsPage() {
                   {validationErrors.name && <p className="text-xs text-red-500 mt-1.5">{validationErrors.name}</p>}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (weeks) <span className="text-red-500">*</span></label>
                     <input type="number" placeholder="e.g. 12" value={formData.duration}
@@ -1813,8 +1882,8 @@ export default function ProgramsPage() {
               <div>
                 <label className="block text-sm font-semibold text-gray-800 mb-3">Activities <span className="text-red-500">*</span></label>
                 <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-                  <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100 flex-wrap">
-                    <div className="relative" ref={typeFilterRef}>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-3 sm:px-5 py-4 border-b border-gray-100">
+                    <div className="relative self-start" ref={typeFilterRef}>
                       <button type="button" onClick={() => setTypeFilterOpen(!typeFilterOpen)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50">
                         <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
                         {activityTypeFilter}
@@ -1829,9 +1898,9 @@ export default function ProgramsPage() {
                       )}
                     </div>
 
-                    <div className="ml-auto flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:ml-auto">
                       <div className="relative" ref={addMenuRef}>
-                        <button type="button" onClick={() => setAddMenuOpen(!addMenuOpen)} className="flex items-center gap-1.5 px-5 py-2.5 text-sm font-medium text-white bg-[#1a73e8] hover:bg-[#1557b0] rounded-full transition shadow-sm">
+                        <button type="button" onClick={() => setAddMenuOpen(!addMenuOpen)} className="flex items-center justify-center gap-1.5 px-4 sm:px-5 py-2.5 text-sm font-medium text-white bg-[#1a73e8] hover:bg-[#1557b0] rounded-full transition shadow-sm w-full sm:w-auto">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
                           Add
                           <svg className={`w-3.5 h-3.5 transition-transform ${addMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -1851,7 +1920,7 @@ export default function ProgramsPage() {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+                      <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1 self-start sm:self-auto">
                         <button type="button" onClick={() => setActivityView('Grid')} className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full transition ${activityView === 'Grid' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                           Grid
@@ -1866,7 +1935,7 @@ export default function ProgramsPage() {
 
                   {activityView === 'Grid' ? (
                     <div className="overflow-x-auto">
-                      <div className="grid grid-cols-[100px_repeat(7,minmax(110px,1fr))] border-b border-gray-100 min-w-[900px]">
+                      <div className="grid grid-cols-[90px_repeat(7,minmax(110px,1fr))] border-b border-gray-100 min-w-[900px]">
                         <div className="px-3 py-3"></div>
                         {DAYS.map((d) => (<div key={d} className="px-3 py-3 text-center text-[11px] font-bold text-gray-500 tracking-wider">{d}</div>))}
                       </div>
@@ -1874,7 +1943,7 @@ export default function ProgramsPage() {
                         const weekNum = wi + 1;
                         return (
                           <div key={weekNum} className="border-b border-gray-100 last:border-b-0 min-w-[900px]">
-                            <div className="grid grid-cols-[100px_repeat(7,minmax(110px,1fr))]">
+                            <div className="grid grid-cols-[90px_repeat(7,minmax(110px,1fr))]">
                               <div className="px-3 py-4 flex flex-col justify-start">
                                 <p className="text-[11px] font-bold text-gray-500 tracking-wider mb-2">WEEK {weekNum}</p>
                                 <button type="button" onClick={() => copyWeek(weekNum)} className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-[#1a73e8] transition">
@@ -1912,25 +1981,25 @@ export default function ProgramsPage() {
                       })}
                     </div>
                   ) : (
-                    <div className="p-6">
+                    <div className="p-4 sm:p-6">
                       {Object.entries(formData.activities).length === 0 ? (
-                        <div className="text-center py-16 text-sm text-gray-400">No activities yet. Switch to Grid view and click + Add.</div>
+                        <div className="text-center py-12 sm:py-16 text-sm text-gray-400">No activities yet. Switch to Grid view and click + Add.</div>
                       ) : (
                         <div className="space-y-4">
                           {Object.entries(formData.activities).map(([key, items]: any) => {
                             const [w, d] = key.split('-');
                             if (items.length === 0) return null;
                             return (
-                              <div key={key} className="border border-gray-200 rounded-lg p-4">
+                              <div key={key} className="border border-gray-200 rounded-lg p-3 sm:p-4">
                                 <p className="text-xs font-bold text-gray-500 tracking-wider mb-3">WEEK {w} · DAY {d}</p>
                                 <div className="space-y-2">
                                   {items.map((a: any) => (
                                     <div key={a.id} className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-md px-3 py-2">
-                                      <div>
-                                        <p className="text-sm font-medium text-gray-800">{a.name}</p>
+                                      <div className="min-w-0">
+                                        <p className="text-sm font-medium text-gray-800 truncate">{a.name}</p>
                                         <p className="text-[11px] text-gray-500">{a.type}</p>
                                       </div>
-                                      <button type="button" onClick={() => removeActivity(Number(w), Number(d), a.id)} className="text-gray-400 hover:text-red-500">
+                                      <button type="button" onClick={() => removeActivity(Number(w), Number(d), a.id)} className="text-gray-400 hover:text-red-500 flex-shrink-0">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
                                       </button>
                                     </div>
@@ -1946,9 +2015,9 @@ export default function ProgramsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
-                <button type="button" onClick={closeCreateForm} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                <button type="submit" disabled={saving || !canCreateProgram} className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${(saving || !canCreateProgram) ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 border-t border-gray-100">
+                <button type="button" onClick={closeCreateForm} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white order-2 sm:order-1">Cancel</button>
+                <button type="submit" disabled={saving || !canCreateProgram} className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition order-1 sm:order-2 ${(saving || !canCreateProgram) ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
                   {saving ? (editingProgramId ? 'Updating...' : 'Creating...') : (editingProgramId ? 'Update Program' : 'Create Program')}
                 </button>
               </div>
@@ -1959,40 +2028,40 @@ export default function ProgramsPage() {
         {/* CREATE WORKOUT VIEW */}
         {view === 'createWorkout' && (
           <div className="flex-1 overflow-y-auto bg-[#f5f6f8]">
-            <div className="bg-white px-10 pt-9 pb-7 border-b border-gray-100">
-              <div className="flex items-start gap-5">
-                <button onClick={closeCreateWorkout} className="w-12 h-12 rounded-full border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center flex-shrink-0 transition">
+            <div className="bg-white px-4 sm:px-6 lg:px-10 pt-6 sm:pt-9 pb-4 sm:pb-7 border-b border-gray-100">
+              <div className="flex items-start gap-3 sm:gap-5">
+                <button onClick={closeCreateWorkout} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center flex-shrink-0 transition">
                   <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                 </button>
-                <div>
-                  <h1 className="text-[22px] font-bold text-gray-900 leading-tight">Create Workout</h1>
-                  <p className="text-[13.5px] text-gray-500 leading-tight mt-1">Fill in the details to create a new workout.</p>
+                <div className="min-w-0">
+                  <h1 className="text-lg sm:text-[22px] font-bold text-gray-900 leading-tight">Create Workout</h1>
+                  <p className="text-[12.5px] sm:text-[13.5px] text-gray-500 leading-tight mt-1">Fill in the details to create a new workout.</p>
                 </div>
               </div>
             </div>
 
-            <div className="px-10 py-8">
-              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-7">
-                <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-2xl p-7 bg-white">
-                    <div className="mb-6">
-                      <label className="block text-[14px] font-semibold text-gray-800 mb-2">Workout Name <span className="text-red-500">*</span></label>
+            <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-7">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 bg-white">
+                    <div className="mb-5 sm:mb-6">
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">Workout Name <span className="text-red-500">*</span></label>
                       <input type="text" placeholder="e.g. Upper Body Strength" value={workoutData.name} autoFocus
                         onChange={(e) => { setWorkoutData({ ...workoutData, name: e.target.value }); if (workoutErrors.name) setWorkoutErrors({ ...workoutErrors, name: '' }); }}
                         className={`w-full h-[46px] px-4 border rounded-lg text-sm outline-none transition ${workoutErrors.name ? 'border-red-400 focus:ring-4 focus:ring-red-500/10' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                       {workoutErrors.name && <p className="text-xs text-red-500 mt-1.5">{workoutErrors.name}</p>}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-5 sm:mb-6">
                       <div>
-                        <label className="block text-[14px] font-semibold text-gray-800 mb-2">Duration (min)</label>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Duration (min)</label>
                         <input type="number" placeholder="0" value={workoutData.duration}
                           onChange={(e) => { setWorkoutData({ ...workoutData, duration: e.target.value }); if (workoutErrors.duration) setWorkoutErrors({ ...workoutErrors, duration: '' }); }}
                           className={`w-full h-[46px] px-4 border rounded-lg text-sm outline-none transition ${workoutErrors.duration ? 'border-red-400 focus:ring-4 focus:ring-red-500/10' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                         {workoutErrors.duration && <p className="text-xs text-red-500 mt-1.5">{workoutErrors.duration}</p>}
                       </div>
                       <div>
-                        <label className="block text-[14px] font-semibold text-gray-800 mb-2">Access</label>
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">Access</label>
                         <div className="relative">
                           <select value={workoutData.access} onChange={(e) => setWorkoutData({ ...workoutData, access: e.target.value })} className="w-full h-[46px] px-4 border border-gray-300 rounded-lg text-sm bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             {ACCESS_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -2004,8 +2073,8 @@ export default function ProgramsPage() {
 
                     <div className="mb-1">
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-[14px] font-semibold text-gray-800">Note</label>
-                        <span className="text-[12.5px] text-gray-400">{workoutData.note.length}/1000</span>
+                        <label className="block text-sm font-semibold text-gray-800">Note</label>
+                        <span className="text-[12px] sm:text-[12.5px] text-gray-400">{workoutData.note.length}/1000</span>
                       </div>
                       <textarea rows={5} maxLength={1000} placeholder="Optional workout note..." value={workoutData.note}
                         onChange={(e) => setWorkoutData({ ...workoutData, note: e.target.value })}
@@ -2016,16 +2085,16 @@ export default function ProgramsPage() {
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <h2 className="text-[15px] font-bold text-gray-900">Exercises</h2>
-                      <span className="text-[12.5px] text-gray-400">{canvasItems.filter(i => i.kind === 'exercise').length} exercise(s)</span>
+                      <span className="text-[12px] sm:text-[12.5px] text-gray-400">{canvasItems.filter(i => i.kind === 'exercise').length} exercise(s)</span>
                     </div>
                     <div ref={dropZoneRef} onDragOver={handleCanvasDragOver} onDrop={handleCanvasDropFromPalette}
-                      className="border-2 border-dashed border-gray-300 rounded-2xl bg-white min-h-[220px] p-5 transition">
+                      className="border-2 border-dashed border-gray-300 rounded-2xl bg-white min-h-[200px] sm:min-h-[220px] p-4 sm:p-5 transition">
                       {canvasItems.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center text-center py-8 pointer-events-none">
-                          <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                        <div className="flex flex-col items-center justify-center text-center py-6 sm:py-8 pointer-events-none">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-100 flex items-center justify-center mb-3">
                             <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1" /><rect x="3" y="13" width="6" height="6" rx="1" /><path d="M13 6h8M13 10h5M13 14h8M13 18h5" strokeLinecap="round" /></svg>
                           </div>
-                          <p className="text-[13.5px] text-gray-500">No exercises added yet. Drag elements or click <span className="font-semibold">+</span></p>
+                          <p className="text-[13px] sm:text-[13.5px] text-gray-500 px-4">No exercises added yet. Drag elements or click <span className="font-semibold">+</span></p>
                         </div>
                       ) : (
                         <div className="space-y-3">
@@ -2035,33 +2104,33 @@ export default function ProgramsPage() {
                               onDragOver={(e) => handleDragOver(e, index)}
                               onDrop={(e) => handleDrop(e, index)}
                               onDragEnd={handleDragEnd}
-                              className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl border-2 cursor-grab transition ${dragOverIndex === index && draggingIndex !== index ? 'border-[#1a73e8] bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                              <svg className="w-4 h-4 text-gray-300 flex-shrink-0 cursor-grab" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5" /><circle cx="15" cy="6" r="1.5" /><circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" /><circle cx="9" cy="18" r="1.5" /><circle cx="15" cy="18" r="1.5" /></svg>
+                              className={`group relative flex items-center gap-3 px-3 sm:px-4 py-3 rounded-xl border-2 cursor-grab transition ${dragOverIndex === index && draggingIndex !== index ? 'border-[#1a73e8] bg-blue-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                              <svg className="w-4 h-4 text-gray-300 flex-shrink-0 cursor-grab hidden sm:block" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5" /><circle cx="15" cy="6" r="1.5" /><circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" /><circle cx="9" cy="18" r="1.5" /><circle cx="15" cy="18" r="1.5" /></svg>
                               {item.kind === 'section' ? (
                                 <>
-                                  <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
+                                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h10" /></svg>
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[14px] font-semibold text-gray-900 truncate">{item.data.name}</p>
-                                    <p className="text-[11.5px] text-gray-500">Section</p>
+                                    <p className="text-[13px] sm:text-[14px] font-semibold text-gray-900 truncate">{item.data.name}</p>
+                                    <p className="text-[11px] sm:text-[11.5px] text-gray-500">Section</p>
                                   </div>
                                 </>
                               ) : (
                                 <>
-                                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
                                     <svg className="w-4 h-4 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
                                   </div>
                                   <div className="flex-1 min-w-0">
-                                    <p className="text-[14px] font-semibold text-gray-900 truncate">{item.data.name}</p>
-                                    <p className="text-[11.5px] text-gray-500">{item.data.sets} sets × {item.data.reps} reps</p>
+                                    <p className="text-[13px] sm:text-[14px] font-semibold text-gray-900 truncate">{item.data.name}</p>
+                                    <p className="text-[11px] sm:text-[11.5px] text-gray-500">{item.data.sets} sets × {item.data.reps} reps</p>
                                   </div>
                                 </>
                               )}
-                              <button type="button" onClick={() => { if (item.kind === 'exercise') setSelectedExercise(item.data); }} className="text-[12.5px] text-[#1a73e8] font-medium opacity-0 group-hover:opacity-100 transition px-2">
+                              <button type="button" onClick={() => { if (item.kind === 'exercise') setSelectedExercise(item.data); }} className="text-[12px] sm:text-[12.5px] text-[#1a73e8] font-medium opacity-0 group-hover:opacity-100 transition px-2 hidden sm:inline">
                                 {item.kind === 'exercise' ? 'Details' : ''}
                               </button>
-                              <button type="button" onClick={() => removeCanvasItem(index)} className="w-7 h-7 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition">
+                              <button type="button" onClick={() => removeCanvasItem(index)} className="w-7 h-7 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 flex items-center justify-center transition flex-shrink-0">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
                               </button>
                             </div>
@@ -2072,39 +2141,39 @@ export default function ProgramsPage() {
 
                     <div className="mt-5">
                       <p className="text-[12px] font-semibold text-gray-500 mb-2">Elements</p>
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <div draggable onDragStart={(e) => handlePaletteDragStart(e, 'section')} className="flex items-center gap-2 px-4 py-2.5 border-2 border-amber-200 bg-amber-50/60 rounded-xl cursor-grab active:cursor-grabbing select-none">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                        <div draggable onDragStart={(e) => handlePaletteDragStart(e, 'section')} className="flex items-center gap-2 px-3 sm:px-4 py-2.5 border-2 border-amber-200 bg-amber-50/60 rounded-xl cursor-grab active:cursor-grabbing select-none">
                           <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h10" /></svg>
-                          <span className="text-[14px] font-medium text-amber-700">Section</span>
+                          <span className="text-[13px] sm:text-[14px] font-medium text-amber-700">Section</span>
                           <button type="button" onClick={() => addSectionToCanvas()} className="ml-1 w-6 h-6 rounded-md bg-white text-amber-600 border border-amber-200 hover:bg-amber-100 flex items-center justify-center">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                           </button>
                         </div>
-                        <div draggable onDragStart={(e) => handlePaletteDragStart(e, 'exercise')} className="flex items-center gap-2 px-4 py-2.5 border-2 border-blue-200 bg-blue-50/60 rounded-xl cursor-grab active:cursor-grabbing select-none">
+                        <div draggable onDragStart={(e) => handlePaletteDragStart(e, 'exercise')} className="flex items-center gap-2 px-3 sm:px-4 py-2.5 border-2 border-blue-200 bg-blue-50/60 rounded-xl cursor-grab active:cursor-grabbing select-none">
                           <svg className="w-4 h-4 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
-                          <span className="text-[14px] font-medium text-[#1a73e8]">Exercise</span>
+                          <span className="text-[13px] sm:text-[14px] font-medium text-[#1a73e8]">Exercise</span>
                           <button type="button" onClick={() => setExercisePickerOpen(true)} className="ml-1 w-6 h-6 rounded-md bg-white text-[#1a73e8] border border-blue-200 hover:bg-blue-100 flex items-center justify-center">
                             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                           </button>
                         </div>
                       </div>
-                      <p className="text-[11.5px] text-gray-400 mt-3">Drag onto canvas or click +</p>
+                      <p className="text-[11px] sm:text-[11.5px] text-gray-400 mt-3">Drag onto canvas or click +</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-2xl bg-white min-h-[500px] p-7">
+                <div className="border border-gray-200 rounded-2xl bg-white min-h-[300px] sm:min-h-[500px] p-4 sm:p-6 lg:p-7">
                   {selectedExercise ? (
                     <div>
-                      <div className="flex items-center justify-between mb-5">
-                        <h3 className="text-[16px] font-bold text-gray-900">Exercise details</h3>
+                      <div className="flex items-center justify-between mb-4 sm:mb-5">
+                        <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900">Exercise details</h3>
                         <button onClick={() => setSelectedExercise(null)} className="text-gray-400 hover:text-gray-700">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-[12.5px] font-semibold text-gray-700 mb-1.5">Name</label>
+                          <label className="block text-[12px] sm:text-[12.5px] font-semibold text-gray-700 mb-1.5">Name</label>
                           <input type="text" value={selectedExercise.name}
                             onChange={(e) => {
                               const updated = { ...selectedExercise, name: e.target.value };
@@ -2115,7 +2184,7 @@ export default function ProgramsPage() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-[12.5px] font-semibold text-gray-700 mb-1.5">Sets</label>
+                            <label className="block text-[12px] sm:text-[12.5px] font-semibold text-gray-700 mb-1.5">Sets</label>
                             <input type="number" value={selectedExercise.sets ?? 3}
                               onChange={(e) => {
                                 const updated = { ...selectedExercise, sets: parseInt(e.target.value) || 0 };
@@ -2125,7 +2194,7 @@ export default function ProgramsPage() {
                               className="w-full h-[42px] px-3.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                           </div>
                           <div>
-                            <label className="block text-[12.5px] font-semibold text-gray-700 mb-1.5">Reps</label>
+                            <label className="block text-[12px] sm:text-[12.5px] font-semibold text-gray-700 mb-1.5">Reps</label>
                             <input type="number" value={selectedExercise.reps ?? 10}
                               onChange={(e) => {
                                 const updated = { ...selectedExercise, reps: parseInt(e.target.value) || 0 };
@@ -2136,7 +2205,7 @@ export default function ProgramsPage() {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-[12.5px] font-semibold text-gray-700 mb-1.5">Weight</label>
+                          <label className="block text-[12px] sm:text-[12.5px] font-semibold text-gray-700 mb-1.5">Weight</label>
                           <input type="text" placeholder="e.g. 20 kg" value={selectedExercise.weight ?? ''}
                             onChange={(e) => {
                               const updated = { ...selectedExercise, weight: e.target.value };
@@ -2146,7 +2215,7 @@ export default function ProgramsPage() {
                             className="w-full h-[42px] px-3.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                         </div>
                         <div>
-                          <label className="block text-[12.5px] font-semibold text-gray-700 mb-1.5">Notes</label>
+                          <label className="block text-[12px] sm:text-[12.5px] font-semibold text-gray-700 mb-1.5">Notes</label>
                           <textarea rows={3} placeholder="Optional notes..." value={selectedExercise.notes ?? ''}
                             onChange={(e) => {
                               const updated = { ...selectedExercise, notes: e.target.value };
@@ -2158,27 +2227,27 @@ export default function ProgramsPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center">
-                      <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mb-4">
-                        <svg className="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
+                    <div className="flex flex-col items-center justify-center h-full text-center py-10 sm:py-0">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gray-50 flex items-center justify-center mb-4">
+                        <svg className="w-6 h-6 sm:w-7 sm:h-7 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
                       </div>
-                      <p className="text-[13.5px] text-gray-400">Select an exercise to see details</p>
+                      <p className="text-[13px] sm:text-[13.5px] text-gray-400">Select an exercise to see details</p>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="mt-7">
-                <button type="button" onClick={() => setCreateExerciseOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-200 rounded-full bg-white hover:bg-gray-50 transition text-[14px] font-medium text-gray-700">
+              <div className="mt-6 sm:mt-7">
+                <button type="button" onClick={() => setCreateExerciseOpen(true)} className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 border border-gray-200 rounded-full bg-white hover:bg-gray-50 transition text-[13px] sm:text-[14px] font-medium text-gray-700">
                   <svg className="w-4 h-4 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
                   Create Exercise
                 </button>
               </div>
 
-              <div className="flex items-center gap-3 pt-7 mt-7 border-t border-gray-100">
-                <button type="button" onClick={closeCreateWorkout} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-6 sm:pt-7 mt-6 sm:mt-7 border-t border-gray-100">
+                <button type="button" onClick={closeCreateWorkout} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white order-2 sm:order-1">Cancel</button>
                 <button type="button" onClick={handleSaveWorkout} disabled={workoutSaving}
-                  className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${workoutSaving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
+                  className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition order-1 sm:order-2 ${workoutSaving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
                   {workoutSaving ? 'Creating...' : 'Create Workout'}
                 </button>
               </div>
@@ -2189,22 +2258,22 @@ export default function ProgramsPage() {
         {/* ACCOUNT INFO */}
         {view === 'account-info' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
               <p className="text-[13.5px] text-gray-500">Manage your personal profile and business details.</p>
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-8 pt-6 pb-5 border-b border-gray-100">
-                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1">
-                    <button onClick={() => { setActiveInfoTab('user'); setInfoErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
-                    <button onClick={() => { setActiveInfoTab('business'); setInfoErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
+                <div className="px-4 sm:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
+                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1 min-w-max">
+                    <button onClick={() => { setActiveInfoTab('user'); setInfoErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
+                    <button onClick={() => { setActiveInfoTab('business'); setInfoErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
                   </div>
                 </div>
 
                 {activeInfoTab === 'user' && (
-                  <div className="p-8 lg:p-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-8 lg:gap-10">
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div>
@@ -2223,7 +2292,7 @@ export default function ProgramsPage() {
                           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (infoErrors.email) setInfoErrors({ ...infoErrors, email: '' }); }} className={`w-full h-[48px] px-4 border rounded-lg text-[14px] outline-none transition ${infoErrors.email ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                           {infoErrors.email && <p className="text-xs text-red-500 mt-1.5">{infoErrors.email}</p>}
                         </div>
-                        <div className="border border-gray-200 rounded-2xl p-6">
+                        <div className="border border-gray-200 rounded-2xl p-4 sm:p-6">
                           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-5">Change password — leave blank to keep current</p>
                           <div className="space-y-5">
                             <div>
@@ -2252,7 +2321,7 @@ export default function ProgramsPage() {
                       <div className="flex flex-col items-center justify-start pt-2">
                         <p className="text-[14px] font-semibold text-gray-800 mb-5">Profile Photo</p>
                         <input ref={accountPhotoInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" className="hidden" onChange={handleAccountPhotoChange} />
-                        <div className="relative w-[220px] h-[220px] mb-6">
+                        <div className="relative w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] mb-6">
                           <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                             {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : <span className="text-[42px] font-semibold text-gray-600">{getInitials(user.name)}</span>}
                           </div>
@@ -2266,34 +2335,17 @@ export default function ProgramsPage() {
                           {accountPhoto ? 'Change photo' : 'Upload photo'}
                         </button>
                         <p className="text-xs text-gray-500 mt-3">JPG, PNG, GIF or WebP. Max 6MB.</p>
-
-                        <div className="w-full border-t border-gray-100 my-8"></div>
-
-                        <button
-                          type="button"
-                          onClick={() => setToast({ message: 'Google account connection coming soon', type: 'success' })}
-                          className="w-full flex items-center justify-center gap-3 h-[52px] border border-gray-200 rounded-full bg-white hover:bg-gray-50 text-[14.5px] font-medium text-gray-800 transition"
-                        >
-                          <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 48 48">
-                            <path fill="#FFC107" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-1.657,2.372-4.354,4-7.5,4c-4.971,0-9-4.029-9-9s4.029-9,9-9 c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658C35.68,3.5,30.151,2,24,2C11.85,2,2,11.85,2,24s9.85,22,22,22c11.046,0,20.62-8.134,21.773-18.916 C45.937,25.023,45.5,22.5,45.5,20C45.5,19.566,45.451,19.145,45.354,18.738L43.611,20.083z" />
-                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658 C35.68,3.5,30.151,2,24,2C16.318,2,9.656,6.337,6.306,14.691z" />
-                            <path fill="#4CAF50" d="M24,46c5.152,0,9.861-1.971,13.409-5.192l-6.19-5.238C29.145,36.091,26.705,37,24,37 c-3.184,0-5.905-1.616-7.5-4.145l-6.531,5.027C13.18,42.317,18.223,46,24,46z" />
-                            <path fill="#1976D2" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-0.796,1.14-1.848,2.084-3.076,2.774 c0.001-0.001,6.192,5.238,6.192,5.238C36.971,34.174,46,28,46,20C46,19.653,45.973,19.312,45.921,18.983L43.611,20.083z" />
-                          </svg>
-                          Continue with Google
-                        </button>
-                        <p className="text-xs text-gray-500 mt-3 text-center">Link a Google account to sign in faster.</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('list')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToPrograms} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
 
                 {activeInfoTab === 'business' && (
-                  <div className="p-8 lg:p-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -2328,9 +2380,9 @@ export default function ProgramsPage() {
                         <input type="url" placeholder="https://yoursite.com" value={website} onChange={(e) => setWebsite(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('list')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToPrograms} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
@@ -2342,46 +2394,64 @@ export default function ProgramsPage() {
         {/* ACCOUNT SETTINGS */}
         {view === 'account-settings' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
               <p className="text-[13.5px] text-gray-500">Manage branding, metrics, testing, integrations, and system configuration.</p>
             </div>
 
-            <div className="px-10 pb-6">
-              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5">
+            <div className="px-4 sm:px-6 lg:px-10 pb-6 overflow-x-auto">
+              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 min-w-max">
                 {(['privileges', 'metrics', 'testing', 'results', 'branding', 'integrations'] as const).map((tab) => (
-                  <button key={tab} onClick={() => setSettingsTab(tab)} className={`px-5 py-2 text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
+                  <button key={tab} onClick={() => setSettingsTab(tab)} className={`px-3 sm:px-5 py-1.5 sm:py-2 text-[12px] sm:text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
                 ))}
               </div>
             </div>
 
-            <div className="px-10 pb-10 max-w-[1400px]">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-[1400px]">
               {settingsTab === 'privileges' && (
-                <div className="bg-white border border-gray-200 rounded-2xl p-8">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
                   <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
                   <p className="text-[13px] text-gray-500 mb-6">
                     Manage role-based permissions for account members.
                     {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
                   </p>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[600px]">
+                    <table className="w-full text-left border-collapse min-w-[560px]">
                       <thead>
                         <tr className="border-b border-gray-200">
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Admin</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {PRIVILEGE_ROWS.map((row) => (
-                          <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                            <td className="py-4 px-4 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.admin ?? true} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.supervisor ?? true} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.staff ?? true} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                          </tr>
-                        ))}
+                        {PRIVILEGE_ROWS.map((row) => {
+                          const rowPriv = privileges[row.id] || { admin: true, supervisor: true, staff: true };
+                          const adminOn = rowPriv.admin;
+                          const supervisorOn = rowPriv.supervisor;
+
+                          return (
+                            <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <input type="checkbox" checked={adminOn} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+                              </td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <input type="checkbox" checked={supervisorOn} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin || !adminOn} title={!adminOn ? 'Enable Admin first' : undefined} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" />
+                                  {!adminOn && isAdmin && (<span className="text-[9px] text-amber-600 leading-tight md:hidden">Admin first</span>)}
+                                </div>
+                              </td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <input type="checkbox" checked={rowPriv.staff} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin || !supervisorOn} title={!supervisorOn ? 'Enable Supervisor first' : undefined} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" />
+                                  {!supervisorOn && isAdmin && (<span className="text-[9px] text-amber-600 leading-tight md:hidden">Supervisor first</span>)}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -2390,11 +2460,11 @@ export default function ProgramsPage() {
 
               {settingsTab === 'metrics' && (
                 <div className="space-y-8">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <div className="flex items-center gap-4 mb-2">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
                       <label className="text-[14px] font-semibold text-gray-900">Measurement System</label>
-                      <div className="relative inline-block">
-                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer">
+                      <div className="relative inline-block w-full sm:w-auto">
+                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer w-full sm:w-auto">
                           <option value="Imperial">Imperial</option><option value="Metric">Metric</option>
                         </select>
                         <svg className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -2446,13 +2516,13 @@ export default function ProgramsPage() {
                   <div>
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Primary Color</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Sets the main accent color for the account.</p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                       <div className="w-[100px] h-[52px] rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
                         <div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} />
                       </div>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
-                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
+                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-full sm:w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
                       </div>
                     </div>
                   </div>
@@ -2460,8 +2530,8 @@ export default function ProgramsPage() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Account Logo</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Upload your account logo. Max 5MB (PNG, JPG, GIF recommended).</p>
                     <input ref={accountLogoInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml" onChange={handleAccountLogoUpload} className="hidden" />
-                    <div className="relative inline-block">
-                      <button type="button" onClick={() => accountLogoInputRef.current?.click()} className="w-[400px] h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
+                    <div className="relative inline-block w-full sm:w-auto">
+                      <button type="button" onClick={() => accountLogoInputRef.current?.click()} className="w-full sm:w-[400px] h-[160px] sm:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
                         {accountLogo ? <img src={accountLogo} alt="Account logo" className="w-full h-full object-contain p-4" /> : <p className="text-[14px] font-medium text-gray-500">Logo</p>}
                       </button>
                       {accountLogo && (
@@ -2476,7 +2546,7 @@ export default function ProgramsPage() {
 
               {settingsTab === 'integrations' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">InBody</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.inbody.enabled} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2494,7 +2564,7 @@ export default function ProgramsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Evolt</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.evolt.enabled} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2512,7 +2582,7 @@ export default function ProgramsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Styku</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.styku.enabled} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2555,7 +2625,7 @@ export default function ProgramsPage() {
                   type="button"
                   onClick={handleSaveSettings}
                   disabled={settingsTab === 'privileges' && !isAdmin}
-                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   Save settings
                 </button>
@@ -2563,18 +2633,18 @@ export default function ProgramsPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       <CreateExerciseModal open={createExerciseOpen} onClose={() => setCreateExerciseOpen(false)} onSave={handleSaveCustomExercise} />
 
       {exercisePickerOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl relative p-7 max-h-[80vh] flex flex-col">
-            <button onClick={() => setExercisePickerOpen(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl relative p-5 sm:p-7 max-h-[85vh] flex flex-col">
+            <button onClick={() => setExercisePickerOpen(false)} className="absolute top-4 right-4 sm:top-5 sm:right-5 text-gray-400 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <h2 className="text-[20px] font-bold text-gray-900 mb-1">Add exercise</h2>
-            <p className="text-[13px] text-gray-500 mb-5">Pick an exercise or create a new one</p>
+            <h2 className="text-lg sm:text-[20px] font-bold text-gray-900 mb-1">Add exercise</h2>
+            <p className="text-[12.5px] sm:text-[13px] text-gray-500 mb-4 sm:mb-5">Pick an exercise or create a new one</p>
 
             <button onClick={() => { setExercisePickerOpen(false); setCreateExerciseOpen(true); }} className="w-full mb-3 flex items-center gap-3 px-4 py-3 rounded-lg border-2 border-dashed border-blue-200 hover:bg-blue-50 transition text-left">
               <span className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -2613,24 +2683,24 @@ export default function ProgramsPage() {
       )}
 
       {addActivityFor && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[150] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-[520px] rounded-2xl shadow-2xl relative p-7">
-            <button onClick={closeAddActivityModal} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-[150] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-[520px] rounded-2xl shadow-2xl relative p-5 sm:p-7 max-h-[92vh] overflow-y-auto">
+            <button onClick={closeAddActivityModal} className="absolute top-4 right-4 sm:top-5 sm:right-5 text-gray-400 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
-            <div className="mb-6">
-              <h2 className="text-[22px] font-bold text-gray-900 leading-tight">Add activity</h2>
-              <p className="text-[13px] text-gray-500 mt-1">Week {addActivityFor.week} · Day {addActivityFor.day}</p>
+            <div className="mb-5 sm:mb-6">
+              <h2 className="text-lg sm:text-[22px] font-bold text-gray-900 leading-tight">Add activity</h2>
+              <p className="text-[12.5px] sm:text-[13px] text-gray-500 mt-1">Week {addActivityFor.week} · Day {addActivityFor.day}</p>
             </div>
-            <div className="mb-5">
+            <div className="mb-4 sm:mb-5">
               <label className="block text-[13px] font-semibold text-gray-800 mb-2">Type</label>
               <div className="relative" ref={addActivityTypeRef}>
-                <button type="button" onClick={() => setAddActivityTypeOpen(!addActivityTypeOpen)} className="w-full h-[52px] px-3.5 border-2 border-[#1a73e8] rounded-xl bg-white flex items-center justify-between outline-none transition ring-4 ring-[#1a73e8]/10">
-                  <span className="flex items-center gap-3 text-gray-800">
-                    <span className="w-9 h-9 rounded-[10px] bg-[#1a73e8] flex items-center justify-center flex-shrink-0"><TypeIcon type={addActivityType} /></span>
-                    <span className="text-[15px] font-medium">{addActivityType}</span>
+                <button type="button" onClick={() => setAddActivityTypeOpen(!addActivityTypeOpen)} className="w-full h-[48px] sm:h-[52px] px-3.5 border-2 border-[#1a73e8] rounded-xl bg-white flex items-center justify-between outline-none transition ring-4 ring-[#1a73e8]/10">
+                  <span className="flex items-center gap-3 text-gray-800 min-w-0">
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] bg-[#1a73e8] flex items-center justify-center flex-shrink-0"><TypeIcon type={addActivityType} /></span>
+                    <span className="text-[14px] sm:text-[15px] font-medium truncate">{addActivityType}</span>
                   </span>
-                  <svg className={`w-4 h-4 text-gray-500 transition-transform ${addActivityTypeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                  <svg className={`w-4 h-4 text-gray-500 transition-transform flex-shrink-0 ${addActivityTypeOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                 </button>
                 {addActivityTypeOpen && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
@@ -2644,18 +2714,18 @@ export default function ProgramsPage() {
                 )}
               </div>
             </div>
-            <div className="mb-5">
+            <div className="mb-4 sm:mb-5">
               <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
                 {(['All Workouts', 'My Workouts'] as const).map((tab) => (
-                  <button key={tab} type="button" onClick={() => { setAddActivityTab(tab); setAddActivityWorkout(''); }} className={`flex-1 px-4 py-2.5 text-[14px] font-medium rounded-full transition ${addActivityTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
+                  <button key={tab} type="button" onClick={() => { setAddActivityTab(tab); setAddActivityWorkout(''); }} className={`flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-[12.5px] sm:text-[14px] font-medium rounded-full transition ${addActivityTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>{tab}</button>
                 ))}
               </div>
             </div>
             <div className="mb-4">
               <div className="relative" ref={addActivityWorkoutRef}>
-                <button type="button" onClick={() => setAddActivityWorkoutOpen(!addActivityWorkoutOpen)} className="w-full h-[52px] px-4 border border-gray-200 rounded-xl bg-white flex items-center justify-between outline-none transition hover:border-gray-300">
-                  <span className={`text-[15px] ${addActivityWorkout ? 'text-gray-800' : 'text-gray-400'}`}>{addActivityWorkout || 'Select a workout...'}</span>
-                  <svg className={`w-4 h-4 text-gray-500 transition-transform ${addActivityWorkoutOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                <button type="button" onClick={() => setAddActivityWorkoutOpen(!addActivityWorkoutOpen)} className="w-full h-[48px] sm:h-[52px] px-4 border border-gray-200 rounded-xl bg-white flex items-center justify-between outline-none transition hover:border-gray-300">
+                  <span className={`text-[14px] sm:text-[15px] truncate ${addActivityWorkout ? 'text-gray-800' : 'text-gray-400'}`}>{addActivityWorkout || 'Select a workout...'}</span>
+                  <svg className={`w-4 h-4 text-gray-500 transition-transform flex-shrink-0 ${addActivityWorkoutOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                 </button>
                 {addActivityWorkoutOpen && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-56 overflow-y-auto py-2">
@@ -2670,38 +2740,37 @@ export default function ProgramsPage() {
                 )}
               </div>
             </div>
-            <button type="button" onClick={handleCreateWorkoutFromMenu} className="inline-flex items-center justify-center gap-2 h-11 px-5 border-2 border-dashed border-gray-300 rounded-full text-[14px] font-medium text-gray-600 hover:border-[#1a73e8] hover:text-[#1a73e8] transition mb-7">
+            <button type="button" onClick={handleCreateWorkoutFromMenu} className="inline-flex items-center justify-center gap-2 h-10 sm:h-11 px-4 sm:px-5 border-2 border-dashed border-gray-300 rounded-full text-[13px] sm:text-[14px] font-medium text-gray-600 hover:border-[#1a73e8] hover:text-[#1a73e8] transition mb-5 sm:mb-7">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
               Create new workout
             </button>
-            <div className="flex items-center justify-end gap-3">
-              <button type="button" onClick={closeAddActivityModal} className="px-6 py-3 text-[14px] font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition">Cancel</button>
-              <button type="button" onClick={confirmAddActivity} disabled={!addActivityWorkout} className={`px-6 py-3 text-[14px] font-semibold rounded-full transition ${!addActivityWorkout ? 'bg-[#e8eaed] text-gray-400 cursor-not-allowed' : 'bg-[#1a73e8] text-white hover:bg-[#1557b0]'}`}>Add Activity</button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+              <button type="button" onClick={closeAddActivityModal} className="px-6 py-3 text-[14px] font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition order-2 sm:order-1">Cancel</button>
+              <button type="button" onClick={confirmAddActivity} disabled={!addActivityWorkout} className={`px-6 py-3 text-[14px] font-semibold rounded-full transition order-1 sm:order-2 ${!addActivityWorkout ? 'bg-[#e8eaed] text-gray-400 cursor-not-allowed' : 'bg-[#1a73e8] text-white hover:bg-[#1557b0]'}`}>Add Activity</button>
             </div>
           </div>
         </div>
       )}
 
       {actionsProgram && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setActionsProgram(null)}>
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-2xl font-semibold text-gray-900">Program actions</h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4" onClick={() => setActionsProgram(null)}>
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-5 sm:p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <h3 className="text-xl sm:text-2xl font-semibold text-gray-900">Program actions</h3>
               <button onClick={() => setActionsProgram(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="space-y-3">
-              <button onClick={handleEditProgram} className="w-full flex items-center gap-3 px-5 py-4 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium text-left transition">
+              <button onClick={handleEditProgram} className="w-full flex items-center gap-3 px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 text-sm font-medium text-left transition">
                 <svg className="w-5 h-5 text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                 <span className="font-semibold text-gray-900">Edit program</span>
               </button>
-              {/* ✅ Delete — gated by delete_programs */}
               <button
                 onClick={handleOpenDelete}
                 disabled={!canDeleteProgram}
                 title={!canDeleteProgram ? 'You do not have permission to delete programs' : undefined}
-                className={`w-full flex items-center gap-3 px-5 py-4 rounded-xl border text-sm font-medium text-left transition ${
+                className={`w-full flex items-center gap-3 px-4 sm:px-5 py-3.5 sm:py-4 rounded-xl border text-sm font-medium text-left transition ${
                   canDeleteProgram
                     ? 'border-red-100 bg-red-50/60 text-[#b83232] hover:bg-red-50'
                     : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
@@ -2716,19 +2785,19 @@ export default function ProgramsPage() {
       )}
 
       {deleteProgram && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-7">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-5 sm:p-7">
             <button onClick={() => setDeleteProgram(null)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-5">
               <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteProgram.name}&quot;?</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteProgram.name}&quot;?</h2>
             <p className="text-[15px] text-gray-500 mb-7">Are you sure you want to delete this program? This action cannot be undone.</p>
-            <div className="flex items-center justify-end gap-3">
-              <button onClick={() => setDeleteProgram(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition">Cancel</button>
-              <button onClick={confirmDeleteProgram} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition">Delete</button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+              <button onClick={() => setDeleteProgram(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition w-full sm:w-auto">Cancel</button>
+              <button onClick={confirmDeleteProgram} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition w-full sm:w-auto">Delete</button>
             </div>
           </div>
         </div>
@@ -2737,9 +2806,10 @@ export default function ProgramsPage() {
   );
 }
 
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; }) {
+// ============== REUSABLE ==============
+function NavLink({ href, label, icon, active = false, badge = 0, onClick }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; onClick?: (e: any) => void; }) {
   return (
-    <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
+    <Link href={href} onClick={onClick} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
       {active && (<span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>)}
       <span className="text-gray-500">{icon}</span>
       <span className="flex-1">{label}</span>

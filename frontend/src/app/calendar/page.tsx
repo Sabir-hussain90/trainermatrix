@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  'http://localhost:4000';
 
 // Generate time options every 15 minutes (12:00 am → 11:45 pm)
 const generateTimeOptions = () => {
@@ -156,7 +159,6 @@ const ALL_METRICS = [
   ...METRICS_SENIOR,
 ];
 
-// ============ TESTING CONFIG ============
 const TESTING_COLUMNS = [
   { id: 'weight_lo', label: 'WEIGHT LO' },
   { id: 'stabilization', label: 'STABILIZATI' },
@@ -165,7 +167,6 @@ const TESTING_COLUMNS = [
   { id: 'power', label: 'POWER' },
 ];
 
-// ============ RESULTS CONFIG ============
 const INTERPRETATION_TEXT: { [key: string]: string } = {
   weight: "Weight can a tricky metric to use as a measurement of progress. Although it is a very easy to record, it must be combined with other factors such as height and body fat percentage. This is because weight fluctuates naturally by a few pounds during the day and is influenced by factors such as stress, hydration, or menstruation. Body Mass Index (BMI) takes into consideration your height and is a quick way to categorize someone as underweight, normal weight, overweight, or obese. Body fat measurements can be calculated in a variety of ways, but your trainer will most likely use skinfold calipers or a tape measure to perform these tests in the gym.",
   body_fat: "Keep in mind that the comparison classifications vary by age and by gender, so it wouldn't make sense to compare the body fat percentages of a 32 year old man vs a 32 year old woman, or a 32 year old woman vs a 65 year old woman. Skinfold measurements measure subcutaneous fat located under your skin and not visceral fat located within your abdomen. These metrics are best combined with circumference measurements and weight to create a complete picture of your health.",
@@ -248,7 +249,7 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true);
   const [logoError, setLogoError] = useState(false);
 
-  // 📱 MOBILE: sidebar drawer state
+  // ✅ NEW: mobile sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [openSections, setOpenSections] = useState({
@@ -263,12 +264,10 @@ export default function CalendarPage() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
-  // ====== NOTIFICATIONS ======
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const [unreadConversations, setUnreadConversations] = useState<any[]>([]);
 
-  // ====== FILTERS ======
   const [userFilterOpen, setUserFilterOpen] = useState(false);
   const [groupFilterOpen, setGroupFilterOpen] = useState(false);
   const userFilterRef = useRef<HTMLDivElement>(null);
@@ -283,7 +282,6 @@ export default function CalendarPage() {
 
   const [currentWeekStart, setCurrentWeekStart] = useState<Date | null>(null);
 
-  // ====== CREATE EVENT MODAL ======
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -299,13 +297,11 @@ export default function CalendarPage() {
   const [saving, setSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
-  // Time dropdown state
   const [startTimeOpen, setStartTimeOpen] = useState(false);
   const [endTimeOpen, setEndTimeOpen] = useState(false);
   const startTimeRef = useRef<HTMLDivElement>(null);
   const endTimeRef = useRef<HTMLDivElement>(null);
 
-  // User / Profile dropdowns
   const [usersOpen, setUsersOpen] = useState(false);
   const [profilesOpen, setProfilesOpen] = useState(false);
   const usersRef = useRef<HTMLDivElement>(null);
@@ -315,7 +311,6 @@ export default function CalendarPage() {
   const [staffOptions, setStaffOptions] = useState<{ id: string; name: string }[]>([]);
   const [profileOptions, setProfileOptions] = useState<{ id: string; name: string }[]>([]);
 
-  // ====== ACCOUNT INFO FORM ======
   const [activeInfoTab, setActiveInfoTab] = useState<'user' | 'business'>('user');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -336,7 +331,6 @@ export default function CalendarPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [savingInfo, setSavingInfo] = useState(false);
 
-  // ====== ACCOUNT SETTINGS ======
   type SettingsTab = 'privileges' | 'metrics' | 'testing' | 'results' | 'branding' | 'integrations';
   const [settingsTab, setSettingsTab] = useState<SettingsTab>('privileges');
   const [primaryColor, setPrimaryColor] = useState('#F59E0B');
@@ -360,17 +354,11 @@ export default function CalendarPage() {
     return defaults;
   });
 
-  // ===== METRICS STATE =====
   const [measurementSystem, setMeasurementSystem] = useState<'Imperial' | 'Metric'>('Imperial');
   const [metricsData, setMetricsData] = useState<{ [key: string]: { days: string; show: boolean } }>(() => buildInitialMetricsData());
-
-  // ===== TESTING STATE =====
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
-
-  // ===== RESULTS STATE =====
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
-  // ====== INITIAL FETCH ======
   useEffect(() => {
     const now = new Date();
     const day = now.getDay();
@@ -479,7 +467,6 @@ export default function CalendarPage() {
     }
   };
 
-  // ✅ NEW: Fetch privileges from backend
   const fetchPrivileges = async (token: string) => {
     try {
       const res = await fetch(`${API_URL}/privileges`, { headers: { Authorization: `Bearer ${token}` } });
@@ -494,14 +481,12 @@ export default function CalendarPage() {
     }
   };
 
-  // ✅ NEW: Call fetchPrivileges after user loads
   useEffect(() => {
     if (loading || !user) return;
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) fetchPrivileges(token);
   }, [loading, user]);
 
-  // ====== CLICK OUTSIDE ======
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
@@ -519,10 +504,10 @@ export default function CalendarPage() {
   }, []);
 
   useEffect(() => {
-    if (createModalOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+    const anyOverlay = createModalOpen || isSidebarOpen;
+    document.body.style.overflow = anyOverlay ? 'hidden' : 'auto';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [createModalOpen]);
+  }, [createModalOpen, isSidebarOpen]);
 
   useEffect(() => {
     if (toast) {
@@ -548,6 +533,13 @@ export default function CalendarPage() {
 
   const toggleSection = (key: keyof typeof openSections) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // ✅ NEW: goToCalendar — same pattern as Dashboard's goTo
+  const goToCalendar = () => {
+    setAccountMenuOpen(false);
+    setIsSidebarOpen(false);
+    setView('calendar');
   };
 
   const goToToday = () => {
@@ -593,7 +585,6 @@ export default function CalendarPage() {
     setFormData((prev) => ({ ...prev, profiles: prev.profiles.filter((x) => x !== profileId) }));
   };
 
-  // ====== SAVE EVENT (POST) ======
   const handleSaveEvent = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -684,7 +675,6 @@ export default function CalendarPage() {
     return hour;
   };
 
-  // ====== SAVE ACCOUNT INFO ======
   const handleSaveAccountInfo = async () => {
     const errs: { [key: string]: string } = {};
 
@@ -785,9 +775,7 @@ export default function CalendarPage() {
     setToast({ message: 'Account logo removed', type: 'success' });
   };
 
-  // ✅ REPLACED: handleSaveSettings now saves privileges to backend for ADMIN
   const handleSaveSettings = async () => {
-    // Save non-privilege settings locally (as before)
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor,
       accountLogo,
@@ -798,13 +786,11 @@ export default function CalendarPage() {
       resultsData,
     }));
 
-    // Non-ADMIN: only save personal settings, don't touch privileges
     if (user?.role !== 'ADMIN') {
       setToast({ message: 'Settings saved', type: 'success' });
       return;
     }
 
-    // ADMIN: save privileges to backend
     try {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const res = await fetch(`${API_URL}/privileges`, {
@@ -827,24 +813,61 @@ export default function CalendarPage() {
     }
   };
 
+  // ✅ PRIVILEGES TOGGLE — identical to Tasks page
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    setPrivileges((prev) => ({
-      ...prev,
-      [rowId]: {
-        ...prev[rowId],
-        [role]: !prev[rowId][role],
-      },
-    }));
+    if (user?.role !== 'ADMIN') {
+      setToast({ message: 'Only Admins can change privileges', type: 'error' });
+      return;
+    }
+
+    setPrivileges((prev) => {
+      const currentRow = prev[rowId] || { admin: true, supervisor: true, staff: true };
+      const newRow = { ...currentRow };
+
+      if (role === 'admin') {
+        newRow.admin = !currentRow.admin;
+        if (!newRow.admin) {
+          newRow.supervisor = false;
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for all roles', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for Admin', type: 'success' });
+        }
+      } else if (role === 'supervisor') {
+        if (!currentRow.admin) {
+          setToast({ message: 'Cannot enable Supervisor — Admin must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.supervisor = !currentRow.supervisor;
+        if (!newRow.supervisor) {
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for supervisor', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for supervisor', type: 'success' });
+        }
+      } else {
+        if (!currentRow.supervisor) {
+          setToast({ message: 'Cannot enable Staff — Supervisor must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.staff = !currentRow.staff;
+        if (newRow.staff) {
+          setToast({ message: 'Privilege added for staff', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege removed for staff', type: 'success' });
+        }
+      }
+
+      return { ...prev, [rowId]: newRow };
+    });
   };
 
-  // ✅ NEW: can() helper
   const can = (key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
     return privileges?.[key]?.[roleKey] === true;
   };
 
-  // ====== GUARD ======
   if (loading || !user || !currentWeekStart) {
     return (
       <div className="min-h-screen bg-[#f5f6f8] flex items-center justify-center">
@@ -899,11 +922,12 @@ export default function CalendarPage() {
   const isAdmin = user?.role === 'ADMIN';
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] flex relative overflow-hidden">
+    <div className="min-h-screen bg-[#f5f6f8]">
 
+      {/* Toast */}
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] w-[calc(100vw-2rem)] sm:w-auto flex justify-center">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 w-full sm:w-auto sm:min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] px-3">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-4 sm:px-5 flex items-center gap-3 min-w-[280px] sm:min-w-[320px] max-w-[92vw]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
               {toast.type === 'error' ? (
                 <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -912,11 +936,14 @@ export default function CalendarPage() {
               )}
             </div>
             <p className="text-sm font-medium text-gray-800 flex-1">{toast.message}</p>
+            <button onClick={() => setToast(null)} className="text-gray-400 hover:text-gray-600">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
           </div>
         </div>
       )}
 
-      {/* 📱 MOBILE OVERLAY */}
+      {/* Mobile overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -924,9 +951,10 @@ export default function CalendarPage() {
         />
       )}
 
-      {/* SIDEBAR (drawer on mobile, static on desktop) */}
+      {/* SIDEBAR — responsive drawer */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 flex flex-col h-full transition-transform duration-300 lg:translate-x-0 lg:static
+        fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300
+        lg:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
@@ -939,15 +967,20 @@ export default function CalendarPage() {
               <span className="text-white text-sm font-bold">{getInitials(user.name)}</span>
             )}
           </div>
-          {/* 📱 Close button on mobile */}
-          <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-gray-600 lg:hidden ml-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-          <button className="hidden lg:block text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+              aria-label="Close menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <button className="hidden lg:block text-gray-400 hover:text-gray-600">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3">
@@ -960,7 +993,14 @@ export default function CalendarPage() {
               <nav className="px-3 pt-1 space-y-0.5">
                 <NavLink href="/dashboard" label="Dashboard" icon={<IconDashboard />} />
                 <NavLink href="/tasks" label="Tasks" icon={<IconTask />} />
-                <NavLink href="/calendar" label="Calendar" active icon={<IconCalendar />} />
+                {/* ✅ Calendar link resets to main calendar screen */}
+                <NavLink
+                  href="/calendar"
+                  label="Calendar"
+                  active={view === 'calendar'}
+                  icon={<IconCalendar />}
+                  onClick={(e: any) => { e.preventDefault(); goToCalendar(); }}
+                />
                 <NavLink href="/messages" label="Messages" icon={<IconMessage />} badge={unreadCount} />
               </nav>
             )}
@@ -1020,17 +1060,19 @@ export default function CalendarPage() {
         </div>
       </aside>
 
-      {/* MAIN */}
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0 h-screen">
-        <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-shrink-0">
-
-          {/* 📱 Mobile Menu Button */}
-          <button onClick={() => setIsSidebarOpen(true)} className="text-gray-500 hover:text-gray-700 lg:hidden">
+      {/* MAIN — responsive margin */}
+      <div className="lg:ml-64 flex flex-col h-screen">
+        <header className="bg-white border-b border-gray-100 px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between gap-3 flex-shrink-0">
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100"
+            aria-label="Open menu"
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
 
-          <div className="flex items-center gap-2 md:gap-4 ml-auto">
-            {/* NOTIFICATIONS BELL */}
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
             <div className="relative" ref={notificationsRef}>
               <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
@@ -1038,7 +1080,7 @@ export default function CalendarPage() {
               </button>
 
               {notificationsOpen && (
-                <div className="absolute top-full right-0 mt-3 w-[300px] md:w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute top-full right-0 mt-3 w-[290px] sm:w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                     <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
                   </div>
@@ -1064,7 +1106,7 @@ export default function CalendarPage() {
             <div className="relative" ref={accountMenuRef}>
               <button
                 onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-                className="flex items-center gap-3 pl-2 md:pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-2 py-1 transition"
+                className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-1.5 sm:px-2 py-1 transition"
               >
                 <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
                   {profilePhoto ? (
@@ -1080,13 +1122,13 @@ export default function CalendarPage() {
               </button>
 
               {accountMenuOpen && (
-                <div className="absolute top-full right-0 mt-3 w-[280px] md:w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute top-full right-0 mt-3 w-[280px] sm:w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
                   <div className="px-5 py-4 border-b border-gray-100">
-                    <p className="text-[15px] font-semibold text-gray-900">{user.name}</p>
+                    <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
                     <p className="text-[12.5px] text-gray-500 mt-0.5">{user.role}</p>
                   </div>
                   <div className="py-2">
-                    <button onClick={() => { setAccountMenuOpen(false); setView('calendar'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                    <button onClick={() => { setAccountMenuOpen(false); goToCalendar(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
                       <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
                       <span>Switch to Classic</span>
                     </button>
@@ -1097,10 +1139,6 @@ export default function CalendarPage() {
                     <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
                       <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       <span>Account Settings</span>
-                    </button>
-                    <button onClick={() => setAccountMenuOpen(false)} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                      <span>Billing</span>
                     </button>
                   </div>
                   <div className="border-t border-gray-100 py-2">
@@ -1117,27 +1155,24 @@ export default function CalendarPage() {
 
         {/* CALENDAR VIEW */}
         {view === 'calendar' && (
-          <div className="flex-1 p-4 md:p-8 overflow-y-auto bg-[#f7f8fa]">
-            <div className="flex flex-col md:flex-row items-start justify-between mb-6 flex-wrap gap-4">
+          <div className="flex-1 p-3 sm:p-4 lg:p-8 overflow-y-auto bg-[#f7f8fa]">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">Calendar</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Calendar</h1>
                 <p className="text-sm text-gray-500">View and manage your schedule and Events.</p>
               </div>
 
-              {/* FILTERS */}
-              <div className="flex items-center gap-2 w-full md:w-auto">
-
-                {/* GROUP FILTER */}
-                <div className="relative flex-1 md:flex-none" ref={groupFilterRef}>
-                  <button onClick={() => setGroupFilterOpen(!groupFilterOpen)} className="w-full md:w-auto flex items-center justify-between md:justify-start gap-1.5 px-3 md:px-4 py-2 text-[13px] md:text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium">
-                    <span className="flex items-center gap-1.5 min-w-0">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                      <span className="truncate">{selectedGroup ? groups.find(g => g.id === selectedGroup)?.name || 'All Groups' : 'All Groups'}</span>
-                    </span>
-                    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                <div className="relative flex-1 sm:flex-none" ref={groupFilterRef}>
+                  <button onClick={() => setGroupFilterOpen(!groupFilterOpen)} className="flex items-center justify-between sm:justify-start gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium w-full sm:w-auto">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {selectedGroup ? groups.find(g => g.id === selectedGroup)?.name || 'All Groups' : 'All Groups'}
+                    </div>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </button>
                   {groupFilterOpen && (
-                    <div className="absolute top-full left-0 md:left-auto md:right-0 mt-2 w-full min-w-[200px] md:w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full right-0 mt-2 w-full sm:w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                       <button onClick={() => { setSelectedGroup(''); setGroupFilterOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">All Groups</button>
                       {groups.map(g => (
                         <button key={g.id} onClick={() => { setSelectedGroup(g.id); setGroupFilterOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{g.name}</button>
@@ -1146,17 +1181,16 @@ export default function CalendarPage() {
                   )}
                 </div>
 
-                {/* USER FILTER */}
-                <div className="relative flex-1 md:flex-none" ref={userFilterRef}>
-                  <button onClick={() => setUserFilterOpen(!userFilterOpen)} className="w-full md:w-auto flex items-center justify-between md:justify-start gap-1.5 px-3 md:px-4 py-2 text-[13px] md:text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium">
-                    <span className="flex items-center gap-1.5 min-w-0">
-                      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                      <span className="truncate">{selectedUser ? staffOptions.find(u => u.id === selectedUser)?.name || 'All Users' : 'All Users'}</span>
-                    </span>
-                    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                <div className="relative flex-1 sm:flex-none" ref={userFilterRef}>
+                  <button onClick={() => setUserFilterOpen(!userFilterOpen)} className="flex items-center justify-between sm:justify-start gap-1.5 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium w-full sm:w-auto">
+                    <div className="flex items-center gap-1.5">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {selectedUser ? staffOptions.find(u => u.id === selectedUser)?.name || 'All Users' : 'All Users'}
+                    </div>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </button>
                   {userFilterOpen && (
-                    <div className="absolute top-full right-0 mt-2 w-full min-w-[200px] md:w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full right-0 mt-2 w-full sm:w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                       <button onClick={() => { setSelectedUser(''); setUserFilterOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">All Users</button>
                       {staffOptions.map(u => (
                         <button key={u.id} onClick={() => { setSelectedUser(u.id); setUserFilterOpen(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{u.name}</button>
@@ -1164,43 +1198,44 @@ export default function CalendarPage() {
                     </div>
                   )}
                 </div>
-
               </div>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-              <div className="flex items-center justify-between gap-3 px-4 md:px-6 py-4 md:py-5 border-b border-gray-100">
-                <div className="flex items-center gap-1 md:gap-2 bg-gray-100 rounded-lg p-1">
-                  <button onClick={() => setActiveTab('Calendar')} className={`px-3 md:px-5 py-1.5 md:py-2 text-sm font-medium rounded-md transition ${activeTab === 'Calendar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Calendar</button>
-                  <button onClick={() => setActiveTab('Agenda')} className={`px-3 md:px-5 py-1.5 md:py-2 text-sm font-medium rounded-md transition ${activeTab === 'Agenda' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Agenda</button>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 gap-3">
+                <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1 self-start">
+                  <button onClick={() => setActiveTab('Calendar')} className={`px-3 sm:px-5 py-2 text-sm font-medium rounded-md transition ${activeTab === 'Calendar' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Calendar</button>
+                  <button onClick={() => setActiveTab('Agenda')} className={`px-3 sm:px-5 py-2 text-sm font-medium rounded-md transition ${activeTab === 'Agenda' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Agenda</button>
                 </div>
-                <button onClick={() => setCreateModalOpen(true)} className="bg-[#1a73e8] hover:bg-[#1557b0] text-white text-sm font-medium px-3 md:px-5 py-2.5 rounded-lg flex items-center gap-1.5 transition shadow-sm whitespace-nowrap">
+                <button onClick={() => setCreateModalOpen(true)} className="bg-[#1a73e8] hover:bg-[#1557b0] text-white text-sm font-medium px-4 sm:px-5 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm w-full sm:w-auto">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
                   Create Event
                 </button>
               </div>
 
-              <div className="px-4 md:px-6 py-4 flex items-center gap-3 flex-wrap border-b border-gray-100">
-                <div className="flex items-center gap-2 px-3 md:px-4 py-2 text-[13px] md:text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full">
-                  <svg className="w-4 h-4 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                  {fmtShort(currentWeekStart)} – {fmtShort(weekEnd)}
-                  <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+              <div className="px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap border-b border-gray-100">
+                <div className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full w-full sm:w-auto justify-between sm:justify-start">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                    {fmtShort(currentWeekStart)} – {fmtShort(weekEnd)}
+                  </div>
+                  <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                 </div>
-                <button onClick={goToToday} className="px-4 md:px-5 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50">Today</button>
-                <div className="ml-auto flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-                  <button onClick={() => setViewMode('Day')} className={`px-3 md:px-4 py-1.5 text-sm font-medium rounded-md transition ${viewMode === 'Day' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Day</button>
-                  <button onClick={() => setViewMode('Week')} className={`px-3 md:px-4 py-1.5 text-sm font-medium rounded-md transition ${viewMode === 'Week' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Week</button>
+                <button onClick={goToToday} className="px-5 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 w-full sm:w-auto">Today</button>
+                <div className="sm:ml-auto flex items-center gap-1 bg-gray-100 rounded-lg p-1 w-full sm:w-auto">
+                  <button onClick={() => setViewMode('Day')} className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium rounded-md transition ${viewMode === 'Day' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Day</button>
+                  <button onClick={() => setViewMode('Week')} className={`flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium rounded-md transition ${viewMode === 'Week' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Week</button>
                 </div>
               </div>
 
               {activeTab === 'Calendar' ? (
                 <div className="overflow-x-auto">
-                  <table className={`w-full border-collapse ${viewMode === 'Week' ? 'min-w-[900px]' : 'min-w-[320px]'}`}>
+                  <table className="w-full border-collapse min-w-[900px]">
                     <thead>
                       <tr>
-                        <th className="w-[64px] md:w-[88px] border-r border-b border-gray-200 bg-white"></th>
+                        <th className="w-[80px] sm:w-[88px] border-r border-b border-gray-200 bg-white"></th>
                         {displayDays.map((d, i) => (
-                          <th key={i} className={`border-r border-b border-gray-200 bg-white py-3.5 px-2 text-center text-xs md:text-sm font-semibold whitespace-nowrap ${isToday(d) ? 'text-[#1a73e8]' : 'text-gray-800'}`}>
+                          <th key={i} className={`border-r border-b border-gray-200 bg-white py-3 px-2 text-center text-xs sm:text-sm font-semibold ${isToday(d) ? 'text-[#1a73e8]' : 'text-gray-800'}`}>
                             {fmtDayHeader(d)}
                           </th>
                         ))}
@@ -1209,15 +1244,15 @@ export default function CalendarPage() {
                     <tbody>
                       {hours.map((hour) => (
                         <tr key={hour}>
-                          <td className="w-[64px] md:w-[88px] border-r border-b border-gray-100 bg-white text-right align-top pt-2 pb-3 pr-2 md:pr-3 text-[10px] md:text-[12px] text-gray-500 font-normal">
+                          <td className="w-[80px] sm:w-[88px] border-r border-b border-gray-100 bg-white text-right align-top pt-2 pb-3 pr-2 sm:pr-3 text-[11px] sm:text-[12px] text-gray-500 font-normal">
                             {formatHour(hour)}
                           </td>
                           {displayDays.map((d, i) => {
                             const dayEvents = getEventsForDay(d).filter((e) => timeToHour(e.startTime) === hour);
                             return (
-                              <td key={i} className={`border-r border-b border-gray-100 align-top pt-1 pb-1 px-1.5 h-[68px] ${isToday(d) ? 'bg-blue-50/40' : 'bg-white'}`}>
+                              <td key={i} className={`border-r border-b border-gray-100 align-top pt-1 pb-1 px-1 sm:px-1.5 h-[60px] sm:h-[68px] ${isToday(d) ? 'bg-blue-50/40' : 'bg-white'}`}>
                                 {dayEvents.map((ev) => (
-                                  <div key={ev.id} className="bg-[#1a73e8] text-white text-[11px] font-medium rounded-md px-2 py-1.5 mb-1 truncate" title={`${ev.title} (${ev.startTime} - ${ev.endTime})`}>
+                                  <div key={ev.id} className="bg-[#1a73e8] text-white text-[10px] sm:text-[11px] font-medium rounded-md px-1.5 sm:px-2 py-1 mb-1 truncate" title={`${ev.title} (${ev.startTime} - ${ev.endTime})`}>
                                     {ev.title}
                                   </div>
                                 ))}
@@ -1230,21 +1265,21 @@ export default function CalendarPage() {
                   </table>
                 </div>
               ) : (
-                <div className="p-4 md:p-6">
+                <div className="p-4 sm:p-6">
                   {events.length === 0 ? (
                     <div className="text-center py-16 text-gray-400 text-sm">No events scheduled.</div>
                   ) : (
                     <div className="space-y-3">
                       {[...events].sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime)).map((ev) => (
-                        <div key={ev.id} className="flex items-start gap-3 md:gap-4 p-3 md:p-4 border border-gray-200 rounded-xl hover:bg-gray-50">
-                          <div className="w-12 md:w-16 text-center flex-shrink-0">
+                        <div key={ev.id} className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 rounded-xl hover:bg-gray-50">
+                          <div className="w-14 sm:w-16 text-center flex-shrink-0">
                             <p className="text-xs text-gray-500 font-medium">{new Date(ev.date).toLocaleDateString('en-US', { month: 'short' })}</p>
-                            <p className="text-xl font-bold text-gray-800">{new Date(ev.date).getDate()}</p>
+                            <p className="text-lg sm:text-xl font-bold text-gray-800">{new Date(ev.date).getDate()}</p>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-800 break-words">{ev.title}</p>
+                            <p className="text-sm font-semibold text-gray-800 truncate">{ev.title}</p>
                             <p className="text-xs text-gray-500 mt-0.5">{ev.startTime} – {ev.endTime}</p>
-                            {ev.note && <p className="text-xs text-gray-500 mt-1 break-words">{ev.note}</p>}
+                            {ev.note && <p className="text-xs text-gray-500 mt-1">{ev.note}</p>}
                           </div>
                         </div>
                       ))}
@@ -1256,25 +1291,25 @@ export default function CalendarPage() {
           </div>
         )}
 
-        {/* ACCOUNT INFO VIEW */}
+        {/* ACCOUNT INFO */}
         {view === 'account-info' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-4 md:px-10 pt-6 md:pt-10 pb-4 md:pb-6">
-              <h1 className="text-2xl md:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
               <p className="text-[13.5px] text-gray-500">Manage your personal profile and business details.</p>
             </div>
-            <div className="px-4 md:px-10 pb-10">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-4 md:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
+                <div className="px-4 sm:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
                   <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1 min-w-max">
-                    <button onClick={() => { setActiveInfoTab('user'); setErrors({}); }} className={`px-4 md:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
-                    <button onClick={() => { setActiveInfoTab('business'); setErrors({}); }} className={`px-4 md:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
+                    <button onClick={() => { setActiveInfoTab('user'); setErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
+                    <button onClick={() => { setActiveInfoTab('business'); setErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
                   </div>
                 </div>
 
                 {activeInfoTab === 'user' && (
-                  <div className="p-4 md:p-8 lg:p-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-8 lg:gap-10">
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div>
@@ -1293,7 +1328,7 @@ export default function CalendarPage() {
                           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (errors.email) setErrors({ ...errors, email: '' }); }} className={`w-full h-[48px] px-4 border rounded-lg text-[14px] outline-none transition ${errors.email ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                           {errors.email && <p className="text-xs text-red-500 mt-1.5">{errors.email}</p>}
                         </div>
-                        <div className="border border-gray-200 rounded-2xl p-4 md:p-6">
+                        <div className="border border-gray-200 rounded-2xl p-4 sm:p-6">
                           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-5">Change password — leave blank to keep current</p>
                           <div className="space-y-5">
                             <div>
@@ -1320,33 +1355,32 @@ export default function CalendarPage() {
                         </div>
                       </div>
 
-                      {/* PROFILE PHOTO */}
                       <div className="flex flex-col items-center justify-start pt-2">
                         <p className="text-[14px] font-semibold text-gray-800 mb-5">Profile Photo</p>
                         <input ref={profileInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/webp" onChange={handleProfilePhotoUpload} className="hidden" />
-                        <div className="w-[160px] h-[160px] md:w-[220px] md:h-[220px] rounded-full bg-gray-200 flex items-center justify-center mb-6 overflow-hidden">
+                        <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] rounded-full bg-gray-200 flex items-center justify-center mb-6 overflow-hidden">
                           {profilePhoto ? <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" /> : <span className="text-[42px] font-semibold text-gray-600">{getInitials(user.name)}</span>}
                         </div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <button type="button" onClick={() => profileInputRef.current?.click()} className="px-6 h-[42px] border border-gray-300 rounded-full bg-white hover:bg-gray-50 text-[14px] font-medium text-gray-700 transition">Change photo</button>
-                          {profilePhoto && <button type="button" onClick={() => { setProfilePhoto(null); localStorage.removeItem('profile_photo'); }} className="px-4 h-[42px] border border-red-200 rounded-full bg-white hover:bg-red-50 text-[14px] font-medium text-red-600 transition">Remove</button>}
+                        <div className="flex flex-col sm:flex-row items-center gap-2 mb-2 w-full sm:w-auto">
+                          <button type="button" onClick={() => profileInputRef.current?.click()} className="px-6 h-[42px] border border-gray-300 rounded-full bg-white hover:bg-gray-50 text-[14px] font-medium text-gray-700 transition w-full sm:w-auto">Change photo</button>
+                          {profilePhoto && <button type="button" onClick={() => { setProfilePhoto(null); localStorage.removeItem('profile_photo'); }} className="px-4 h-[42px] border border-red-200 rounded-full bg-white hover:bg-red-50 text-[14px] font-medium text-red-600 transition w-full sm:w-auto">Remove</button>}
                         </div>
-                        <div className="w-full border-t border-gray-100 my-8"></div>
-                        <button type="button" onClick={() => setToast({ message: 'Google account connection coming soon', type: 'success' })} className="w-full flex items-center justify-center gap-3 h-[52px] border border-gray-200 rounded-full bg-white hover:bg-gray-50 text-[13px] md:text-[14.5px] font-medium text-gray-800 transition px-3">
+                        <div className="w-full border-t border-gray-100 my-6 sm:my-8"></div>
+                        <button type="button" onClick={() => setToast({ message: 'Google account connection coming soon', type: 'success' })} className="w-full flex items-center justify-center gap-3 h-[52px] border border-gray-200 rounded-full bg-white hover:bg-gray-50 text-[14px] sm:text-[14.5px] font-medium text-gray-800 transition">
                           <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-1.657,2.372-4.354,4-7.5,4c-4.971,0-9-4.029-9-9s4.029-9,9-9 c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658C35.68,3.5,30.151,2,24,2C11.85,2,2,11.85,2,24s9.85,22,22,22c11.046,0,20.62-8.134,21.773-18.916 C45.937,25.023,45.5,22.5,45.5,20C45.5,19.566,45.451,19.145,45.354,18.738L43.611,20.083z" /><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658 C35.68,3.5,30.151,2,24,2C16.318,2,9.656,6.337,6.306,14.691z" /><path fill="#4CAF50" d="M24,46c5.152,0,9.861-1.971,13.409-5.192l-6.19-5.238C29.145,36.091,26.705,37,24,37 c-3.184,0-5.905-1.616-7.5-4.145l-6.531,5.027C13.18,42.317,18.223,46,24,46z" /><path fill="#1976D2" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-0.796,1.14-1.848,2.084-3.076,2.774 c0.001-0.001,6.192,5.238,6.192,5.238C36.971,34.174,46,28,46,20C46,19.653,45.973,19.312,45.921,18.983L43.611,20.083z" /></svg>
-                          Connect with Google Calendar and Tasks
+                          <span className="truncate">Connect with Google Calendar and Tasks</span>
                         </button>
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('calendar')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToCalendar} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
 
                 {activeInfoTab === 'business' && (
-                  <div className="p-4 md:p-8 lg:p-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -1381,9 +1415,9 @@ export default function CalendarPage() {
                         <input type="url" placeholder="https://yoursite.com" value={website} onChange={(e) => setWebsite(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('calendar')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToCalendar} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
@@ -1392,21 +1426,21 @@ export default function CalendarPage() {
           </div>
         )}
 
-        {/* ACCOUNT SETTINGS VIEW */}
+        {/* ACCOUNT SETTINGS */}
         {view === 'account-settings' && (
           <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-4 md:px-10 pt-6 md:pt-10 pb-4 md:pb-6">
-              <h1 className="text-2xl md:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
               <p className="text-[13.5px] text-gray-500">Manage branding, metrics, testing, integrations, and system configuration.</p>
             </div>
 
-            <div className="px-4 md:px-10 pb-6 overflow-x-auto">
+            <div className="px-4 sm:px-6 lg:px-10 pb-6 overflow-x-auto">
               <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 min-w-max">
                 {(['privileges', 'metrics', 'testing', 'results', 'branding', 'integrations'] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setSettingsTab(tab)}
-                    className={`px-3 md:px-5 py-1.5 md:py-2 text-[12px] md:text-[14px] font-medium rounded-full transition capitalize ${
+                    className={`px-3 sm:px-5 py-1.5 sm:py-2 text-[12px] sm:text-[14px] font-medium rounded-full transition capitalize ${
                       settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
@@ -1416,58 +1450,79 @@ export default function CalendarPage() {
               </div>
             </div>
 
-            <div className="px-4 md:px-10 pb-10 max-w-[1400px]">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-[1400px]">
               {settingsTab === 'privileges' && (
                 <div className="space-y-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-8">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
                     <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
                     <p className="text-[13px] text-gray-500 mb-6">
                       Manage role-based permissions for account members.
                       {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
                     </p>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse min-w-[600px]">
+                      <table className="w-full text-left border-collapse min-w-[560px]">
                         <thead>
                           <tr className="border-b border-gray-200">
-                            <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
-                            <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
-                            <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
-                            <th className="py-3 md:py-4 px-2 md:px-4 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                            <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
+                            <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
+                            <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
+                            <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {PRIVILEGE_ROWS.map((row) => (
-                            <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.admin ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'admin')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.supervisor ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'supervisor')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                              <td className="py-3 md:py-4 px-2 md:px-4 text-center">
-                                <input
-                                  type="checkbox"
-                                  checked={privileges[row.id]?.staff ?? true}
-                                  onChange={() => handleTogglePrivilege(row.id, 'staff')}
-                                  disabled={!isAdmin}
-                                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {PRIVILEGE_ROWS.map((row) => {
+                            const rowPriv = privileges[row.id] || { admin: true, supervisor: true, staff: true };
+                            const adminOn = rowPriv.admin;
+                            const supervisorOn = rowPriv.supervisor;
+
+                            return (
+                              <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
+                                <td className="py-3 sm:py-4 px-2 sm:px-4 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+
+                                <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={adminOn}
+                                    onChange={() => handleTogglePrivilege(row.id, 'admin')}
+                                    disabled={!isAdmin}
+                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  />
+                                </td>
+
+                                <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                  <div className="flex flex-col items-center gap-1">
+                                    <input
+                                      type="checkbox"
+                                      checked={supervisorOn}
+                                      onChange={() => handleTogglePrivilege(row.id, 'supervisor')}
+                                      disabled={!isAdmin || !adminOn}
+                                      title={!adminOn ? 'Enable Admin first' : undefined}
+                                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    />
+                                    {!adminOn && isAdmin && (
+                                      <span className="text-[9px] text-amber-600 leading-tight md:hidden">Admin first</span>
+                                    )}
+                                  </div>
+                                </td>
+
+                                <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                  <div className="flex flex-col items-center gap-1">
+                                    <input
+                                      type="checkbox"
+                                      checked={rowPriv.staff}
+                                      onChange={() => handleTogglePrivilege(row.id, 'staff')}
+                                      disabled={!isAdmin || !supervisorOn}
+                                      title={!supervisorOn ? 'Enable Supervisor first' : undefined}
+                                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                    />
+                                    {!supervisorOn && isAdmin && (
+                                      <span className="text-[9px] text-amber-600 leading-tight md:hidden">Supervisor first</span>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
@@ -1477,14 +1532,14 @@ export default function CalendarPage() {
 
               {settingsTab === 'metrics' && (
                 <div className="space-y-8">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-8">
-                    <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-2">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
                       <label className="text-[14px] font-semibold text-gray-900">Measurement System</label>
-                      <div className="relative inline-block w-full md:w-auto">
+                      <div className="relative inline-block w-full sm:w-auto">
                         <select
                           value={measurementSystem}
                           onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')}
-                          className="w-full md:w-auto h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer"
+                          className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer w-full sm:w-auto"
                         >
                           <option value="Imperial">Imperial</option>
                           <option value="Metric">Metric</option>
@@ -1539,17 +1594,17 @@ export default function CalendarPage() {
                   <div>
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Primary Color</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Sets the main accent color for the account.</p>
-                    <div className="flex items-center gap-4">
-                      <div className="w-[80px] md:w-[100px] h-[44px] md:h-[52px] rounded-lg border border-gray-200 bg-white p-1.5 md:p-2 shadow-sm">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <div className="w-[100px] h-[52px] rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
                         <div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} />
                       </div>
                       <div className="relative">
-                        <span className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
                         <input
                           type="text"
                           value={primaryColor}
                           onChange={(e) => setPrimaryColor(e.target.value)}
-                          className="h-[44px] md:h-[52px] pl-9 md:pl-11 pr-3 md:pr-4 w-[150px] md:w-[180px] border border-gray-200 rounded-lg text-[13px] md:text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white"
+                          className="h-[52px] pl-11 pr-4 w-full sm:w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white"
                         />
                       </div>
                     </div>
@@ -1559,11 +1614,11 @@ export default function CalendarPage() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Account Logo</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Upload your account logo. Max 5MB (PNG, JPG, GIF recommended).</p>
                     <input ref={logoInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml" onChange={handleLogoUpload} className="hidden" />
-                    <div className="relative inline-block w-full max-w-[300px] md:max-w-none md:w-auto">
+                    <div className="relative inline-block w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => logoInputRef.current?.click()}
-                        className="w-full md:w-[400px] h-[140px] md:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden"
+                        className="w-full sm:w-[400px] h-[160px] sm:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden"
                       >
                         {accountLogo ? (
                           <img src={accountLogo} alt="Account logo" className="w-full h-full object-contain p-4" />
@@ -1575,9 +1630,9 @@ export default function CalendarPage() {
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); removeAccountLogo(); }}
-                          className="absolute top-2 right-2 md:top-3 md:right-3 w-7 h-7 md:w-8 md:h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-md transition"
+                          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-md transition"
                         >
-                          <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
                           </svg>
                         </button>
@@ -1589,7 +1644,7 @@ export default function CalendarPage() {
 
               {settingsTab === 'integrations' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">InBody</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.inbody.enabled} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -1598,16 +1653,16 @@ export default function CalendarPage() {
                     <div className="space-y-5">
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Username</label>
-                        <input type="text" value={integrations.inbody.apiUsername} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiUsername: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        <input type="text" value={integrations.inbody.apiUsername} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiUsername: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Key</label>
-                        <input type="text" value={integrations.inbody.apiKey} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiKey: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        <input type="text" value={integrations.inbody.apiKey} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, apiKey: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Evolt</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.evolt.enabled} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -1616,16 +1671,16 @@ export default function CalendarPage() {
                     <div className="space-y-5">
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Client ID</label>
-                        <input type="text" value={integrations.evolt.clientId} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientId: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        <input type="text" value={integrations.evolt.clientId} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientId: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Client Secret</label>
-                        <input type="text" value={integrations.evolt.clientSecret} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientSecret: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        <input type="text" value={integrations.evolt.clientSecret} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, clientSecret: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Styku</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.styku.enabled} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -1634,16 +1689,16 @@ export default function CalendarPage() {
                     <div className="space-y-5">
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Key</label>
-                        <input type="text" value={integrations.styku.apiKey} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiKey: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        <input type="text" value={integrations.styku.apiKey} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiKey: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">API Secret</label>
-                        <input type="text" value={integrations.styku.apiSecret} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiSecret: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                        <input type="text" value={integrations.styku.apiSecret} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, apiSecret: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Body Fat Method</label>
                         <div className="relative">
-                          <select value={integrations.styku.bodyFatMethod} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, bodyFatMethod: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                          <select value={integrations.styku.bodyFatMethod} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, bodyFatMethod: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             <option value="BIA">BIA</option>
                             <option value="DEXA">DEXA</option>
                             <option value="Navy">Navy</option>
@@ -1658,7 +1713,7 @@ export default function CalendarPage() {
                       <div>
                         <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Circumference Measurement</label>
                         <div className="relative">
-                          <select value={integrations.styku.circumferenceMeasurement} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, circumferenceMeasurement: e.target.value } })} className="w-full h-[44px] md:h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
+                          <select value={integrations.styku.circumferenceMeasurement} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, circumferenceMeasurement: e.target.value } })} className="w-full h-[48px] px-4 border border-gray-200 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             <option value="Left Side">Left Side</option>
                             <option value="Right Side">Right Side</option>
                             <option value="Average">Average</option>
@@ -1679,7 +1734,7 @@ export default function CalendarPage() {
                     type="button"
                     onClick={handleSaveSettings}
                     disabled={!isAdmin && settingsTab === 'privileges'}
-                    className="px-4 md:px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                   >
                     Save settings
                   </button>
@@ -1688,31 +1743,31 @@ export default function CalendarPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* CREATE EVENT MODAL */}
       {createModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative max-h-[92vh] flex flex-col">
             <button onClick={closeModal} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 z-10">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            <div className="px-5 md:px-7 pt-6 md:pt-7 pb-4 flex items-center gap-4">
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 md:w-7 md:h-7 text-[#1a73e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="px-4 sm:px-7 pt-5 sm:pt-7 pb-4 flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                <svg className="w-6 h-6 sm:w-7 sm:h-7 text-[#1a73e8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M12 4v16m8-8H4" />
                 </svg>
               </div>
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-0.5">Create Event</h2>
+              <div className="min-w-0">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-0.5">Create Event</h2>
                 <p className="text-sm text-gray-500">Schedule a new event.</p>
               </div>
             </div>
 
-            <form onSubmit={handleSaveEvent} className="flex-1 overflow-y-auto px-5 md:px-7 pb-4" noValidate>
+            <form onSubmit={handleSaveEvent} className="flex-1 overflow-y-auto px-4 sm:px-7 pb-4" noValidate>
               <div className="space-y-5">
 
                 <div>
@@ -1757,8 +1812,7 @@ export default function CalendarPage() {
                   {validationErrors.date && <p className="text-xs text-red-500 mt-1.5">{validationErrors.date}</p>}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
-
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-2">
                       Start Time <span className="text-red-500">*</span>
@@ -1767,7 +1821,7 @@ export default function CalendarPage() {
                       <button
                         type="button"
                         onClick={() => setStartTimeOpen(!startTimeOpen)}
-                        className={`w-full h-11 px-3 md:px-4 border rounded-lg text-sm bg-white flex items-center justify-between outline-none transition ${
+                        className={`w-full h-11 px-4 border rounded-lg text-sm bg-white flex items-center justify-between outline-none transition ${
                           validationErrors.startTime
                             ? 'border-red-400'
                             : startTimeOpen
@@ -1814,7 +1868,7 @@ export default function CalendarPage() {
                       <button
                         type="button"
                         onClick={() => setEndTimeOpen(!endTimeOpen)}
-                        className={`w-full h-11 px-3 md:px-4 border rounded-lg text-sm bg-white flex items-center justify-between outline-none transition ${
+                        className={`w-full h-11 px-4 border rounded-lg text-sm bg-white flex items-center justify-between outline-none transition ${
                           validationErrors.endTime
                             ? 'border-red-400'
                             : endTimeOpen
@@ -1965,14 +2019,14 @@ export default function CalendarPage() {
 
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-gray-100 sticky bottom-0 bg-white pb-1">
-                <button type="button" onClick={closeModal} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-6 mt-6 border-t border-gray-100 sticky bottom-0 bg-white">
+                <button type="button" onClick={closeModal} className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition order-2 sm:order-1">
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition ${
+                  className={`px-6 py-2.5 text-sm font-medium text-white rounded-lg transition order-1 sm:order-2 ${
                     saving ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'
                   }`}
                 >
@@ -1990,9 +2044,13 @@ export default function CalendarPage() {
 
 // ============== REUSABLE COMPONENTS ==============
 
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; }) {
+function NavLink({ href, label, icon, active = false, onClick, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; onClick?: (e: any) => void; badge?: number; }) {
   return (
-    <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}>
+    <Link
+      href={href}
+      onClick={onClick}
+      className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md ${active ? 'bg-gray-100 text-gray-900 font-medium' : 'text-gray-600 hover:bg-gray-50 font-medium'}`}
+    >
       {active && (<span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>)}
       <span className="text-gray-500">{icon}</span>
       <span className="flex-1">{label}</span>
@@ -2012,16 +2070,16 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
         <table className="w-full text-left border-collapse min-w-[500px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
-              <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
-              <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-3 md:py-4 px-3 md:px-6 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
-                <td className="py-3 md:py-4 px-3 md:px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input
                     type="text"
                     value={metricsData[row.id]?.days ?? ''}
@@ -2030,10 +2088,10 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
                       setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } }));
                     }}
                     placeholder="—"
-                    className="w-20 md:w-24 h-[34px] md:h-9 text-center border border-gray-300 rounded-lg text-[13px] md:text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10"
+                    className="w-20 sm:w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10"
                   />
                 </td>
-                <td className="py-3 md:py-4 px-3 md:px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input
                     type="checkbox"
                     checked={metricsData[row.id]?.show ?? false}
@@ -2063,10 +2121,10 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
         <table className="w-full text-left border-collapse min-w-[700px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
               {TESTING_COLUMNS.map(col => (
-                <th key={col.id} className="py-3 md:py-4 px-3 md:px-6 text-center">
-                  <span className="px-2 md:px-4 py-1.5 text-[10px] md:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">
+                <th key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
+                  <span className="px-3 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">
                     {col.label}
                   </span>
                 </th>
@@ -2076,9 +2134,9 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-3 md:py-4 px-3 md:px-6 text-[13px] md:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
                 {TESTING_COLUMNS.map(col => (
-                  <td key={col.id} className="py-3 md:py-4 px-3 md:px-6 text-center">
+                  <td key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
                     <input
                       type="checkbox"
                       checked={testingData[row.id]?.[col.id] ?? false}
@@ -2115,15 +2173,15 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
         <table className="w-full text-left border-collapse min-w-[600px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
-              <th className="py-3 md:py-4 px-3 md:px-6 text-[12px] md:text-[13px] font-semibold text-gray-600">Interpretation</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600">Interpretation</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-3 md:py-4 px-3 md:px-6 text-[13px] md:text-[14px] text-gray-800 font-medium align-top pt-4 md:pt-6">{row.label}</td>
-                <td className="py-3 md:py-4 px-3 md:px-6">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium align-top pt-4 sm:pt-6">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6">
                   <div className="relative">
                     <textarea
                       value={resultsData[row.id] ?? ''}
@@ -2132,9 +2190,9 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
                       }}
                       placeholder="Enter interpretation here..."
                       rows={4}
-                      className="w-full p-3 md:p-4 border border-gray-200 rounded-xl text-[13px] md:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y"
+                      className="w-full p-3 sm:p-4 border border-gray-200 rounded-xl text-[13px] sm:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y"
                     />
-                    <div className="text-[10px] md:text-[11px] text-gray-400 mt-1 text-right">
+                    <div className="text-[10px] sm:text-[11px] text-gray-400 mt-1 text-right">
                       {(resultsData[row.id] ?? '').length} / 1500
                     </div>
                   </div>

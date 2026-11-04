@@ -268,7 +268,6 @@ type UIExercise = {
   raw?: any;
 };
 
-// ============ Settings Section components ============
 function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: string; rows: { id: string; label: string }[]; metricsData: any; setMetricsData: any; }) {
   return (
     <div>
@@ -276,22 +275,22 @@ function MetricsSection({ title, rows, metricsData, setMetricsData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[500px]">
+        <table className="w-full text-left border-collapse min-w-[480px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Days Between</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center w-24">Show</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                <td className="py-4 px-6 text-center">
-                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
+                  <input type="text" value={metricsData[row.id]?.days ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9]/g, ''); setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], days: val } })); }} placeholder="—" className="w-20 sm:w-24 h-9 text-center border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                 </td>
-                <td className="py-4 px-6 text-center">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-center">
                   <input type="checkbox" checked={metricsData[row.id]?.show ?? false} onChange={() => { setMetricsData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], show: !prev[row.id].show } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                 </td>
               </tr>
@@ -310,13 +309,13 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[700px]">
+        <table className="w-full text-left border-collapse min-w-[680px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/3">Metric</th>
               {TESTING_COLUMNS.map(col => (
-                <th key={col.id} className="py-4 px-6 text-center">
-                  <span className="px-4 py-1.5 text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
+                <th key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
+                  <span className="px-3 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-bold text-gray-600 bg-white border border-gray-200 rounded-full uppercase tracking-wider whitespace-nowrap inline-block">{col.label}</span>
                 </th>
               ))}
             </tr>
@@ -324,9 +323,9 @@ function TestingSection({ title, rows, testingData, setTestingData }: { title: s
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
                 {TESTING_COLUMNS.map(col => (
-                  <td key={col.id} className="py-4 px-6 text-center">
+                  <td key={col.id} className="py-3 sm:py-4 px-2 sm:px-6 text-center">
                     <input type="checkbox" checked={testingData[row.id]?.[col.id] ?? false} onChange={() => { setTestingData((prev: any) => ({ ...prev, [row.id]: { ...prev[row.id], [col.id]: !prev[row.id]?.[col.id] } })); }} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600" />
                   </td>
                 ))}
@@ -346,21 +345,21 @@ function ResultsSection({ title, rows, resultsData, setResultsData }: { title: s
         <span className="w-2 h-2 rounded-full bg-blue-600"></span>{title}
       </h3>
       <div className="bg-white border border-gray-200 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[600px]">
+        <table className="w-full text-left border-collapse min-w-[560px]">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
-              <th className="py-4 px-6 text-[13px] font-semibold text-gray-600">Interpretation</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/4">Metric</th>
+              <th className="py-3 sm:py-4 px-3 sm:px-6 text-[12px] sm:text-[13px] font-semibold text-gray-600">Interpretation</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-gray-50 hover:bg-gray-50/30">
-                <td className="py-4 px-6 text-[14px] text-gray-800 font-medium align-top pt-6">{row.label}</td>
-                <td className="py-4 px-6">
+                <td className="py-3 sm:py-4 px-3 sm:px-6 text-[13px] sm:text-[14px] text-gray-800 font-medium align-top pt-4 sm:pt-6">{row.label}</td>
+                <td className="py-3 sm:py-4 px-3 sm:px-6">
                   <div className="relative">
-                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-4 border border-gray-200 rounded-xl text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
-                    <div className="text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
+                    <textarea value={resultsData[row.id] ?? ''} onChange={(e) => { setResultsData((prev: any) => ({ ...prev, [row.id]: e.target.value })); }} placeholder="Enter interpretation here..." rows={4} className="w-full p-3 sm:p-4 border border-gray-200 rounded-xl text-[13px] sm:text-[14px] text-gray-700 outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white resize-y" />
+                    <div className="text-[10px] sm:text-[11px] text-gray-400 mt-1 text-right">{(resultsData[row.id] ?? '').length} / 1500</div>
                   </div>
                 </td>
               </tr>
@@ -379,6 +378,8 @@ export default function ExercisesPage() {
   const [loading, setLoading] = useState(true);
   const [logoError, setLogoError] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [view, setView] = useState<'list' | 'create' | 'edit' | 'account-info' | 'account-settings'>('list');
   const [editingExercise, setEditingExercise] = useState<UIExercise | null>(null);
@@ -481,7 +482,6 @@ export default function ExercisesPage() {
   const [testingData, setTestingData] = useState<{ [key: string]: { [colId: string]: boolean } }>(() => buildInitialTestingData());
   const [resultsData, setResultsData] = useState<{ [key: string]: string }>(() => buildInitialResultsData());
 
-  // ============ ✅ PRIVILEGE HELPER ============
   const can = useCallback((key: string): boolean => {
     if (!user) return false;
     const roleKey = (user.role || '').toLowerCase() as 'admin' | 'supervisor' | 'staff';
@@ -654,10 +654,10 @@ export default function ExercisesPage() {
   }, []);
 
   useEffect(() => {
-    if (deleteExercise || actionsExercise) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+    const anyOverlay = deleteExercise || actionsExercise || isSidebarOpen;
+    document.body.style.overflow = anyOverlay ? 'hidden' : 'auto';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [deleteExercise, actionsExercise]);
+  }, [deleteExercise, actionsExercise, isSidebarOpen]);
 
   useEffect(() => {
     if (toast) { const t = setTimeout(() => setToast(null), 3000); return () => clearTimeout(t); }
@@ -678,6 +678,13 @@ export default function ExercisesPage() {
   };
 
   const toggleSection = (key: keyof typeof openSections) => setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const goToExercises = () => {
+    setAccountMenuOpen(false);
+    setIsSidebarOpen(false);
+    setView('list');
+    setEditingExercise(null);
+  };
 
   const toggleUnit = (u: string) => {
     setUnits((prev) => prev.includes(u) ? prev.filter((x) => x !== u) : [...prev, u]);
@@ -704,7 +711,6 @@ export default function ExercisesPage() {
     e.target.value = '';
   };
 
-  // ============ ✅ PRIVILEGE-CHECKED ACTIONS ============
   const openCreateForm = () => {
     if (!canCreateExercise) {
       setToast({ message: 'You do not have permission to create exercises.', type: 'error' });
@@ -758,7 +764,6 @@ export default function ExercisesPage() {
   const closeForm = () => { setView('list'); setEditingExercise(null); };
 
   const handleSave = async () => {
-    // ✅ Privilege guard (defense-in-depth)
     if (!canCreateExercise) {
       setToast({ message: 'You do not have permission to save exercises.', type: 'error' });
       return;
@@ -960,7 +965,6 @@ export default function ExercisesPage() {
     reader.readAsDataURL(file);
   };
 
-  // ============ ✅ SAVE SETTINGS — persist privileges to backend for ADMIN ============
   const handleSaveSettings = async () => {
     localStorage.setItem('account_settings', JSON.stringify({
       primaryColor, accountLogo, integrations, privileges, measurementSystem, metricsData, testingData, resultsData,
@@ -987,10 +991,52 @@ export default function ExercisesPage() {
     }
   };
 
-  // ============ ✅ ONLY ADMIN CAN TOGGLE PRIVILEGES ============
   const handleTogglePrivilege = (rowId: string, role: 'admin' | 'supervisor' | 'staff') => {
-    if (!isAdmin) return;
-    setPrivileges((prev) => ({ ...prev, [rowId]: { ...prev[rowId], [role]: !prev[rowId][role] } }));
+    if (!isAdmin) {
+      setToast({ message: 'Only Admins can change privileges', type: 'error' });
+      return;
+    }
+
+    setPrivileges((prev) => {
+      const currentRow = prev[rowId] || { admin: true, supervisor: true, staff: true };
+      const newRow = { ...currentRow };
+
+      if (role === 'admin') {
+        newRow.admin = !currentRow.admin;
+        if (!newRow.admin) {
+          newRow.supervisor = false;
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for all roles', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for Admin', type: 'success' });
+        }
+      } else if (role === 'supervisor') {
+        if (!currentRow.admin) {
+          setToast({ message: 'Cannot enable Supervisor — Admin must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.supervisor = !currentRow.supervisor;
+        if (!newRow.supervisor) {
+          newRow.staff = false;
+          setToast({ message: 'Privilege removed for supervisor', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege added for supervisor', type: 'success' });
+        }
+      } else {
+        if (!currentRow.supervisor) {
+          setToast({ message: 'Cannot enable Staff — Supervisor must be enabled first', type: 'error' });
+          return prev;
+        }
+        newRow.staff = !currentRow.staff;
+        if (newRow.staff) {
+          setToast({ message: 'Privilege added for staff', type: 'success' });
+        } else {
+          setToast({ message: 'Privilege removed for staff', type: 'success' });
+        }
+      }
+
+      return { ...prev, [rowId]: newRow };
+    });
   };
 
   const filteredExercises = exercises.filter((e) => {
@@ -1029,10 +1075,10 @@ export default function ExercisesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f6f8] flex">
+    <div className="h-screen w-screen bg-[#f5f6f8] overflow-hidden">
       {toast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300]">
-          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-5 flex items-center gap-3 min-w-[320px]">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[300] px-3">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-100 py-3.5 px-4 sm:px-5 flex items-center gap-3 min-w-[280px] sm:min-w-[320px] max-w-[92vw]">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${toast.type === 'error' ? 'bg-red-50' : 'bg-emerald-50'}`}>
               {toast.type === 'error' ? (
                 <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1045,8 +1091,17 @@ export default function ExercisesPage() {
         </div>
       )}
 
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen">
+      {/* Mobile overlay */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      {/* SIDEBAR — fixed on all screens; visible on lg; slide-in drawer on mobile */}
+      <aside className={`
+        fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-100 flex flex-col z-50 transition-transform duration-300
+        lg:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
         <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100 flex-shrink-0">
           <div className="w-11 h-11 rounded-full flex items-center justify-center overflow-hidden bg-white">
             {!logoError ? (
@@ -1055,9 +1110,14 @@ export default function ExercisesPage() {
               <span className="text-white text-sm font-bold bg-amber-600 w-full h-full flex items-center justify-center">{getInitials(user.name)}</span>
             )}
           </div>
-          <button className="text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
-          </button>
+          <div className="flex items-center gap-1">
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100" aria-label="Close menu">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <button className="hidden lg:block text-gray-400 hover:text-gray-600">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 4v16M15 4v16" /></svg>
+            </button>
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto py-3">
@@ -1097,7 +1157,13 @@ export default function ExercisesPage() {
               <nav className="px-3 pt-1 space-y-0.5">
                 <NavLink href="/programs" label="Programs" icon={<IconBook />} />
                 <NavLink href="/workouts" label="Workouts" icon={<IconBolt />} />
-                <NavLink href="/exercises" label="Exercises" active icon={<IconActivity />} />
+                <NavLink
+                  href="/exercises"
+                  label="Exercises"
+                  active={view === 'list'}
+                  icon={<IconActivity />}
+                  onClick={(e: any) => { e.preventDefault(); goToExercises(); }}
+                />
                 <NavLink href="/forms" label="Forms" icon={<IconForm />} />
               </nav>
             )}
@@ -1127,350 +1193,349 @@ export default function ExercisesPage() {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col overflow-hidden h-screen">
-        <header className="bg-white border-b border-gray-100 px-6 py-3 flex items-center justify-end gap-4 flex-shrink-0">
-          <div className="relative" ref={notificationsRef}>
-            <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-              {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
-            </button>
+      {/* MAIN — flex column with proper min-h-0 for scroll children */}
+      <div className="lg:ml-64 flex flex-col h-screen min-h-0">
+        <header className="bg-white border-b border-gray-100 px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between gap-3 flex-shrink-0">
+          <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-gray-700 p-1.5 rounded-md hover:bg-gray-100" aria-label="Open menu">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+          </button>
 
-            {notificationsOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
-                </div>
-                <div className="max-h-[360px] overflow-y-auto">
-                  {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
-                    unreadConversations.map((c) => (
-                      <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
-                        <div className="flex items-start gap-2">
-                          <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile?.firstName} {c.profile?.lastName}</p>
-                            <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+            <div className="relative" ref={notificationsRef}>
+              <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="text-gray-500 hover:text-gray-700 relative p-1 rounded-full hover:bg-gray-100 transition">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                {unreadCount > 0 && <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">{unreadCount}</span>}
+              </button>
+
+              {notificationsOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[290px] sm:w-[340px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <p className="text-[14px] font-semibold text-gray-900">Notifications {unreadCount > 0 && <span className="text-gray-500 font-normal">({unreadCount})</span>}</p>
+                  </div>
+                  <div className="max-h-[360px] overflow-y-auto">
+                    {unreadConversations.length === 0 ? <div className="px-4 py-8 text-center text-sm text-gray-400">No unread messages</div> : (
+                      unreadConversations.map((c) => (
+                        <Link href="/messages" key={c.id} onClick={() => setNotificationsOpen(false)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 transition block">
+                          <div className="flex items-start gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-[13px] font-semibold text-gray-900 truncate">{c.profile?.firstName} {c.profile?.lastName}</p>
+                              <p className="text-[12px] text-gray-500 truncate">{c.lastMessage}</p>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="relative" ref={accountMenuRef}>
-            <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-3 pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-2 py-1 transition">
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
-                {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
-                <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
-              </div>
-            </button>
-
-            {accountMenuOpen && (
-              <div className="absolute top-full right-0 mt-3 w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-semibold overflow-hidden flex-shrink-0">
-                    {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
-                    <p className="text-[12.5px] text-gray-500 mt-0.5 truncate">{user.role}</p>
+                        </Link>
+                      ))
+                    )}
                   </div>
                 </div>
-                <div className="py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); setView('list'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
-                    <span>Switch to Classic</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    <span>Account Info</span>
-                  </button>
-                  <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                    <span>Account Settings</span>
-                  </button>
-                  <button onClick={() => setAccountMenuOpen(false)} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
-                    <span>Billing</span>
-                  </button>
+              )}
+            </div>
+
+            <div className="relative" ref={accountMenuRef}>
+              <button onClick={() => setAccountMenuOpen(!accountMenuOpen)} className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200 hover:bg-gray-50 rounded-lg px-1.5 sm:px-2 py-1 transition">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-semibold overflow-hidden">
+                  {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
                 </div>
-                <div className="border-t border-gray-100 py-2">
-                  <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
-                    <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                    <span className="font-medium">Logout</span>
-                  </button>
+                <div className="text-left hidden sm:block">
+                  <p className="text-sm font-semibold text-gray-800 leading-none">{user.name}</p>
+                  <p className="text-[11px] text-gray-500 leading-none mt-1">{user.role}</p>
                 </div>
-              </div>
-            )}
+              </button>
+
+              {accountMenuOpen && (
+                <div className="absolute top-full right-0 mt-3 w-[280px] sm:w-[320px] bg-white border border-gray-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-semibold overflow-hidden flex-shrink-0">
+                      {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : getInitials(user.name)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[15px] font-semibold text-gray-900 truncate">{user.name}</p>
+                      <p className="text-[12.5px] text-gray-500 mt-0.5 truncate">{user.role}</p>
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); goToExercises(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6M3 10l6-6" /></svg>
+                      <span>Switch to Classic</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-info'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      <span>Account Info</span>
+                    </button>
+                    <button onClick={() => { setAccountMenuOpen(false); setView('account-settings'); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-gray-800 hover:bg-gray-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] text-gray-600 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      <span>Account Settings</span>
+                    </button>
+                  </div>
+                  <div className="border-t border-gray-100 py-2">
+                    <button onClick={() => { setAccountMenuOpen(false); handleLogout(); }} className="w-full flex items-center gap-3.5 px-5 py-3 text-[14px] text-red-600 hover:bg-red-50 transition text-left">
+                      <svg className="w-[18px] h-[18px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                      <span className="font-medium">Logout</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
-        {/* LIST */}
+        {/* LIST — flex-1 with min-h-0 to allow proper scroll */}
         {view === 'list' && (
-          <div className="flex-1 p-8 overflow-y-auto bg-white">
-            <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">Exercises</h1>
-                <p className="text-sm text-gray-500">Manage your exercise library and filter by training attributes.</p>
-              </div>
-              {/* ✅ Create Exercise — gated by create_exercises */}
-              <button
-                onClick={openCreateForm}
-                disabled={!canCreateExercise}
-                title={!canCreateExercise ? 'You do not have permission to create exercises' : undefined}
-                className={`text-sm font-medium px-5 py-2.5 rounded-lg flex items-center gap-1.5 transition shadow-sm ${
-                  canCreateExercise
-                    ? 'bg-[#1a73e8] hover:bg-[#1557b0] text-white'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                }`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-                Create Exercise
-              </button>
-            </div>
-
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 py-4 flex items-center gap-3 flex-wrap border-b border-gray-100">
-                <div className="flex items-center gap-1 flex-shrink-0 bg-gray-100 rounded-full p-1">
-                  {['All Exercises', 'My Exercises'].map((tab) => (
-                    <button key={tab} onClick={() => { setActiveTab(tab); setCurrentPage(1); }} className={`px-4 py-2 text-sm font-medium rounded-full transition whitespace-nowrap ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                      {tab}
-                    </button>
-                  ))}
+          <div className="flex-1 min-h-0 overflow-y-auto bg-white">
+            <div className="p-3 sm:p-4 lg:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Exercises</h1>
+                  <p className="text-sm text-gray-500">Manage your exercise library and filter by training attributes.</p>
                 </div>
+                <button
+                  onClick={openCreateForm}
+                  disabled={!canCreateExercise}
+                  title={!canCreateExercise ? 'You do not have permission to create exercises' : undefined}
+                  className={`text-sm font-medium px-4 sm:px-5 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm w-full sm:w-auto ${
+                    canCreateExercise
+                      ? 'bg-[#1a73e8] hover:bg-[#1557b0] text-white'
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+                  Create Exercise
+                </button>
+              </div>
 
-                <div className="relative flex-shrink-0" ref={fieldRef}>
-                  <button onClick={() => setFieldOpen(!fieldOpen)}
-                    className={`flex items-center gap-2 px-4 py-2 text-sm rounded-full font-medium whitespace-nowrap border-2 transition ${fieldFilterCount > 0 ? 'border-[#1a73e8] text-[#1a73e8] bg-blue-50/50' : 'border-gray-200 text-gray-700 hover:bg-gray-50 bg-white'}`}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    Field {fieldFilterCount > 0 ? `(${fieldFilterCount})` : ''}
-                    <svg className={`w-3.5 h-3.5 transition-transform ${fieldOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {fieldOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-[400px] bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4">
-                      <p className="text-[12px] font-semibold text-gray-500 tracking-wider mb-3">FILTER BY FIELD</p>
-                      <div className="space-y-2">
-                        {COLUMN_OPTIONS.map((col) => (
-                          <label key={col} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" checked={fieldFilter === col} onChange={() => { setFieldFilter(fieldFilter === col ? null : col); setFieldFilterCount(fieldFilter === col ? 0 : 1); }} className="rounded border-gray-300 w-4 h-4 text-[#1a73e8] focus:ring-[#1a73e8]" />
-                            <span className="text-[14px] text-gray-800">{col}</span>
-                          </label>
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <div className="px-3 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 border-b border-gray-100">
+                  <div className="flex items-center gap-1 flex-shrink-0 bg-gray-100 rounded-full p-1 self-start overflow-x-auto max-w-full">
+                    {['All Exercises', 'My Exercises'].map((tab) => (
+                      <button key={tab} onClick={() => { setActiveTab(tab); setCurrentPage(1); }} className={`px-3 sm:px-4 py-2 text-sm font-medium rounded-full transition whitespace-nowrap ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="relative flex-shrink-0 self-start" ref={fieldRef}>
+                    <button onClick={() => setFieldOpen(!fieldOpen)}
+                      className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-sm rounded-full font-medium whitespace-nowrap border-2 transition ${fieldFilterCount > 0 ? 'border-[#1a73e8] text-[#1a73e8] bg-blue-50/50' : 'border-gray-200 text-gray-700 hover:bg-gray-50 bg-white'}`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      Field {fieldFilterCount > 0 ? `(${fieldFilterCount})` : ''}
+                      <svg className={`w-3.5 h-3.5 transition-transform ${fieldOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {fieldOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] max-w-[340px] sm:w-[400px] bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4">
+                        <p className="text-[12px] font-semibold text-gray-500 tracking-wider mb-3">FILTER BY FIELD</p>
+                        <div className="space-y-2">
+                          {COLUMN_OPTIONS.map((col) => (
+                            <label key={col} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 cursor-pointer">
+                              <input type="checkbox" checked={fieldFilter === col} onChange={() => { setFieldFilter(fieldFilter === col ? null : col); setFieldFilterCount(fieldFilter === col ? 0 : 1); }} className="rounded border-gray-300 w-4 h-4 text-[#1a73e8] focus:ring-[#1a73e8]" />
+                              <span className="text-[14px] text-gray-800">{col}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="relative flex-shrink-0 self-start" ref={columnRef}>
+                    <button onClick={() => setColumnOpen(!columnOpen)} className="flex items-center gap-2 px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium whitespace-nowrap">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {selectedColumn || 'Column'}
+                      <svg className={`w-3.5 h-3.5 transition-transform ${columnOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {columnOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
+                        {COLUMN_OPTIONS.map((c) => (
+                          <button key={c} onClick={() => { setSelectedColumn(c); setColumnOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${selectedColumn === c ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>{c}</button>
                         ))}
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative flex-shrink-0" ref={columnRef}>
-                  <button onClick={() => setColumnOpen(!columnOpen)} className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium whitespace-nowrap">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    {selectedColumn || 'Column'}
-                    <svg className={`w-3.5 h-3.5 transition-transform ${columnOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {columnOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
-                      {COLUMN_OPTIONS.map((c) => (
-                        <button key={c} onClick={() => { setSelectedColumn(c); setColumnOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${selectedColumn === c ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>{c}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="relative flex-shrink-0" ref={valueRef}>
-                  <button onClick={() => setValueOpen(!valueOpen)} className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium whitespace-nowrap">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-                    {selectedValue || 'Value'}
-                    <svg className={`w-3.5 h-3.5 transition-transform ${valueOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                  {valueOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
-                      {VALUE_OPTIONS.map((v) => (
-                        <button key={v} onClick={() => { setSelectedValue(v); setValueOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${selectedValue === v ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>{v}</button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="ml-auto flex items-center gap-2 flex-shrink-0">
-                  <div className="relative">
-                    <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    <input type="text" placeholder="Search exercises..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                      className="pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-lg w-64 outline-none focus:border-[#1a73e8]" />
+                    )}
                   </div>
-                  <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
-                    <button type="button" onClick={() => setViewMode('list')} title="List view" className={`w-8 h-8 flex items-center justify-center rounded-full transition ${viewMode === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
-                    </button>
-                    <button type="button" onClick={() => setViewMode('grid')} title="Grid view" className={`w-8 h-8 flex items-center justify-center rounded-full transition ${viewMode === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                    </button>
-                  </div>
-                  <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium">
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                  </select>
-                </div>
-              </div>
 
-              {fieldFilter && (
-                <div className="px-6 py-3 border-b border-gray-100 bg-gray-50/40">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-[13.5px] text-gray-700 shadow-sm">
-                    <span className="font-semibold tracking-wider text-[11.5px] text-gray-500 uppercase">FILTER BY FIELD</span>
-                    <span className="text-gray-800">{fieldFilter}</span>
-                    <button onClick={() => { setFieldFilter(null); setFieldFilterCount(0); }} className="ml-1 w-4 h-4 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                  <div className="relative flex-shrink-0 self-start" ref={valueRef}>
+                    <button onClick={() => setValueOpen(!valueOpen)} className="flex items-center gap-2 px-3 sm:px-4 py-2 text-sm border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 bg-white font-medium whitespace-nowrap">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                      {selectedValue || 'Value'}
+                      <svg className={`w-3.5 h-3.5 transition-transform ${valueOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                     </button>
+                    {valueOpen && (
+                      <div className="absolute top-full left-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50 py-2">
+                        {VALUE_OPTIONS.map((v) => (
+                          <button key={v} onClick={() => { setSelectedValue(v); setValueOpen(false); }} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${selectedValue === v ? 'text-[#1a73e8] font-medium' : 'text-gray-700'}`}>{v}</button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto sm:ml-auto">
+                    <div className="relative flex-1 sm:flex-none">
+                      <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                      <input type="text" placeholder="Search exercises..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                        className="pl-9 pr-4 py-2 text-sm bg-white border border-gray-200 rounded-lg w-full sm:w-64 outline-none focus:border-[#1a73e8]" />
+                    </div>
+                    <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1 self-start sm:self-auto">
+                      <button type="button" onClick={() => setViewMode('list')} title="List view" className={`w-8 h-8 flex items-center justify-center rounded-full transition ${viewMode === 'list' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                      </button>
+                      <button type="button" onClick={() => setViewMode('grid')} title="Grid view" className={`w-8 h-8 flex items-center justify-center rounded-full transition ${viewMode === 'grid' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                      </button>
+                    </div>
+                    <select value={itemsPerPage} onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="text-sm border border-gray-200 rounded-md px-3 py-2 outline-none bg-white font-medium self-start sm:self-auto">
+                      <option value={10}>10</option>
+                      <option value={25}>25</option>
+                      <option value={50}>50</option>
+                    </select>
                   </div>
                 </div>
-              )}
 
-              {dataLoading && exercises.length === 0 ? (
-                <div className="px-6 py-16 text-center text-gray-400 text-sm">Loading exercises...</div>
-              ) : paginatedExercises.length === 0 ? (
-                <div className="px-6 py-16 text-center text-gray-400 text-sm">
-                  {activeTab === 'My Exercises' ? 'You have not created any exercises yet.' : 'No exercises yet.'}{' '}
-                  {canCreateExercise ? (
-                    <>Click <button onClick={openCreateForm} className="font-medium text-[#1a73e8] hover:underline">Create Exercise</button> to get started.</>
-                  ) : (
-                    <>Ask an admin to create an exercise.</>
-                  )}
-                </div>
-              ) : viewMode === 'list' ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50/40">
-                        <th className="px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
-                        <th className="px-4 py-3 font-medium text-xs">Name</th>
-                        <th className="px-4 py-3 font-medium text-xs">Primary Muscle</th>
-                        <th className="px-4 py-3 font-medium text-xs">Equipment</th>
-                        <th className="px-4 py-3 font-medium text-xs">Mechanics</th>
-                        <th className="px-4 py-3 font-medium text-xs">Force</th>
-                        <th className="px-4 py-3 font-medium text-xs">Access</th>
-                        <th className="px-6 py-3 font-medium text-xs text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {paginatedExercises.map((ex) => (
-                        <tr key={ex.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="px-6 py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
-                          <td className="px-4 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                <svg className="w-4 h-4 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
-                              </div>
-                              <span className="font-medium text-gray-800">{ex.name}</span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 text-gray-600">{ex.primaryMuscle || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{ex.equipment || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{ex.mechanics || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{ex.force || '—'}</td>
-                          <td className="px-4 py-4 text-gray-600">{ex.access || '—'}</td>
-                          <td className="px-6 py-4 text-right">
-                            <button onClick={() => setActionsExercise(ex)} className="p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 inline-flex">
-                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
-                              </svg>
-                            </button>
-                          </td>
+                {fieldFilter && (
+                  <div className="px-3 sm:px-6 py-3 border-b border-gray-100 bg-gray-50/40">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-[13.5px] text-gray-700 shadow-sm">
+                      <span className="font-semibold tracking-wider text-[11.5px] text-gray-500 uppercase">FILTER BY FIELD</span>
+                      <span className="text-gray-800">{fieldFilter}</span>
+                      <button onClick={() => { setFieldFilter(null); setFieldFilterCount(0); }} className="ml-1 w-4 h-4 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {dataLoading && exercises.length === 0 ? (
+                  <div className="px-6 py-16 text-center text-gray-400 text-sm">Loading exercises...</div>
+                ) : paginatedExercises.length === 0 ? (
+                  <div className="px-6 py-16 text-center text-gray-400 text-sm">
+                    {activeTab === 'My Exercises' ? 'You have not created any exercises yet.' : 'No exercises yet.'}{' '}
+                    {canCreateExercise ? (
+                      <>Click <button onClick={openCreateForm} className="font-medium text-[#1a73e8] hover:underline">Create Exercise</button> to get started.</>
+                    ) : (
+                      <>Ask an admin to create an exercise.</>
+                    )}
+                  </div>
+                ) : viewMode === 'list' ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm min-w-[820px]">
+                      <thead>
+                        <tr className="text-left text-gray-500 border-b border-gray-100 bg-gray-50/40">
+                          <th className="px-3 sm:px-6 py-3 w-10"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></th>
+                          <th className="px-3 sm:px-4 py-3 font-medium text-xs">Name</th>
+                          <th className="px-3 sm:px-4 py-3 font-medium text-xs">Primary Muscle</th>
+                          <th className="px-3 sm:px-4 py-3 font-medium text-xs">Equipment</th>
+                          <th className="px-3 sm:px-4 py-3 font-medium text-xs">Mechanics</th>
+                          <th className="px-3 sm:px-4 py-3 font-medium text-xs">Force</th>
+                          <th className="px-3 sm:px-4 py-3 font-medium text-xs">Access</th>
+                          <th className="px-3 sm:px-6 py-3 font-medium text-xs text-right">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {paginatedExercises.map((ex) => (
-                    <div key={ex.id} className="group relative border border-gray-200 rounded-2xl bg-white hover:shadow-md hover:border-gray-300 transition flex flex-col">
-                      <div className="p-5 flex items-start gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-5 h-5 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
+                      </thead>
+                      <tbody>
+                        {paginatedExercises.map((ex) => (
+                          <tr key={ex.id} className="border-b border-gray-100 hover:bg-gray-50">
+                            <td className="px-3 sm:px-6 py-3 sm:py-4"><input type="checkbox" className="rounded border-gray-300 w-4 h-4" /></td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                  <svg className="w-4 h-4 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
+                                </div>
+                                <span className="font-medium text-gray-800">{ex.name}</span>
+                              </div>
+                            </td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{ex.primaryMuscle || '—'}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{ex.equipment || '—'}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{ex.mechanics || '—'}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{ex.force || '—'}</td>
+                            <td className="px-3 sm:px-4 py-3 sm:py-4 text-gray-600">{ex.access || '—'}</td>
+                            <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
+                              <button onClick={() => setActionsExercise(ex)} className="p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700 inline-flex">
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="p-3 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+                    {paginatedExercises.map((ex) => (
+                      <div key={ex.id} className="group relative border border-gray-200 rounded-2xl bg-white hover:shadow-md hover:border-gray-300 transition flex flex-col">
+                        <div className="p-4 sm:p-5 flex items-start gap-3">
+                          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-[#1a73e8]" fill="none" stroke="currentColor" strokeWidth={2.2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.5 6.5v11M3.5 8.5v7M17.5 6.5v11M20.5 8.5v7M6.5 12h11" /></svg>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-[15px] font-semibold text-gray-900 truncate" title={ex.name}>{ex.name}</h3>
+                            <p className="text-[12px] text-gray-500 truncate mt-0.5">{ex.creator || 'Unknown creator'}</p>
+                          </div>
+                          <button onClick={() => setActionsExercise(ex)} className="opacity-0 group-hover:opacity-100 transition p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700" title="Actions">
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                              <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
+                            </svg>
+                          </button>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="text-[15px] font-semibold text-gray-900 truncate" title={ex.name}>{ex.name}</h3>
-                          <p className="text-[12px] text-gray-500 truncate mt-0.5">{ex.creator || 'Unknown creator'}</p>
+
+                        <div className="px-4 sm:px-5 pb-4 flex-1">
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {ex.primaryMuscle && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-indigo-50 text-indigo-700 text-[11px] font-medium">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                {ex.primaryMuscle}
+                              </span>
+                            )}
+                            {ex.equipment && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-medium">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                                {ex.equipment}
+                              </span>
+                            )}
+                            {ex.mechanics && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 text-gray-700 text-[11px] font-medium">{ex.mechanics}</span>
+                            )}
+                            {ex.force && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-purple-50 text-purple-700 text-[11px] font-medium">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                {ex.force}
+                              </span>
+                            )}
+                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-amber-50 text-amber-700 text-[11px] font-medium truncate">
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                              {ex.access}
+                            </span>
+                          </div>
+                          {ex.instructions && <p className="text-[12.5px] text-gray-500 line-clamp-2">{ex.instructions}</p>}
                         </div>
-                        <button onClick={() => setActionsExercise(ex)} className="opacity-0 group-hover:opacity-100 transition p-1 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-700" title="Actions">
-                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
-                          </svg>
-                        </button>
-                      </div>
 
-                      <div className="px-5 pb-4 flex-1">
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {ex.primaryMuscle && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-indigo-50 text-indigo-700 text-[11px] font-medium">
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                              {ex.primaryMuscle}
-                            </span>
-                          )}
-                          {ex.equipment && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-medium">
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                              {ex.equipment}
-                            </span>
-                          )}
-                          {ex.mechanics && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 text-gray-700 text-[11px] font-medium">
-                              {ex.mechanics}
-                            </span>
-                          )}
-                          {ex.force && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-purple-50 text-purple-700 text-[11px] font-medium">
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                              {ex.force}
-                            </span>
-                          )}
-                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-amber-50 text-amber-700 text-[11px] font-medium truncate">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            {ex.access}
-                          </span>
+                        <div className="px-4 sm:px-5 py-3 border-t border-gray-100 flex items-center justify-between">
+                          <button
+                            onClick={() => openEditForm(ex)}
+                            disabled={!canCreateExercise}
+                            title={!canCreateExercise ? 'You do not have permission to edit exercises' : undefined}
+                            className={`text-[12.5px] font-medium ${canCreateExercise ? 'text-[#1a73e8] hover:underline' : 'text-gray-300 cursor-not-allowed'}`}
+                          >
+                            Edit
+                          </button>
+                          <button onClick={() => setActionsExercise(ex)} className="text-[12.5px] font-medium text-gray-500 hover:text-gray-800">More</button>
                         </div>
-                        {ex.instructions && (
-                          <p className="text-[12.5px] text-gray-500 line-clamp-2">{ex.instructions}</p>
-                        )}
                       </div>
+                    ))}
+                  </div>
+                )}
 
-                      <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        {/* ✅ Edit gated by create_exercises */}
-                        <button
-                          onClick={() => openEditForm(ex)}
-                          disabled={!canCreateExercise}
-                          title={!canCreateExercise ? 'You do not have permission to edit exercises' : undefined}
-                          className={`text-[12.5px] font-medium ${canCreateExercise ? 'text-[#1a73e8] hover:underline' : 'text-gray-300 cursor-not-allowed'}`}
-                        >
-                          Edit
-                        </button>
-                        <button onClick={() => setActionsExercise(ex)} className="text-[12.5px] font-medium text-gray-500 hover:text-gray-800">More</button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-                <p className="text-sm text-gray-500">
-                  Showing <span className="font-semibold text-gray-700">{startItem}–{endItem}</span> of <span className="font-semibold text-gray-700">{totalItems}</span>
-                </p>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1}
-                    className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                    Previous
-                  </button>
-                  <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages}
-                    className={`flex items-center gap-1 px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
-                    Next
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                  </button>
+                <div className="flex flex-col sm:flex-row items-center justify-between px-3 sm:px-6 py-4 border-t border-gray-100 gap-3">
+                  <p className="text-sm text-gray-500">
+                    Showing <span className="font-semibold text-gray-700">{startItem}–{endItem}</span> of <span className="font-semibold text-gray-700">{totalItems}</span>
+                  </p>
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    <button onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)} disabled={currentPage === 1}
+                      className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage === 1 ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+                      Previous
+                    </button>
+                    <button onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages}
+                      className={`flex items-center gap-1 px-3 sm:px-4 py-2 text-sm rounded-lg border transition ${currentPage >= totalPages ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-white' : 'border-gray-200 text-gray-700 bg-white hover:bg-gray-50'}`}>
+                      Next
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1479,28 +1544,28 @@ export default function ExercisesPage() {
 
         {/* CREATE / EDIT */}
         {(view === 'create' || view === 'edit') && (
-          <div className="flex-1 overflow-y-auto bg-[#f5f6f8]">
-            <div className="bg-white px-8 pt-7 pb-5 border-b border-gray-100">
-              <div className="flex items-center gap-3.5">
+          <div className="flex-1 min-h-0 overflow-y-auto bg-[#f5f6f8]">
+            <div className="bg-white px-4 sm:px-6 lg:px-8 pt-5 sm:pt-7 pb-4 sm:pb-5 border-b border-gray-100">
+              <div className="flex items-center gap-3">
                 <button onClick={closeForm} className="w-9 h-9 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center flex-shrink-0 transition">
                   <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <div>
-                  <h1 className="text-[19px] font-bold text-gray-900 leading-tight">{view === 'edit' ? 'Edit Exercise' : 'Create Exercise'}</h1>
-                  <p className="text-[13px] text-gray-500 leading-tight mt-0.5">{view === 'edit' ? 'Update the exercise details below.' : 'Fill in the details to add a new exercise.'}</p>
+                <div className="min-w-0">
+                  <h1 className="text-lg sm:text-[19px] font-bold text-gray-900 leading-tight truncate">{view === 'edit' ? 'Edit Exercise' : 'Create Exercise'}</h1>
+                  <p className="text-[12.5px] sm:text-[13px] text-gray-500 leading-tight mt-0.5">{view === 'edit' ? 'Update the exercise details below.' : 'Fill in the details to add a new exercise.'}</p>
                 </div>
               </div>
             </div>
 
-            <div className="px-10 py-8">
-              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-7">
-                <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-2xl p-7 bg-white">
-                    <h3 className="text-[16px] font-bold text-gray-900 mb-6">Basic Info</h3>
-                    <div className="mb-5">
+            <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-7">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 bg-white">
+                    <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-6">Basic Info</h3>
+                    <div className="mb-4 sm:mb-5">
                       <div className="flex items-center justify-between mb-2">
-                        <label className="block text-[13.5px] font-semibold text-gray-800">Exercise Name <span className="text-red-500">*</span></label>
-                        <span className="text-[12px] text-gray-400">{name.length}/100</span>
+                        <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800">Exercise Name <span className="text-red-500">*</span></label>
+                        <span className="text-[11.5px] sm:text-[12px] text-gray-400">{name.length}/100</span>
                       </div>
                       <input type="text" maxLength={100} autoFocus placeholder="e.g. Barbell Back Squat" value={name}
                         onChange={(e) => { setName(e.target.value); if (formErrors.name) setFormErrors({ ...formErrors, name: '' }); }}
@@ -1508,7 +1573,7 @@ export default function ExercisesPage() {
                       {formErrors.name && <p className="text-xs text-red-500 mt-1.5">{formErrors.name}</p>}
                     </div>
                     <div>
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Access</label>
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Access</label>
                       <div className="relative">
                         <select value={access} onChange={(e) => setAccess(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           {ACCESS_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -1518,16 +1583,16 @@ export default function ExercisesPage() {
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-2xl p-7 bg-white">
-                    <h3 className="text-[16px] font-bold text-gray-900 mb-6">Classification</h3>
-                    <div className="mb-6">
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-3">Units of Measure <span className="text-red-500">*</span></label>
-                      <div className="flex items-center gap-3 flex-wrap">
+                  <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 bg-white">
+                    <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-6">Classification</h3>
+                    <div className="mb-4 sm:mb-6">
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2 sm:mb-3">Units of Measure <span className="text-red-500">*</span></label>
+                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                         {UNITS_OF_MEASURE.map((u) => {
                           const active = units.includes(u);
                           return (
                             <button key={u} type="button" onClick={() => toggleUnit(u)}
-                              className={`px-5 h-[42px] rounded-full text-[14px] font-medium transition border ${active ? 'bg-[#e8f0fe] border-[#1a73e8] text-[#1a73e8]' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
+                              className={`px-4 sm:px-5 h-[42px] rounded-full text-[13px] sm:text-[14px] font-medium transition border ${active ? 'bg-[#e8f0fe] border-[#1a73e8] text-[#1a73e8]' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'}`}>
                               {u}
                             </button>
                           );
@@ -1535,8 +1600,8 @@ export default function ExercisesPage() {
                       </div>
                       {formErrors.units && <p className="text-xs text-red-500 mt-2">{formErrors.units}</p>}
                     </div>
-                    <div className="mb-5">
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Body Segment</label>
+                    <div className="mb-4 sm:mb-5">
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Body Segment</label>
                       <div className="relative">
                         <select value={bodySegment} onChange={(e) => setBodySegment(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           <option value="">— Select —</option>
@@ -1545,8 +1610,8 @@ export default function ExercisesPage() {
                         <svg className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                       </div>
                     </div>
-                    <div className="mb-5">
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Primary Muscle</label>
+                    <div className="mb-4 sm:mb-5">
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Primary Muscle</label>
                       <div className="relative">
                         <select value={primaryMuscle} onChange={(e) => setPrimaryMuscle(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           <option value="">— Select —</option>
@@ -1555,8 +1620,8 @@ export default function ExercisesPage() {
                         <svg className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                       </div>
                     </div>
-                    <div className="mb-5">
-                      <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Equipment</label>
+                    <div className="mb-4 sm:mb-5">
+                      <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Equipment</label>
                       <div className="relative">
                         <select value={equipment} onChange={(e) => setEquipment(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                           <option value="">— Select —</option>
@@ -1565,9 +1630,9 @@ export default function ExercisesPage() {
                         <svg className="w-4 h-4 text-gray-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Mechanics</label>
+                        <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Mechanics</label>
                         <div className="relative">
                           <select value={mechanics} onChange={(e) => setMechanics(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             <option value="">— Select —</option>
@@ -1577,7 +1642,7 @@ export default function ExercisesPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">Force</label>
+                        <label className="block text-[13px] sm:text-[13.5px] font-semibold text-gray-800 mb-2">Force</label>
                         <div className="relative">
                           <select value={force} onChange={(e) => setForce(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] bg-white outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none pr-10">
                             <option value="">— Select —</option>
@@ -1589,9 +1654,9 @@ export default function ExercisesPage() {
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-2xl p-7 bg-white">
+                  <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 bg-white">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-[16px] font-bold text-gray-900">Instructions</h3>
+                      <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900">Instructions</h3>
                       <span className="text-[12px] text-gray-400">{instructions.length}/1000</span>
                     </div>
                     <textarea rows={6} maxLength={1000} placeholder="Describe how to perform this exercise step by step..." value={instructions}
@@ -1600,49 +1665,49 @@ export default function ExercisesPage() {
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-2xl p-7 bg-white">
-                    <h3 className="text-[16px] font-bold text-gray-900 mb-6">Video</h3>
-                    <div className="aspect-video rounded-xl flex flex-col items-center justify-center mb-6 relative overflow-hidden bg-[#0b1426]">
+                <div className="space-y-4 sm:space-y-6">
+                  <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 bg-white">
+                    <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-6">Video</h3>
+                    <div className="aspect-video rounded-xl flex flex-col items-center justify-center mb-4 sm:mb-6 relative overflow-hidden bg-[#0b1426]">
                       {embedUrl ? (
                         <iframe key={embedUrl} src={embedUrl} title="Exercise video" className="w-full h-full absolute inset-0" frameBorder={0} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
                       ) : previewThumb ? (
                         <img src={previewThumb} alt="Video preview" className="w-full h-full object-cover" />
                       ) : videoPlatform === 'YouTube' ? (
                         <>
-                          <div className="w-16 h-16 rounded-full bg-[#ff0000] flex items-center justify-center mb-4"><svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
-                          <p className="text-[13.5px] text-white/70 font-medium">YouTube video</p>
-                          <p className="text-[12px] text-white/40 mt-1">Paste a URL below to play</p>
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#ff0000] flex items-center justify-center mb-3 sm:mb-4"><svg className="w-7 h-7 sm:w-8 sm:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+                          <p className="text-[12.5px] sm:text-[13.5px] text-white/70 font-medium">YouTube video</p>
+                          <p className="text-[11.5px] sm:text-[12px] text-white/40 mt-1">Paste a URL below to play</p>
                         </>
                       ) : videoPlatform === 'Vimeo' ? (
                         <>
-                          <div className="w-16 h-16 rounded-full bg-[#1ab7ea] flex items-center justify-center mb-4"><svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
-                          <p className="text-[13.5px] text-white/70 font-medium">Vimeo video</p>
-                          <p className="text-[12px] text-white/40 mt-1">Paste a URL below to play</p>
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#1ab7ea] flex items-center justify-center mb-3 sm:mb-4"><svg className="w-7 h-7 sm:w-8 sm:h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+                          <p className="text-[12.5px] sm:text-[13.5px] text-white/70 font-medium">Vimeo video</p>
+                          <p className="text-[11.5px] sm:text-[12px] text-white/40 mt-1">Paste a URL below to play</p>
                         </>
                       ) : (
                         <>
-                          <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4"><svg className="w-7 h-7 text-white/50 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
-                          <p className="text-[13.5px] text-white/50">Select a platform and enter a URL</p>
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3 sm:mb-4"><svg className="w-7 h-7 text-white/50 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></div>
+                          <p className="text-[12.5px] sm:text-[13.5px] text-white/50 px-3 text-center">Select a platform and enter a URL</p>
                         </>
                       )}
                     </div>
-                    <div className="mb-5">
-                      <label className="block text-[14px] font-bold text-gray-900 mb-3">Platform</label>
-                      <div className="flex items-center gap-3 flex-wrap">
+                    <div className="mb-4 sm:mb-5">
+                      <label className="block text-[13px] sm:text-[14px] font-bold text-gray-900 mb-2 sm:mb-3">Platform</label>
+                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                         {(['None', 'YouTube', 'Vimeo'] as const).map((p) => {
                           const active = videoPlatform === p;
                           return (
                             <button key={p} type="button" onClick={() => setVideoPlatform(p)}
-                              className={`px-6 h-[46px] rounded-full text-[15px] font-medium transition ${active ? 'bg-[#1e293b] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+                              className={`px-4 sm:px-6 h-[42px] sm:h-[46px] rounded-full text-[13px] sm:text-[15px] font-medium transition ${active ? 'bg-[#1e293b] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                               {p}
                             </button>
                           );
                         })}
                       </div>
                     </div>
-                    <div className="mb-5">
-                      <label className="block text-[14px] font-bold text-gray-900 mb-3">Video URL</label>
+                    <div className="mb-4 sm:mb-5">
+                      <label className="block text-[13px] sm:text-[14px] font-bold text-gray-900 mb-2 sm:mb-3">Video URL</label>
                       <div className="relative">
                         <input type="text" placeholder={videoPlatform === 'None' ? 'Select a platform first' : `Paste ${videoPlatform} URL...`}
                           value={videoUrl} disabled={videoPlatform === 'None'}
@@ -1657,18 +1722,18 @@ export default function ExercisesPage() {
                       {embedUrl && <p className="text-xs text-emerald-600 mt-2">✓ Video detected — it will play above.</p>}
                     </div>
                     <div>
-                      <label className="block text-[14px] font-bold text-gray-900 mb-3">Source Label (optional)</label>
+                      <label className="block text-[13px] sm:text-[14px] font-bold text-gray-900 mb-2 sm:mb-3">Source Label (optional)</label>
                       <input type="text" placeholder="e.g. Coach John's Tutorial" value={sourceLabel}
                         onChange={(e) => setSourceLabel(e.target.value)}
                         className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-2xl p-7 bg-white">
-                    <h3 className="text-[16px] font-bold text-gray-900 mb-6">Screenshot</h3>
+                  <div className="border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7 bg-white">
+                    <h3 className="text-[15px] sm:text-[16px] font-bold text-gray-900 mb-4 sm:mb-6">Screenshot</h3>
                     <input ref={screenshotRef} type="file" accept="image/png,image/jpeg,image/gif" onChange={handleScreenshotUpload} className="hidden" />
                     {screenshot ? (
-                      <div className="relative rounded-xl overflow-hidden border border-gray-200 mb-5">
+                      <div className="relative rounded-xl overflow-hidden border border-gray-200 mb-4 sm:mb-5">
                         <img src={screenshot} alt="Screenshot" className="w-full object-cover" />
                         <button type="button" onClick={() => setScreenshot(null)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 hover:bg-white shadow text-gray-600 hover:text-red-500 flex items-center justify-center">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -1676,19 +1741,19 @@ export default function ExercisesPage() {
                       </div>
                     ) : (
                       <button type="button" onClick={() => screenshotRef.current?.click()}
-                        className="w-full border-2 border-dashed border-gray-300 rounded-xl py-12 flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition mb-5">
-                        <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                          <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0-12l-4 4m4-4l4 4" /></svg>
+                        className="w-full border-2 border-dashed border-gray-300 rounded-xl py-8 sm:py-12 flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition mb-4 sm:mb-5">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-100 flex items-center justify-center mb-3 sm:mb-4">
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0-12l-4 4m4-4l4 4" /></svg>
                         </div>
-                        <p className="text-[14.5px] font-semibold text-gray-800 mb-1">Click to upload</p>
-                        <p className="text-[12.5px] text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                        <p className="text-[13px] sm:text-[14.5px] font-semibold text-gray-800 mb-1">Click to upload</p>
+                        <p className="text-[11.5px] sm:text-[12.5px] text-gray-500">PNG, JPG, GIF up to 5MB</p>
                       </button>
                     )}
-                    <div className="flex items-center gap-4 px-5 py-4 border border-gray-200 rounded-xl bg-gray-50/40">
+                    <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3 sm:py-4 border border-gray-200 rounded-xl bg-gray-50/40">
                       <svg className="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" /></svg>
-                      <div className="flex-1">
-                        <p className="text-[14.5px] font-semibold text-gray-900 leading-tight">Share with community</p>
-                        <p className="text-[12.5px] text-gray-500 leading-tight mt-0.5">Make this exercise visible to other users</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] sm:text-[14.5px] font-semibold text-gray-900 leading-tight">Share with community</p>
+                        <p className="text-[11.5px] sm:text-[12.5px] text-gray-500 leading-tight mt-0.5">Make this exercise visible to other users</p>
                       </div>
                       <button type="button" role="switch" aria-checked={shareWithCommunity} onClick={() => setShareWithCommunity(!shareWithCommunity)}
                         className={`relative w-12 h-7 rounded-full transition flex-shrink-0 ${shareWithCommunity ? 'bg-[#1a73e8]' : 'bg-gray-200'}`}>
@@ -1699,10 +1764,10 @@ export default function ExercisesPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-7 mt-7 border-t border-gray-100">
-                <button type="button" onClick={closeForm} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-6 sm:pt-7 mt-6 sm:mt-7 border-t border-gray-100">
+                <button type="button" onClick={closeForm} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white order-2 sm:order-1">Cancel</button>
                 <button type="button" onClick={handleSave} disabled={saving || !canCreateExercise}
-                  className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${(saving || !canCreateExercise) ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
+                  className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition order-1 sm:order-2 ${(saving || !canCreateExercise) ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a73e8] hover:bg-[#1557b0]'}`}>
                   {saving ? (view === 'edit' ? 'Saving...' : 'Creating...') : (view === 'edit' ? 'Save Changes' : 'Create Exercise')}
                 </button>
               </div>
@@ -1712,23 +1777,23 @@ export default function ExercisesPage() {
 
         {/* ACCOUNT INFO */}
         {view === 'account-info' && (
-          <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
+          <div className="flex-1 min-h-0 overflow-y-auto bg-[#f7f8fa]">
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Info</h1>
               <p className="text-[13.5px] text-gray-500">Manage your personal profile and business details.</p>
             </div>
-            <div className="px-10 pb-10">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10">
               <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-                <div className="px-8 pt-6 pb-5 border-b border-gray-100">
-                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1">
-                    <button onClick={() => { setActiveInfoTab('user'); setInfoErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
-                    <button onClick={() => { setActiveInfoTab('business'); setInfoErrors({}); }} className={`px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
+                <div className="px-4 sm:px-8 pt-6 pb-5 border-b border-gray-100 overflow-x-auto">
+                  <div className="inline-flex items-center gap-1 bg-gray-100 rounded-full p-1 min-w-max">
+                    <button onClick={() => { setActiveInfoTab('user'); setInfoErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'user' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>User Info</button>
+                    <button onClick={() => { setActiveInfoTab('business'); setInfoErrors({}); }} className={`px-4 sm:px-5 py-2 text-[14px] font-medium rounded-full transition ${activeInfoTab === 'business' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>Business Info</button>
                   </div>
                 </div>
 
                 {activeInfoTab === 'user' && (
-                  <div className="p-8 lg:p-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-8 lg:gap-10">
                       <div className="space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div>
@@ -1747,13 +1812,13 @@ export default function ExercisesPage() {
                           <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); if (infoErrors.email) setInfoErrors({ ...infoErrors, email: '' }); }} className={`w-full h-[48px] px-4 border rounded-lg text-[14px] outline-none transition ${infoErrors.email ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                           {infoErrors.email && <p className="text-xs text-red-500 mt-1.5">{infoErrors.email}</p>}
                         </div>
-                        <div className="border border-gray-200 rounded-2xl p-6">
+                        <div className="border border-gray-200 rounded-2xl p-4 sm:p-6">
                           <p className="text-[11px] font-bold text-gray-500 tracking-[0.12em] uppercase mb-5">Change password — leave blank to keep current</p>
                           <div className="space-y-5">
                             <div>
                               <label className="block text-[13.5px] font-semibold text-gray-800 mb-2">New password</label>
                               <div className="relative">
-                                <input type={showNewPassword ? 'text' : 'password'} placeholder="Min 8 chars, upper, lower, number, special" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={`w-full h-[48px] px-4 pr-12 border rounded-lg text-[14px] placeholder-gray-400 outline-none transition ${infoErrors.newPassword ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
+                                <input type={showNewPassword ? 'text' : 'password'} placeholder="Min 8 chars" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={`w-full h-[48px] px-4 pr-12 border rounded-lg text-[14px] placeholder-gray-400 outline-none transition ${infoErrors.newPassword ? 'border-red-400' : 'border-gray-300 focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10'}`} />
                                 <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                                 </button>
@@ -1776,7 +1841,7 @@ export default function ExercisesPage() {
                       <div className="flex flex-col items-center justify-start pt-2">
                         <p className="text-[14px] font-semibold text-gray-800 mb-5">Profile Photo</p>
                         <input ref={accountPhotoInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" className="hidden" onChange={handleAccountPhotoChange} />
-                        <div className="relative w-[220px] h-[220px] mb-6">
+                        <div className="relative w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] mb-6">
                           <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                             {accountPhoto ? <img src={accountPhoto} alt={user.name} className="w-full h-full object-cover" /> : <span className="text-[42px] font-semibold text-gray-600">{getInitials(user.name)}</span>}
                           </div>
@@ -1790,34 +1855,17 @@ export default function ExercisesPage() {
                           {accountPhoto ? 'Change photo' : 'Upload photo'}
                         </button>
                         <p className="text-xs text-gray-500 mt-3">JPG, PNG, GIF or WebP. Max 6MB.</p>
-
-                        <div className="w-full border-t border-gray-100 my-8"></div>
-
-                        <button
-                          type="button"
-                          onClick={() => setToast({ message: 'Google account connection coming soon', type: 'success' })}
-                          className="w-full flex items-center justify-center gap-3 h-[52px] border border-gray-200 rounded-full bg-white hover:bg-gray-50 text-[14.5px] font-medium text-gray-800 transition"
-                        >
-                          <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 48 48">
-                            <path fill="#FFC107" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-1.657,2.372-4.354,4-7.5,4c-4.971,0-9-4.029-9-9s4.029-9,9-9 c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658C35.68,3.5,30.151,2,24,2C11.85,2,2,11.85,2,24s9.85,22,22,22c11.046,0,20.62-8.134,21.773-18.916 C45.937,25.023,45.5,22.5,45.5,20C45.5,19.566,45.451,19.145,45.354,18.738L43.611,20.083z" />
-                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c2.293,0,4.403,0.866,5.982,2.284l5.658-5.658 C35.68,3.5,30.151,2,24,2C16.318,2,9.656,6.337,6.306,14.691z" />
-                            <path fill="#4CAF50" d="M24,46c5.152,0,9.861-1.971,13.409-5.192l-6.19-5.238C29.145,36.091,26.705,37,24,37 c-3.184,0-5.905-1.616-7.5-4.145l-6.531,5.027C13.18,42.317,18.223,46,24,46z" />
-                            <path fill="#1976D2" d="M43.611,20.083H42V20H24c0,2.209,1.791,4,4,4h8c-0.796,1.14-1.848,2.084-3.076,2.774 c0.001-0.001,6.192,5.238,6.192,5.238C36.971,34.174,46,28,46,20C46,19.653,45.973,19.312,45.921,18.983L43.611,20.083z" />
-                          </svg>
-                          Continue with Google
-                        </button>
-                        <p className="text-xs text-gray-500 mt-3 text-center">Link a Google account to sign in faster.</p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('list')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToExercises} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
 
                 {activeInfoTab === 'business' && (
-                  <div className="p-8 lg:p-10">
+                  <div className="p-4 sm:p-6 lg:p-10">
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -1852,9 +1900,9 @@ export default function ExercisesPage() {
                         <input type="url" placeholder="https://yoursite.com" value={website} onChange={(e) => setWebsite(e.target.value)} className="w-full h-[48px] px-4 border border-gray-300 rounded-lg text-[14px] outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
-                      <button type="button" onClick={() => setView('list')} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white">Cancel</button>
-                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-8 mt-8 border-t border-gray-100">
+                      <button type="button" onClick={goToExercises} className="px-6 h-[44px] text-[14px] font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition bg-white w-full sm:w-auto">Cancel</button>
+                      <button type="button" onClick={handleSaveAccountInfo} disabled={savingInfo} className={`px-6 h-[44px] text-[14px] font-semibold text-white rounded-lg transition w-full sm:w-auto ${savingInfo ? 'bg-[#7a9bcc] cursor-not-allowed' : 'bg-[#1a4db8] hover:bg-[#15409b]'}`}>{savingInfo ? 'Saving...' : 'Save changes'}</button>
                     </div>
                   </div>
                 )}
@@ -1865,50 +1913,68 @@ export default function ExercisesPage() {
 
         {/* ACCOUNT SETTINGS */}
         {view === 'account-settings' && (
-          <div className="flex-1 overflow-y-auto bg-[#f7f8fa]">
-            <div className="px-10 pt-10 pb-6">
-              <h1 className="text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
+          <div className="flex-1 min-h-0 overflow-y-auto bg-[#f7f8fa]">
+            <div className="px-4 sm:px-6 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-4 sm:pb-6">
+              <h1 className="text-2xl sm:text-[28px] font-bold text-gray-900 leading-tight mb-1">Account Settings</h1>
               <p className="text-[13.5px] text-gray-500">Manage branding, metrics, testing, integrations, and system configuration.</p>
             </div>
 
-            <div className="px-10 pb-6">
-              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 flex-wrap">
+            <div className="px-4 sm:px-6 lg:px-10 pb-6 overflow-x-auto">
+              <div className="inline-flex items-center gap-1 bg-[#eef1f7] rounded-full p-1.5 min-w-max">
                 {(['privileges', 'metrics', 'testing', 'results', 'branding', 'integrations'] as const).map((tab) => (
                   <button key={tab} onClick={() => setSettingsTab(tab)}
-                    className={`px-5 py-2 text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className={`px-3 sm:px-5 py-1.5 sm:py-2 text-[12px] sm:text-[14px] font-medium rounded-full transition capitalize ${settingsTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                     {tab}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="px-10 pb-10 max-w-[1400px]">
+            <div className="px-4 sm:px-6 lg:px-10 pb-10 max-w-[1400px]">
               {settingsTab === 'privileges' && (
-                <div className="bg-white border border-gray-200 rounded-2xl p-8">
+                <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
                   <h3 className="text-[16px] font-bold text-gray-900 mb-2">Privileges</h3>
                   <p className="text-[13px] text-gray-500 mb-6">
                     Manage role-based permissions for account members.
                     {!isAdmin && <span className="ml-1 text-amber-600">(Only ADMIN can change these.)</span>}
                   </p>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[600px]">
+                    <table className="w-full text-left border-collapse min-w-[560px]">
                       <thead>
                         <tr className="border-b border-gray-200">
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Admin</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
-                          <th className="py-4 px-4 text-[13px] font-semibold text-gray-600 text-center">Staff</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 w-1/2">Privilege</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Admin</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Supervisor</th>
+                          <th className="py-3 sm:py-4 px-2 sm:px-4 text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center">Staff</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {PRIVILEGE_ROWS.map((row) => (
-                          <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                            <td className="py-4 px-4 text-[14px] text-gray-800 font-medium">{row.label}</td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.admin ?? true} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.supervisor ?? true} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                            <td className="py-4 px-4 text-center"><input type="checkbox" checked={privileges[row.id]?.staff ?? true} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" /></td>
-                          </tr>
-                        ))}
+                        {PRIVILEGE_ROWS.map((row) => {
+                          const rowPriv = privileges[row.id] || { admin: true, supervisor: true, staff: true };
+                          const adminOn = rowPriv.admin;
+                          const supervisorOn = rowPriv.supervisor;
+
+                          return (
+                            <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50/50">
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-[13px] sm:text-[14px] text-gray-800 font-medium">{row.label}</td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <input type="checkbox" checked={adminOn} onChange={() => handleTogglePrivilege(row.id, 'admin')} disabled={!isAdmin} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-50 disabled:cursor-not-allowed" />
+                              </td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <input type="checkbox" checked={supervisorOn} onChange={() => handleTogglePrivilege(row.id, 'supervisor')} disabled={!isAdmin || !adminOn} title={!adminOn ? 'Enable Admin first' : undefined} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" />
+                                  {!adminOn && isAdmin && (<span className="text-[9px] text-amber-600 leading-tight md:hidden">Admin first</span>)}
+                                </div>
+                              </td>
+                              <td className="py-3 sm:py-4 px-2 sm:px-4 text-center">
+                                <div className="flex flex-col items-center gap-1">
+                                  <input type="checkbox" checked={rowPriv.staff} onChange={() => handleTogglePrivilege(row.id, 'staff')} disabled={!isAdmin || !supervisorOn} title={!supervisorOn ? 'Enable Supervisor first' : undefined} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer accent-blue-600 disabled:opacity-40 disabled:cursor-not-allowed" />
+                                  {!supervisorOn && isAdmin && (<span className="text-[9px] text-amber-600 leading-tight md:hidden">Supervisor first</span>)}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -1917,11 +1983,11 @@ export default function ExercisesPage() {
 
               {settingsTab === 'metrics' && (
                 <div className="space-y-8">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-8">
-                    <div className="flex items-center gap-4 mb-2">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-8">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-2">
                       <label className="text-[14px] font-semibold text-gray-900">Measurement System</label>
-                      <div className="relative inline-block">
-                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer">
+                      <div className="relative inline-block w-full sm:w-auto">
+                        <select value={measurementSystem} onChange={(e) => setMeasurementSystem(e.target.value as 'Imperial' | 'Metric')} className="h-10 pl-4 pr-10 border border-gray-300 rounded-lg text-[14px] bg-white outline-none focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 appearance-none cursor-pointer w-full sm:w-auto">
                           <option value="Imperial">Imperial</option><option value="Metric">Metric</option>
                         </select>
                         <svg className="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
@@ -1973,13 +2039,13 @@ export default function ExercisesPage() {
                   <div>
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Primary Color</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Sets the main accent color for the account.</p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                       <div className="w-[100px] h-[52px] rounded-lg border border-gray-200 bg-white p-2 shadow-sm">
                         <div className="w-full h-full rounded-md" style={{ backgroundColor: primaryColor }} />
                       </div>
                       <div className="relative">
                         <span className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: primaryColor }} />
-                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
+                        <input type="text" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="h-[52px] pl-11 pr-4 w-full sm:w-[180px] border border-gray-200 rounded-lg text-[14px] font-medium text-gray-800 outline-none transition focus:border-[#1a73e8] focus:ring-4 focus:ring-[#1a73e8]/10 bg-white" />
                       </div>
                     </div>
                   </div>
@@ -1987,8 +2053,8 @@ export default function ExercisesPage() {
                     <h3 className="text-[15px] font-bold text-gray-900 mb-1">Account Logo</h3>
                     <p className="text-[13px] text-gray-500 mb-4">Upload your account logo. Max 5MB (PNG, JPG, GIF recommended).</p>
                     <input ref={accountLogoInputRef} type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml" onChange={handleAccountLogoUpload} className="hidden" />
-                    <div className="relative inline-block">
-                      <button type="button" onClick={() => accountLogoInputRef.current?.click()} className="w-[400px] h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
+                    <div className="relative inline-block w-full sm:w-auto">
+                      <button type="button" onClick={() => accountLogoInputRef.current?.click()} className="w-full sm:w-[400px] h-[160px] sm:h-[180px] border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center hover:border-[#1a73e8] hover:bg-blue-50/30 transition relative overflow-hidden">
                         {accountLogo ? <img src={accountLogo} alt="Account logo" className="w-full h-full object-contain p-4" /> : <p className="text-[14px] font-medium text-gray-500">Logo</p>}
                       </button>
                       {accountLogo && (
@@ -2003,7 +2069,7 @@ export default function ExercisesPage() {
 
               {settingsTab === 'integrations' && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">InBody</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.inbody.enabled} onChange={(e) => setIntegrations({ ...integrations, inbody: { ...integrations.inbody, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2021,7 +2087,7 @@ export default function ExercisesPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Evolt</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.evolt.enabled} onChange={(e) => setIntegrations({ ...integrations, evolt: { ...integrations.evolt, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2039,7 +2105,7 @@ export default function ExercisesPage() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-2xl p-7">
+                  <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 lg:p-7">
                     <h3 className="text-[15px] font-bold text-gray-900 mb-5">Styku</h3>
                     <label className="flex items-center gap-3 cursor-pointer select-none mb-5">
                       <input type="checkbox" checked={integrations.styku.enabled} onChange={(e) => setIntegrations({ ...integrations, styku: { ...integrations.styku, enabled: e.target.checked } })} className="w-[18px] h-[18px] rounded border-gray-300 text-[#1a73e8] focus:ring-[#1a73e8]" />
@@ -2082,7 +2148,7 @@ export default function ExercisesPage() {
                   type="button"
                   onClick={handleSaveSettings}
                   disabled={settingsTab === 'privileges' && !isAdmin}
-                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 h-[44px] text-[14px] font-semibold text-white bg-[#1a4db8] hover:bg-[#15409b] rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   Save settings
                 </button>
@@ -2090,81 +2156,77 @@ export default function ExercisesPage() {
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* ACTIONS MODAL */}
       {actionsExercise && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setActionsExercise(null)}>
-          <div className="bg-white w-full max-w-[480px] rounded-2xl shadow-2xl p-7" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between mb-6">
-              <h3 className="text-[22px] font-bold text-gray-900 leading-tight">Exercise actions</h3>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4" onClick={() => setActionsExercise(null)}>
+          <div className="bg-white w-full max-w-[480px] rounded-2xl shadow-2xl p-5 sm:p-7" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4 sm:mb-6">
+              <h3 className="text-xl sm:text-[22px] font-bold text-gray-900 leading-tight">Exercise actions</h3>
               <button onClick={() => setActionsExercise(null)} className="text-gray-400 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100 -mt-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <div className="space-y-3">
-              {/* ✅ Edit gated by create_exercises */}
               <button
                 onClick={handleEditFromActions}
                 disabled={!canCreateExercise}
                 title={!canCreateExercise ? 'You do not have permission to edit exercises' : undefined}
-                className={`w-full flex items-center gap-3.5 px-5 py-[16px] rounded-xl border text-left transition ${
+                className={`w-full flex items-center gap-3.5 px-4 sm:px-5 py-4 rounded-xl border text-left transition ${
                   canCreateExercise
                     ? 'border-gray-200 hover:bg-gray-50'
                     : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
                 }`}
               >
                 <svg className={`w-[20px] h-[20px] flex-shrink-0 ${canCreateExercise ? 'text-[#1a73e8]' : 'text-gray-300'}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                <span className="text-[15px] font-semibold">Edit exercise</span>
+                <span className="text-[14px] sm:text-[15px] font-semibold">Edit exercise</span>
               </button>
-              {/* ✅ Duplicate gated by create_exercises */}
               <button
                 onClick={handleDuplicateExercise}
                 disabled={!canCreateExercise}
                 title={!canCreateExercise ? 'You do not have permission to duplicate exercises' : undefined}
-                className={`w-full flex items-center gap-3.5 px-5 py-[16px] rounded-xl border text-left transition ${
+                className={`w-full flex items-center gap-3.5 px-4 sm:px-5 py-4 rounded-xl border text-left transition ${
                   canCreateExercise
                     ? 'border-gray-200 hover:bg-gray-50'
                     : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
                 }`}
               >
                 <svg className={`w-[20px] h-[20px] flex-shrink-0 ${canCreateExercise ? 'text-gray-700' : 'text-gray-300'}`} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" /></svg>
-                <span className="text-[15px] font-semibold">Duplicate exercise</span>
+                <span className="text-[14px] sm:text-[15px] font-semibold">Duplicate exercise</span>
               </button>
-              {/* ✅ Delete gated by delete_exercises */}
               <button
                 onClick={handleOpenDelete}
                 disabled={!canDeleteExercise}
                 title={!canDeleteExercise ? 'You do not have permission to delete exercises' : undefined}
-                className={`w-full flex items-center gap-3.5 px-5 py-[16px] rounded-xl border text-left transition ${
+                className={`w-full flex items-center gap-3.5 px-4 sm:px-5 py-4 rounded-xl border text-left transition ${
                   canDeleteExercise
                     ? 'border-red-200 bg-red-50/50 text-[#b83232] hover:bg-red-50'
                     : 'border-gray-100 bg-gray-50/50 text-gray-300 cursor-not-allowed'
                 }`}
               >
                 <svg className="w-[20px] h-[20px] flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
-                <span className="text-[15px] font-semibold">Delete exercise</span>
+                <span className="text-[14px] sm:text-[15px] font-semibold">Delete exercise</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* DELETE CONFIRMATION */}
       {deleteExercise && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-7">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl relative p-5 sm:p-7">
             <button onClick={() => setDeleteExercise(null)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-700">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-5">
               <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" /></svg>
             </div>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteExercise.name}&quot;?</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-3 pr-8">Delete &quot;{deleteExercise.name}&quot;?</h2>
             <p className="text-[15px] text-gray-500 mb-7">Are you sure you want to delete this exercise? This action cannot be undone.</p>
-            <div className="flex items-center justify-end gap-3">
-              <button onClick={() => setDeleteExercise(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition">Cancel</button>
-              <button onClick={confirmDeleteExercise} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition">Delete</button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3">
+              <button onClick={() => setDeleteExercise(null)} className="px-6 py-3 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition w-full sm:w-auto">Cancel</button>
+              <button onClick={confirmDeleteExercise} className="px-6 py-3 text-sm font-semibold text-white bg-[#e51b48] hover:bg-[#c9173d] rounded-full transition w-full sm:w-auto">Delete</button>
             </div>
           </div>
         </div>
@@ -2174,9 +2236,9 @@ export default function ExercisesPage() {
 }
 
 // ============== REUSABLE ==============
-function NavLink({ href, label, icon, active = false, badge = 0 }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number }) {
+function NavLink({ href, label, icon, active = false, badge = 0, onClick }: { href: string; label: string; icon: React.ReactNode; active?: boolean; badge?: number; onClick?: (e: any) => void; }) {
   return (
-    <Link href={href} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md transition ${active ? 'bg-[#eef2fb] text-[#1a73e8] font-medium' : 'text-gray-600 hover:bg-[#f4f6fb] font-medium'}`}>
+    <Link href={href} onClick={onClick} className={`relative flex items-center gap-3 px-3 py-2.5 text-[13.5px] rounded-md transition ${active ? 'bg-[#eef2fb] text-[#1a73e8] font-medium' : 'text-gray-600 hover:bg-[#f4f6fb] font-medium'}`}>
       {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] bg-[#1a73e8] rounded-r"></span>}
       <span className={active ? 'text-[#1a73e8]' : 'text-gray-500'}>{icon}</span>
       <span className="flex-1">{label}</span>
